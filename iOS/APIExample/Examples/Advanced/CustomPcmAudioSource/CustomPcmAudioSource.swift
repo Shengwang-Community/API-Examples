@@ -1,27 +1,28 @@
 //
-//  JoinChannelVC.swift
+//  CustomPcmAudioSource.swift
 //  APIExample
 //
-//  Created by 张乾泽 on 2020/4/17.
-//  Copyright © 2020 Agora Corp. All rights reserved.
+//  Created by XC on 2021/5/7.
+//  Copyright © 2021 Agora Corp. All rights reserved.
 //
-import UIKit
-import AGEVideoLayout
-import AgoraRtcKit
-import ReplayKit
 
-class ScreenShareEntry : UIViewController
+import Foundation
+import AgoraRtcKit
+import AGEVideoLayout
+import AVFoundation
+
+class CustomPcmAudioSourceEntry : UIViewController
 {
-    @IBOutlet weak var joinButton: UIButton!
-    @IBOutlet weak var channelTextField: UITextField!
-    let identifier = "ScreenShare"
+    @IBOutlet weak var joinButton: AGButton!
+    @IBOutlet weak var channelTextField: AGTextField!
+    let identifier = "CustomPcmAudioSource"
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    @IBAction func doJoinPressed(sender: UIButton) {
-        guard let channelName = channelTextField.text else {return}
+    @IBAction func doJoinPressed(sender: AGButton) {
+        guard let channelName = channelTextField.text else { return }
         //resign channel text field
         channelTextField.resignFirstResponder()
         
@@ -29,37 +30,38 @@ class ScreenShareEntry : UIViewController
         // create new view controller every time to ensure we get a clean vc
         guard let newViewController = storyBoard.instantiateViewController(withIdentifier: identifier) as? BaseViewController else {return}
         newViewController.title = channelName
-        newViewController.configs = ["channelName":channelName]
+        newViewController.configs = ["channelName": channelName]
         self.navigationController?.pushViewController(newViewController, animated: true)
     }
 }
 
-class ScreenShareMain: BaseViewController {
-    var localVideo = Bundle.loadView(fromNib: "VideoView", withType: VideoView.self)
-    var remoteVideo = Bundle.loadView(fromNib: "VideoView", withType: VideoView.self)
-    
-    @IBOutlet weak var container: AGEVideoContainer!
-    @IBOutlet weak var broadcasterPickerContainer: UIView!
+class CustomPcmAudioSourceMain: BaseViewController {
     var agoraKit: AgoraRtcEngineKit!
+    var pcmSourcePush: AgoraPcmSourcePush?
+    @IBOutlet weak var container: AGEVideoContainer!
+    var audioViews: [UInt:VideoView] = [:]
+    @IBOutlet weak var playAudioSwitch: UISwitch!
+    @IBOutlet weak var pushPcmSwitch: UISwitch!
+    @IBOutlet weak var micSwitch: UISwitch!
     
     // indicate if current instance has joined channel
-    var isJoined: Bool = false
+    var isJoined: Bool = false {
+        didSet {
+            playAudioSwitch.isEnabled = isJoined
+            pushPcmSwitch.isEnabled = isJoined
+            micSwitch.isEnabled = isJoined
+        }
+    }
     
-    override func viewDidLoad() {
+    override func viewDidLoad(){
         super.viewDidLoad()
-        
-        // prepare system broadcaster picker
-        prepareSystemBroadcaster()
-        
-        // layout render view
-        localVideo.setPlaceholder(text: "Local Host".localized)
-        remoteVideo.setPlaceholder(text: "Remote Host".localized)
-        container.layoutStream(views: [localVideo, remoteVideo])
+        let sampleRate:UInt = 44100, channel:UInt = 2, bitPerSample = 16, samples = 441 * 10
         
         // set up agora instance when view loadedlet config = AgoraRtcEngineConfig()
         let config = AgoraRtcEngineConfig()
         config.appId = KeyCenter.AppId
         config.areaCode = GlobalSettings.shared.area.rawValue
+        
         // setup log file path
         let logConfig = AgoraLogConfig()
         logConfig.level = .info
@@ -67,35 +69,24 @@ class ScreenShareMain: BaseViewController {
         
         agoraKit = AgoraRtcEngineKit.sharedEngine(with: config, delegate: self)
         
-        // get channel name from configs
         guard let channelName = configs["channelName"] as? String,
-              let resolution = GlobalSettings.shared.getSetting(key: "resolution")?.selectedOption().value as? CGSize,
-              let fps = GlobalSettings.shared.getSetting(key: "fps")?.selectedOption().value as? AgoraVideoFrameRate,
-              let orientation = GlobalSettings.shared.getSetting(key: "orientation")?.selectedOption().value as? AgoraVideoOutputOrientationMode else {return}
-        
+              let filepath = Bundle.main.path(forResource: "output", ofType: "raw") else {
+            return
+        }
         
         // make myself a broadcaster
-        agoraKit.setChannelProfile(.liveBroadcasting)
         agoraKit.setClientRole(.broadcaster)
         
-        // enable video module and set up video encoding configs
-        agoraKit.enableVideo()
-        agoraKit.disableAudio()
-        agoraKit.setVideoEncoderConfiguration(AgoraVideoEncoderConfiguration(size: resolution,
-                frameRate: fps,
-                bitrate: AgoraVideoBitrateStandard,
-                orientationMode: orientation))
-        
-        // set up local video to render your local camera preview
-        let videoCanvas = AgoraRtcVideoCanvas()
-        videoCanvas.uid = 0
-        // the view to be binded
-        videoCanvas.view = localVideo.videoView
-        videoCanvas.renderMode = .hidden
-        agoraKit.setupLocalVideo(videoCanvas)
-        
+        // disable video module
+        agoraKit.disableVideo()
         // Set audio route to speaker
         agoraKit.setDefaultAudioRouteToSpeakerphone(true)
+        
+        // setup external audio source
+        pcmSourcePush = AgoraPcmSourcePush(delegate: self, filePath: filepath, sampleRate: Int(sampleRate),
+                                           channelsPerFrame: Int(channel), bitPerSample: bitPerSample, samples: samples)
+        agoraKit.adjustPlaybackSignalVolume(0)
+        agoraKit.enableExternalAudioSource(withSampleRate: sampleRate, channelsPerFrame: channel)
         
         // start joining channel
         // 1. Users can only see each other after they join the
@@ -114,32 +105,10 @@ class ScreenShareMain: BaseViewController {
         }
     }
     
-    func prepareSystemBroadcaster() {
-        if #available(iOS 12.0, *) {
-            let frame = CGRect(x: 0, y:0, width: 60, height: 60)
-            let systemBroadcastPicker = RPSystemBroadcastPickerView(frame: frame)
-            systemBroadcastPicker.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
-            if let url = Bundle.main.url(forResource: "Agora-ScreenShare-Extension", withExtension: "appex", subdirectory: "PlugIns") {
-                if let bundle = Bundle(url: url) {
-                    systemBroadcastPicker.preferredExtension = bundle.bundleIdentifier
-                }
-            }
-            broadcasterPickerContainer.addSubview(systemBroadcastPicker)
-        } else {
-            self.showAlert(message: "Minimum support iOS version is 12.0")
-        }
-        
-    }
-    
-    func isScreenShareUid(uid: UInt) -> Bool {
-        return uid >= SCREEN_SHARE_UID_MIN && uid <= SCREEN_SHARE_UID_MAX
-    }
-    
     override func willMove(toParent parent: UIViewController?) {
         if parent == nil {
             // leave channel when exiting the view
-            // deregister packet processing
-            AgoraCustomEncryption.deregisterPacketProcessing(agoraKit)
+            pcmSourcePush?.stop()
             if isJoined {
                 agoraKit.leaveChannel { (stats) -> Void in
                     LogUtils.log(message: "left channel, duration: \(stats.duration)", level: .info)
@@ -147,10 +116,38 @@ class ScreenShareMain: BaseViewController {
             }
         }
     }
+        
+    @IBAction func playAudio(_ sender: UISwitch) {
+        agoraKit.adjustPlaybackSignalVolume(sender.isOn ? 50 : 0)
+    }
+    
+    @IBAction func openOrCloseMic(_ sender: UISwitch) {
+        // if isOn, update config to publish mic audio
+        agoraKit.muteLocalAudioStream(!sender.isOn)
+    }
+    
+    @IBAction func pushPCM(_ sender: UISwitch) {
+        // start or stop push pcm data
+        if sender.isOn {
+            pcmSourcePush?.start()
+        } else {
+            pcmSourcePush?.stop()
+        }
+    }
+}
+
+extension CustomPcmAudioSourceMain: AgoraPcmSourcePushDelegate {
+    func onStop() {
+        pushPcmSwitch.isOn = false
+    }
+    
+    func onAudioFrame(data: UnsafeMutablePointer<UInt8>, samples: UInt) {
+        agoraKit.pushExternalAudioFrameRawData(data, samples: samples, timestamp: 0)
+    }
 }
 
 /// agora rtc engine delegate events
-extension ScreenShareMain: AgoraRtcEngineDelegate {
+extension CustomPcmAudioSourceMain: AgoraRtcEngineDelegate {
     /// callback when warning occured for agora sdk, warning can usually be ignored, still it's nice to check out
     /// what is happening
     /// Warning code description can be found at:
@@ -172,13 +169,14 @@ extension ScreenShareMain: AgoraRtcEngineDelegate {
         self.showAlert(title: "Error", message: "Error \(errorCode.description) occur")
     }
     
-    /// callback when the local user joins a specified channel.
-    /// @param channel
-    /// @param uid uid of local user
-    /// @param elapsed time elapse since current sdk instance join the channel in ms
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
-        isJoined = true
+        self.isJoined = true
         LogUtils.log(message: "Join \(channel) with uid \(uid) elapsed \(elapsed)ms", level: .info)
+        //set up local audio view, this view will not show video but just a placeholder
+        let view = Bundle.loadView(fromNib: "VideoView", withType: VideoView.self)
+        self.audioViews[uid] = view
+        view.setPlaceholder(text: self.getAudioLabel(uid: uid, isLocal: true))
+        self.container.layoutStream3x3(views: Array(self.audioViews.values))
     }
     
     /// callback when a remote user is joinning the channel, note audience in live broadcast mode will NOT trigger this event
@@ -186,21 +184,12 @@ extension ScreenShareMain: AgoraRtcEngineDelegate {
     /// @param elapsed time elapse since current sdk instance join the channel in ms
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
         LogUtils.log(message: "remote user join: \(uid) \(elapsed)ms", level: .info)
-        
-        if(isScreenShareUid(uid: uid)) {
-            LogUtils.log(message: "Ignore screen share uid", level: .info)
-            return
-        }
-        
-        // Only one remote video view is available for this
-        // tutorial. Here we check if there exists a surface
-        // view tagged as this uid.
-        let videoCanvas = AgoraRtcVideoCanvas()
-        videoCanvas.uid = uid
-        // the view to be binded
-        videoCanvas.view = remoteVideo.videoView
-        videoCanvas.renderMode = .hidden
-        agoraKit.setupRemoteVideo(videoCanvas)
+        //set up remote audio view, this view will not show video but just a placeholder
+        let view = Bundle.loadView(fromNib: "VideoView", withType: VideoView.self)
+        self.audioViews[uid] = view
+        view.setPlaceholder(text: self.getAudioLabel(uid: uid, isLocal: false))
+        self.container.layoutStream3x3(views: Array(self.audioViews.values))
+        self.container.reload(level: 0, animated: true)
     }
     
     /// callback when a remote user is leaving the channel, note audience in live broadcast mode will NOT trigger this event
@@ -210,14 +199,9 @@ extension ScreenShareMain: AgoraRtcEngineDelegate {
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
         LogUtils.log(message: "remote user left: \(uid) reason \(reason)", level: .info)
         
-        // to unlink your view from sdk, so that your view reference will be released
-        // note the video will stay at its last frame, to completely remove it
-        // you will need to remove the EAGL sublayer from your binded view
-        let videoCanvas = AgoraRtcVideoCanvas()
-        videoCanvas.uid = uid
-        // the view to be binded
-        videoCanvas.view = nil
-        videoCanvas.renderMode = .hidden
-        agoraKit.setupRemoteVideo(videoCanvas)
+        //remove remote audio view
+        self.audioViews.removeValue(forKey: uid)
+        self.container.layoutStream3x3(views: Array(self.audioViews.values))
+        self.container.reload(level: 0, animated: true)
     }
 }
