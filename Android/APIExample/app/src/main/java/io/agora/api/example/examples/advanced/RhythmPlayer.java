@@ -22,89 +22,85 @@ import io.agora.api.example.R;
 import io.agora.api.example.annotation.Example;
 import io.agora.api.example.common.BaseFragment;
 import io.agora.api.example.utils.CommonUtil;
-import io.agora.extension.ExtensionManager;
 import io.agora.rtc2.ChannelMediaOptions;
 import io.agora.rtc2.Constants;
 import io.agora.rtc2.IRtcEngineEventHandler;
 import io.agora.rtc2.RtcEngine;
 import io.agora.rtc2.RtcEngineConfig;
+import io.agora.rtc2.audio.AgoraRhythmPlayerConfig;
 
+import static io.agora.api.example.common.Constant.URL_DOWNBEAT;
+import static io.agora.api.example.common.Constant.URL_UPBEAT;
 import static io.agora.api.example.common.model.Examples.ADVANCED;
 
 /**
- * This demo demonstrates how to make a one-to-one voice call
- *
- * @author cjw
+ * This demo demonstrates how to make a VideoProcessExtension
  */
 @Example(
-        index = 24,
+        index = 28,
         group = ADVANCED,
-        name = R.string.item_audio_ext,
-        actionId = R.id.action_mainFragment_audio_extension,
-        tipsId = R.string.simpleaudioextension
+        name = R.string.item_rhythmplayer,
+        actionId = R.id.action_mainFragment_rhythm_player,
+        tipsId = R.string.rhythmplayer
 )
-public class SimpleAudioExtension extends BaseFragment implements View.OnClickListener, io.agora.rtc2.IMediaExtensionObserver {
-    private static final String TAG = SimpleAudioExtension.class.getSimpleName();
+public class RhythmPlayer extends BaseFragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+
+    private static final String TAG = RhythmPlayer.class.getSimpleName();
     private EditText et_channel;
-    private Button join;
+    private Button join, play, stop;
     private RtcEngine engine;
     private int myUid;
     private boolean joined = false;
-    private SeekBar record;
-
-
-    SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if(seekBar.getId() == record.getId()){
-                engine.setExtensionProperty(ExtensionManager.EXTENSION_VENDOR_NAME, ExtensionManager.EXTENSION_AUDIO_FILTER_NAME, "volume", ""+progress);
-            }
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-
-        }
-    };
+    private boolean isPlaying = false;
+    private SeekBar beatPerMinute, beatPerMeasure;
+    private AgoraRhythmPlayerConfig agoraRhythmPlayerConfig = new AgoraRhythmPlayerConfig();
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         handler = new Handler();
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_audio_extension, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
+        View view = inflater.inflate(R.layout.fragment_rhythm_player, container, false);
         return view;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    {
         super.onViewCreated(view, savedInstanceState);
         join = view.findViewById(R.id.btn_join);
+        play = view.findViewById(R.id.play);
+        stop = view.findViewById(R.id.stop);
         et_channel = view.findViewById(R.id.et_channel);
+        beatPerMeasure = view.findViewById(R.id.beatsPerMeasure);
+        beatPerMinute = view.findViewById(R.id.beatsPerMinute);
         view.findViewById(R.id.btn_join).setOnClickListener(this);
-        record = view.findViewById(R.id.recordingVol);
-        record.setOnSeekBarChangeListener(seekBarChangeListener);
-        record.setEnabled(false);
+        play.setOnClickListener(this);
+        stop.setOnClickListener(this);
+        beatPerMinute.setOnSeekBarChangeListener(this);
+        beatPerMeasure.setOnSeekBarChangeListener(this);
+        beatPerMeasure.setEnabled(false);
+        beatPerMinute.setEnabled(false);
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState)
+    {
         super.onActivityCreated(savedInstanceState);
         // Check if the context is valid
         Context context = getContext();
-        if (context == null) {
+        if (context == null)
+        {
             return;
         }
-        try {
+        try
+        {
             RtcEngineConfig config = new RtcEngineConfig();
             /**
              * The context of Android Activity
@@ -125,48 +121,45 @@ public class SimpleAudioExtension extends BaseFragment implements View.OnClickLi
              * IRtcEngineEventHandler is an abstract class providing default implementation.
              * The SDK uses this class to report to the app on SDK runtime events.
              */
-            //Name of dynamic link library is provided by plug-in vendor,
-            //e.g. libagora-bytedance.so whose EXTENSION_NAME should be "agora-bytedance"
-            //and one or more plug-ins can be added
-            config.addExtension(ExtensionManager.EXTENSION_NAME);
-            config.mExtensionObserver = this;
             config.mEventHandler = iRtcEngineEventHandler;
+            config.mAudioScenario = Constants.AudioScenario.getValue(Constants.AudioScenario.HIGH_DEFINITION);
             engine = RtcEngine.create(config);
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             e.printStackTrace();
             getActivity().onBackPressed();
         }
     }
 
-    private byte[] audioAggregate(byte[] origin, byte[] buffer) {
-        byte[] output = new byte[origin.length];
-        for (int i = 0; i < origin.length; i++) {
-            output[i] = (byte) ((int) origin[i] + (int) buffer[i] / 2);
-        }
-        return output;
-    }
-
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
         /**leaveChannel and Destroy the RtcEngine instance*/
-        if (engine != null) {
+        if(engine != null)
+        {
+            engine.stopRhythmPlayer();
             engine.leaveChannel();
         }
         handler.post(RtcEngine::destroy);
         engine = null;
     }
 
+
     @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.btn_join) {
-            if (!joined) {
+    public void onClick(View v)
+    {
+        if (v.getId() == R.id.btn_join)
+        {
+            if (!joined)
+            {
                 CommonUtil.hideInputBoard(getActivity(), et_channel);
                 // call when join button hit
                 String channelId = et_channel.getText().toString();
                 // Check permission
-                if (AndPermission.hasPermissions(this, Permission.Group.STORAGE, Permission.Group.MICROPHONE)) {
+                if (AndPermission.hasPermissions(this, Permission.Group.STORAGE, Permission.Group.MICROPHONE, Permission.Group.CAMERA))
+                {
                     joinChannel(channelId);
                     return;
                 }
@@ -179,7 +172,9 @@ public class SimpleAudioExtension extends BaseFragment implements View.OnClickLi
                     // Permissions Granted
                     joinChannel(channelId);
                 }).start();
-            } else {
+            }
+            else
+            {
                 joined = false;
                 /**After joining a channel, the user must call the leaveChannel method to end the
                  * call before joining another channel. This method returns 0 if the user leaves the
@@ -200,45 +195,54 @@ public class SimpleAudioExtension extends BaseFragment implements View.OnClickLi
                  *          triggers the removeInjectStreamUrl method.*/
                 engine.leaveChannel();
                 join.setText(getString(R.string.join));
-                record.setEnabled(false);
-                record.setProgress(0);
             }
+        }
+        else if(v.getId() == R.id.play){
+            if(!isPlaying){
+                int ret = engine.startRhythmPlayer(URL_DOWNBEAT, URL_UPBEAT, agoraRhythmPlayerConfig);
+                Log.i(TAG, "startRhythmPlayer result:" + ret);
+                isPlaying = true;
+                beatPerMeasure.setEnabled(false);
+                beatPerMinute.setEnabled(false);
+            }
+        }
+        else if(v.getId() == R.id.stop){
+            engine.stopRhythmPlayer();
+            isPlaying = false;
+            beatPerMeasure.setEnabled(true);
+            beatPerMinute.setEnabled(true);
         }
     }
 
     /**
      * @param channelId Specify the channel name that you want to join.
-     *                  Users that input the same channel name join the same channel.
-     */
-    private void joinChannel(String channelId) {
+     *                  Users that input the same channel name join the same channel.*/
+    private void joinChannel(String channelId)
+    {
         /**In the demo, the default is to enter as the anchor.*/
         engine.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER);
-        /**
-         * Enable/Disable extension.
-         *
-         * @param id id for extension, e.g. agora.beauty.
-         * @param enable enable or disable.
-         * - true: enable.
-         * - false: disable.
-         *
-         * @return
-         * - 0: Success.
-         * - < 0: Failure.
-         */
-        engine.enableExtension(ExtensionManager.EXTENSION_VENDOR_NAME, ExtensionManager.EXTENSION_AUDIO_FILTER_NAME, true);
         /**Please configure accessToken in the string_config file.
          * A temporary token generated in Console. A temporary token is valid for 24 hours. For details, see
          *      https://docs.agora.io/en/Agora%20Platform/token?platform=All%20Platforms#get-a-temporary-token
          * A token generated at the server. This applies to scenarios with high-security requirements. For details, see
          *      https://docs.agora.io/en/cloud-recording/token_server_java?platform=Java*/
         String accessToken = getString(R.string.agora_access_token);
-        if (TextUtils.equals(accessToken, "") || TextUtils.equals(accessToken, "<#YOUR ACCESS TOKEN#>")) {
+        if (TextUtils.equals(accessToken, "") || TextUtils.equals(accessToken, "<#YOUR ACCESS TOKEN#>"))
+        {
             accessToken = null;
         }
-        engine.enableAudioVolumeIndication(1000, 3, false);
+        /** Allows a user to join a channel.
+         if you do not specify the uid, we will generate the uid for you*/
+        engine.enableAudioVolumeIndication(1000, 3, true);
+
         ChannelMediaOptions option = new ChannelMediaOptions();
         option.autoSubscribeAudio = true;
         option.autoSubscribeVideo = true;
+        option.publishAudioTrack = true;
+        /**
+         * config this for whether need push rhythem player to remote
+         */
+        option.publishRhythmPlayerTrack = true;
         int res = engine.joinChannel(accessToken, channelId, 0, option);
         if (res != 0) {
             // Usually happens with invalid parameters
@@ -251,19 +255,17 @@ public class SimpleAudioExtension extends BaseFragment implements View.OnClickLi
         }
         // Prevent repeated entry
         join.setEnabled(false);
-
-
     }
 
-    /**
-     * IRtcEngineEventHandler is an abstract class providing default implementation.
-     * The SDK uses this class to report to the app on SDK runtime events.
-     */
-    private final IRtcEngineEventHandler iRtcEngineEventHandler = new IRtcEngineEventHandler() {
+    /**IRtcEngineEventHandler is an abstract class providing default implementation.
+     * The SDK uses this class to report to the app on SDK runtime events.*/
+    private final IRtcEngineEventHandler iRtcEngineEventHandler = new IRtcEngineEventHandler()
+    {
         /**Reports a warning during SDK runtime.
          * Warning code: https://docs.agora.io/en/Voice/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler_1_1_warn_code.html*/
         @Override
-        public void onWarning(int warn) {
+        public void onWarning(int warn)
+        {
             Log.w(TAG, String.format("onWarning code %d message %s", warn, RtcEngine.getErrorDescription(warn)));
         }
 
@@ -271,7 +273,8 @@ public class SimpleAudioExtension extends BaseFragment implements View.OnClickLi
          * @param stats With this callback, the application retrieves the channel information,
          *              such as the call duration and statistics.*/
         @Override
-        public void onLeaveChannel(RtcStats stats) {
+        public void onLeaveChannel(RtcStats stats)
+        {
             super.onLeaveChannel(stats);
             Log.i(TAG, String.format("local user %d leaveChannel!", myUid));
             showLongToast(String.format("local user %d leaveChannel!", myUid));
@@ -284,20 +287,64 @@ public class SimpleAudioExtension extends BaseFragment implements View.OnClickLi
          * @param uid User ID
          * @param elapsed Time elapsed (ms) from the user calling joinChannel until this callback is triggered*/
         @Override
-        public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
+        public void onJoinChannelSuccess(String channel, int uid, int elapsed)
+        {
             Log.i(TAG, String.format("onJoinChannelSuccess channel %s uid %d", channel, uid));
             showLongToast(String.format("onJoinChannelSuccess channel %s uid %d", channel, uid));
             myUid = uid;
             joined = true;
-            handler.post(new Runnable() {
+            handler.post(new Runnable()
+            {
                 @Override
-                public void run() {
+                public void run()
+                {
                     join.setEnabled(true);
                     join.setText(getString(R.string.leave));
-                    record.setEnabled(true);
-                    record.setProgress(100);
+                    play.setEnabled(true);
+                    stop.setEnabled(true);
+                    beatPerMeasure.setEnabled(true);
+                    beatPerMinute.setEnabled(true);
                 }
             });
+        }
+
+        /**Since v2.9.0.
+         * This callback indicates the state change of the remote audio stream.
+         * PS: This callback does not work properly when the number of users (in the Communication profile) or
+         *     broadcasters (in the Live-broadcast profile) in the channel exceeds 17.
+         * @param uid ID of the user whose audio state changes.
+         * @param state State of the remote audio
+         *   REMOTE_AUDIO_STATE_STOPPED(0): The remote audio is in the default state, probably due
+         *              to REMOTE_AUDIO_REASON_LOCAL_MUTED(3), REMOTE_AUDIO_REASON_REMOTE_MUTED(5),
+         *              or REMOTE_AUDIO_REASON_REMOTE_OFFLINE(7).
+         *   REMOTE_AUDIO_STATE_STARTING(1): The first remote audio packet is received.
+         *   REMOTE_AUDIO_STATE_DECODING(2): The remote audio stream is decoded and plays normally,
+         *              probably due to REMOTE_AUDIO_REASON_NETWORK_RECOVERY(2),
+         *              REMOTE_AUDIO_REASON_LOCAL_UNMUTED(4) or REMOTE_AUDIO_REASON_REMOTE_UNMUTED(6).
+         *   REMOTE_AUDIO_STATE_FROZEN(3): The remote audio is frozen, probably due to
+         *              REMOTE_AUDIO_REASON_NETWORK_CONGESTION(1).
+         *   REMOTE_AUDIO_STATE_FAILED(4): The remote audio fails to start, probably due to
+         *              REMOTE_AUDIO_REASON_INTERNAL(0).
+         * @param reason The reason of the remote audio state change.
+         *   REMOTE_AUDIO_REASON_INTERNAL(0): Internal reasons.
+         *   REMOTE_AUDIO_REASON_NETWORK_CONGESTION(1): Network congestion.
+         *   REMOTE_AUDIO_REASON_NETWORK_RECOVERY(2): Network recovery.
+         *   REMOTE_AUDIO_REASON_LOCAL_MUTED(3): The local user stops receiving the remote audio
+         *               stream or disables the audio module.
+         *   REMOTE_AUDIO_REASON_LOCAL_UNMUTED(4): The local user resumes receiving the remote audio
+         *              stream or enables the audio module.
+         *   REMOTE_AUDIO_REASON_REMOTE_MUTED(5): The remote user stops sending the audio stream or
+         *               disables the audio module.
+         *   REMOTE_AUDIO_REASON_REMOTE_UNMUTED(6): The remote user resumes sending the audio stream
+         *              or enables the audio module.
+         *   REMOTE_AUDIO_REASON_REMOTE_OFFLINE(7): The remote user leaves the channel.
+         *   @param elapsed Time elapsed (ms) from the local user calling the joinChannel method
+         *                  until the SDK triggers this callback.*/
+        @Override
+        public void onRemoteAudioStateChanged(int uid, IRtcEngineEventHandler.REMOTE_AUDIO_STATE state, IRtcEngineEventHandler.REMOTE_AUDIO_STATE_REASON reason, int elapsed)
+        {
+            super.onRemoteAudioStateChanged(uid, state, reason, elapsed);
+            Log.i(TAG, "onRemoteAudioStateChanged->" + uid + ", state->" + state + ", reason->" + reason);
         }
 
         /**Occurs when a remote user (Communication)/host (Live Broadcast) joins the channel.
@@ -305,7 +352,8 @@ public class SimpleAudioExtension extends BaseFragment implements View.OnClickLi
          * @param elapsed Time delay (ms) from the local user calling joinChannel/setClientRole
          *                until this callback is triggered.*/
         @Override
-        public void onUserJoined(int uid, int elapsed) {
+        public void onUserJoined(int uid, int elapsed)
+        {
             super.onUserJoined(uid, elapsed);
             Log.i(TAG, "onUserJoined->" + uid);
             showLongToast(String.format("user %d joined!", uid));
@@ -322,7 +370,8 @@ public class SimpleAudioExtension extends BaseFragment implements View.OnClickLi
          *   USER_OFFLINE_BECOME_AUDIENCE(2): (Live broadcast only.) The client role switched from
          *               the host to the audience.*/
         @Override
-        public void onUserOffline(int uid, int reason) {
+        public void onUserOffline(int uid, int reason)
+        {
             Log.i(TAG, String.format("user %d offline! reason:%d", uid, reason));
             showLongToast(String.format("user %d offline! reason:%d", uid, reason));
         }
@@ -334,9 +383,24 @@ public class SimpleAudioExtension extends BaseFragment implements View.OnClickLi
         }
     };
 
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if(seekBar.getId() == R.id.beatsPerMeasure){
+            agoraRhythmPlayerConfig.beatsPerMeasure = seekBar.getProgress() < 1 ? 1 : seekBar.getProgress();
+        }
+        else if(seekBar.getId() == R.id.beatsPerMinute){
+            agoraRhythmPlayerConfig.beatsPerMinute = seekBar.getProgress() < 60 ? 60 : seekBar.getProgress();
+        }
+        Log.i(TAG, "agoraRhythmPlayerConfig beatsPerMeasure:"+ agoraRhythmPlayerConfig.beatsPerMeasure +", beatsPerMinute:" + agoraRhythmPlayerConfig.beatsPerMinute);
+    }
 
     @Override
-    public void onEvent(String vendor, String extension, String key, String value) {
-        Log.i(TAG, "onEvent vendor: " + vendor + "  extension: " + extension + "  key: " + key + "  value: " + value);
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }
