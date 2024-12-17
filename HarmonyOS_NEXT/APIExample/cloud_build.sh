@@ -68,9 +68,9 @@ signedHAP() {
     cd - > /dev/null
     
     # 使用解压后的证书文件
-    local cert_file=$(find "${config_dir}" -name "*.cer")
-    local p7b_file=$(find "${config_dir}" -name "*.p7b")
-    local p12_file=$(find "${config_dir}" -name "*.p12")
+    local cert_file=$(find "${config_dir}/sign" -name "*.cer")
+    local p7b_file=$(find "${config_dir}/sign" -name "*.p7b")
+    local p12_file=$(find "${config_dir}/sign" -name "*.p12")
     
     # 检查证书文件是否存在
     if [ ! -f "$cert_file" ] || [ ! -f "$p7b_file" ] || [ ! -f "$p12_file" ]; then
@@ -85,7 +85,7 @@ signedHAP() {
     
     # 签名打包
     echo "开始签名打包..."
-    java -jar ${COMMANDLINE_TOOL_DIR}/hap-sign-tool.jar sign-app \
+    java -jar ${COMMANDLINE_TOOL_DIR}/sdk/default/openharmony/toolchains/hap-sign-tool.jar sign-app \
         -keyAlias "${HMOS_KEY_PWD}" \
         -signAlg "SHA256withECDSA" \
         -mode "localSign" \
@@ -97,6 +97,19 @@ signedHAP() {
         -keyPwd "${HMOS_KEY_PWD}" \
         -keystorePwd "${HMOS_KEY_PWD}" \
         -signCode "1"
+    
+    if [ $? -ne 0 ]; then
+        echo "[ERROR] HAP 签名失败"
+        exit 1
+    fi
+    
+    # 检查签名后的文件
+    if [ ! -f "$signed_hap" ]; then
+        echo "[ERROR] 签名后的 HAP 文件未生成"
+        exit 1
+    fi
+    
+    echo "[INFO] HAP 签名成功: $signed_hap"
 }
 
 function main() {
