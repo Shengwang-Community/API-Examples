@@ -85,7 +85,7 @@ signedHAP() {
     
     # 签名打包
     echo "开始签名打包..."
-    java -jar ${COMMANDLINE_TOOL_DIR}/sdk/default/openharmony/toolchains/hap-sign-tool.jar sign-app \
+    java -jar ${COMMANDLINE_TOOL_DIR}/sdk/default/openharmony/toolchains/lib/hap-sign-tool.jar sign-app \
         -keyAlias "${HMOS_KEY_PWD}" \
         -signAlg "SHA256withECDSA" \
         -mode "localSign" \
