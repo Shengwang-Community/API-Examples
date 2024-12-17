@@ -48,7 +48,7 @@ buildHAP() {
     hvigorw assembleHap --mode module -p product=default -p buildMode=debug --no-daemon
 }
 
-loadSignAndSigned() {
+signedHAP() {
     echo "[INFO] === Starting loadSignAndSigned ==="
     
     # 创建证书目录
@@ -64,7 +64,7 @@ loadSignAndSigned() {
     
     # 解压证书
     cd "${config_dir}"
-    unzip -o apiexample-hmos-sign.zip
+    7za x -y apiexample-hmos-sign.zip
     cd - > /dev/null
     
     # 使用解压后的证书文件
@@ -104,7 +104,7 @@ function main() {
     init_hdc
     init_ohpm
     buildHAP
-    loadSignAndSigned
+    signedHAP
 
     local endTime=$(date '+%s')
     local elapsedTime=$(expr $endTime - $startTime)
