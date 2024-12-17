@@ -71,7 +71,7 @@ def doBuild(buildVariables) {
     
     // 下载并解压签名文件
     if (params.Package_Publish) {
-        // extraArgs = handleSignFiles(extraArgs)
+        extraArgs = handleSignFiles(extraArgs)
     }
     
     def commandConfig = [
