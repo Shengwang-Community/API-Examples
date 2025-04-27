@@ -6,7 +6,7 @@ import groovy.transform.Field
 buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
-    "sourceDir": "api-examples",
+    "sourceDir": "api-examples-shengwang",
     "non-publish": [
         "command": "./.github/ci/build/build_ios.sh",
         "extraArgs": "",
@@ -56,4 +56,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.zip *.ipa || true"
 }
 
-pipelineLoad(this, "ApiExample", "build", "ios", "RTC-Sample")
+pipelineLoad(this, "api_examples_shengwang", "build", "ios", "RTC-Sample")
