@@ -25,6 +25,8 @@
 package io.agora.beautyapi.bytedance
 
 import android.graphics.Matrix
+import android.opengl.GLES20
+import android.opengl.GLES30
 import android.view.SurfaceView
 import android.view.TextureView
 import android.view.View
@@ -53,7 +55,18 @@ import java.util.concurrent.Executors
 
 class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
     private val TAG = "ByteDanceBeautyAPIImpl"
-    private var beautyMode = 0 // 0: 自动根据buffer类型切换，1：固定使用OES纹理，2：固定使用i420
+
+    /**
+     * Beauty mode
+     * 美颜模式
+     * 0: Automatically switch based on buffer type,
+     *    根据缓冲类型自动切换，
+     * 1: Fixed use of OES texture,
+     *    固定使用 OES 纹理，
+     * 2: Fixed use of i420,
+     *    固定使用 I420 格式，
+     */
+    private var beautyMode = 0
 
 
     private var textureBufferHelper: TextureBufferHelper? = null
@@ -83,6 +96,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         UNKNOWN, TEXTURE_OES, TEXTURE_2D, I420
     }
 
+    /**
+     * Initializes the API.
+     * 初始化 API。
+     *
+     * @param config Configuration parameters
+     *               配置参数
+     * @return [ErrorCode] corresponding to the result of initialization
+     *                     对应初始化结果的错误代码
+     */
     override fun initialize(config: Config): Int {
         if (this.config != null) {
             LogUtils.e(TAG, "initialize >> The beauty api has been initialized!")
@@ -112,6 +134,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         return ErrorCode.ERROR_OK.value
     }
 
+    /**
+     * Enable/Disable beauty effects.
+     * 启用/禁用美颜效果。
+     *
+     * @param enable true: Enable; false: Disable
+     *               true: 启用；false: 禁用
+     * @return [ErrorCode] corresponding to the result of the operation
+     *                     对应操作结果的错误代码
+     */
     override fun enable(enable: Boolean): Int {
         LogUtils.i(TAG, "enable >> enable = $enable")
         if (config == null) {
@@ -135,6 +166,17 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         return ErrorCode.ERROR_OK.value
     }
 
+    /**
+     * Sets up local video rendering, with internal handling of mirror mode.
+     * 设置本地视频渲染，内部处理镜像模式。
+     *
+     * @param view SurfaceView or TextureView for rendering the video
+     *             用于渲染视频的 SurfaceView 或 TextureView
+     * @param renderMode Scaling mode for rendering (e.g., Constants.RENDER_MODE_HIDDEN)
+     *                   渲染的缩放模式（例如，Constants.RENDER_MODE_HIDDEN）
+     * @return [ErrorCode] corresponding to the result of the operation
+     *         对应操作结果的错误代码
+     */
     override fun setupLocalVideo(view: View, renderMode: Int): Int {
         val rtcEngine = config?.rtcEngine
         if(rtcEngine == null){
@@ -156,6 +198,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         return ErrorCode.ERROR_VIEW_TYPE_ERROR.value
     }
 
+    /**
+     * When ProcessMode == [CaptureMode.Custom], external input of raw video frames is required.
+     * 当处理模式为 [CaptureMode.Custom] 时，需要外部输入原始视频帧。
+     *
+     * @param videoFrame The raw video frame
+     *                   原始视频帧
+     * @return [ErrorCode] corresponding to the result of the operation
+     *                     对应操作结果的错误代码
+     */
     override fun onFrame(videoFrame: VideoFrame): Int {
         val conf = config
         if (conf == null) {
@@ -177,6 +228,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         return ErrorCode.ERROR_FRAME_SKIPPED.value
     }
 
+    /**
+     * Sets the best default beauty parameters provided by Agora.
+     * 设置 Agora 提供的最佳默认美颜参数。
+     *
+     * @param preset The beauty preset, defaulting to [BeautyPreset.DEFAULT]
+     *               美颜预设，默认为 [BeautyPreset.DEFAULT]
+     * @return [ErrorCode] corresponding to the result of the operation
+     *                     对应操作结果的错误代码
+     */
     override fun setBeautyPreset(
         preset: BeautyPreset,
         beautyNodePath: String,
@@ -216,65 +276,85 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
                 config?.renderManager ?: return@runOnProcessThread
 
             val enable = preset == BeautyPreset.DEFAULT
+            // Smooth skin
             renderManager.updateComposerNodes(
                 beautyNodePath,
                 "smooth",
                 if (enable) 0.3f else 0f
-            )// 磨皮
+            )
+            // Whitening
             renderManager.updateComposerNodes(
                 beautyNodePath,
                 "whiten",
                 if (enable) 0.5f else 0f
-            )// 美白
+            )
+            // Slim face
             renderManager.updateComposerNodes(
                 reSharpNodePath,
                 "Internal_Deform_Overall",
                 if (enable) 0.15f else 0f
-            )//瘦脸
+            )
+            // Slim cheekbones
             renderManager.updateComposerNodes(
                 reSharpNodePath,
                 "Internal_Deform_Zoom_Cheekbone",
                 if (enable) 0.3f else 0f
-            )//瘦颧骨
+            )
+            // Jawbone
             renderManager.updateComposerNodes(
                 reSharpNodePath,
                 "Internal_Deform_Zoom_Jawbone",
                 if (enable) 0.46f else 0f
-            )//下颌骨
+            )
+            // Enlarged eyes
             renderManager.updateComposerNodes(
                 reSharpNodePath,
                 "Internal_Deform_Eye",
                 if (enable) 0.15f else 0f
-            )//大眼
+            )
+            // White teeth
             renderManager.updateComposerNodes(
                 beauty4ItemNodePath,
                 "BEF_BEAUTY_WHITEN_TEETH",
                 if (enable) 0.2f else 0f
-            )//美牙
+            )
+            // Hairline height
             renderManager.updateComposerNodes(
                 reSharpNodePath,
                 "Internal_Deform_Forehead",
                 if (enable) 0.4f else 0f
-            )//额头
+            )
+            // Slim nose
             renderManager.updateComposerNodes(
                 reSharpNodePath,
                 "Internal_Deform_Nose",
                 if (enable) 0.15f else 0f
-            )//瘦鼻
+            )
+            // Mouth shape
             renderManager.updateComposerNodes(
                 reSharpNodePath,
                 "Internal_Deform_ZoomMouth",
                 if (enable) 0.16f else 0f
-            )//嘴形
+            )
+            // Chin length
             renderManager.updateComposerNodes(
                 reSharpNodePath,
                 "Internal_Deform_Chin",
                 if (enable) 0.46f else 0f
-            )//下巴
+            )
         }
         return ErrorCode.ERROR_OK.value
     }
 
+    /**
+     * Private parameter configuration for internal API calls, primarily for testing.
+     * 内部 API 调用的私有参数配置，主要用于测试。
+     *
+     * @param key The parameter key.
+     *            参数键。
+     * @param value The parameter value.
+     *              参数值。
+     */
     override fun setParameters(key: String, value: String) {
         apiReporter.reportFuncEvent("setParameters", mapOf("key" to key, "value" to value), emptyMap())
         when (key) {
@@ -282,6 +362,13 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         }
     }
 
+    /**
+     * Executes an operation within the processing thread.
+     * 在处理线程中执行操作。
+     *
+     * @param run The operation to execute.
+     *            要执行的操作。
+     */
     override fun runOnProcessThread(run: () -> Unit) {
         if (config == null) {
             LogUtils.e(TAG, "runOnProcessThread >> The beauty api has not been initialized!")
@@ -300,6 +387,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         }
     }
 
+    /**
+     * Updates the camera configuration.
+     * 设置 Agora 提供的最佳默认美颜参数。
+     *
+     * @param config New camera configuration to apply
+     *               新的相机配置已应用
+     * @return [ErrorCode] corresponding to the result of the operation
+     *                     对应操作结果的错误代码
+     */
     override fun updateCameraConfig(config: CameraConfig): Int {
         LogUtils.i(TAG, "updateCameraConfig >> oldCameraConfig=$cameraConfig, newCameraConfig=$config")
         cameraConfig = CameraConfig(config.frontMirror, config.backMirror)
@@ -312,8 +408,25 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         return ErrorCode.ERROR_OK.value
     }
 
+    /**
+     * Checks if the current camera is the front camera.
+     * 检查当前摄像头是否为前置摄像头。
+     *
+     * Note: This returns an accurate value only during beauty processing; otherwise, it will always return true.
+     * 注意：此值仅在美颜处理期间返回准确值；否则，它将始终返回 true。
+     *
+     * @return true if the current camera is the front camera, false otherwise
+     *         如果当前摄像头是前置摄像头，则返回 true，否则返回 false
+     */
     override fun isFrontCamera() = isFrontCamera
 
+    /**
+     * Releases resources. Once released, this instance can no longer be used.
+     * 释放资源。一旦释放，该实例将无法再使用。
+     *
+     * @return Refer to ErrorCode
+     *         参考 ErrorCode
+     */
     override fun release(): Int {
         val conf = config
         if(conf == null){
@@ -351,6 +464,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         return ErrorCode.ERROR_OK.value
     }
 
+    /**
+     * Processes the beauty effects on the given video frame.
+     * 在给定的视频帧上处理美颜效果。
+     *
+     * @param videoFrame The video frame to process.
+     *                   要处理的视频帧。
+     * @return true if processing was successful, false otherwise.
+     *         如果处理成功则返回 true，否则返回 false。
+     */
     private fun processBeauty(videoFrame: VideoFrame): Boolean {
         if (isReleased) {
             LogUtils.e(TAG, "processBeauty >> The beauty api has been released!")
@@ -473,11 +595,24 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
 
         apiReporter.endDurationEvent("first_beauty_frame", emptyMap())
 
+        val newFence = textureBufferHelper?.invoke {
+            val texBuffer = videoFrame.buffer as? TextureBuffer ?: return@invoke 0L
+            val fenceOpen = GLES30.glIsSync(texBuffer.fenceObject)
+            if (fenceOpen) {
+                val glFenceSync = GLES30.glFenceSync(GLES30.GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
+                GLES20.glFlush()
+                return@invoke glFenceSync
+            }
+            GLES20.glFinish()
+            return@invoke 0L
+        } ?: 0L
+
         val processBuffer: TextureBuffer = textureBufferHelper?.wrapTextureBuffer(
             videoFrame.rotatedWidth,
             videoFrame.rotatedHeight,
             TextureBuffer.Type.RGB,
             processTexId,
+            newFence,
             Matrix().apply {
                 preTranslate(0.5f, 0.5f)
                 preScale(1.0f, -1.0f)
@@ -488,6 +623,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         return true
     }
 
+    /**
+     * Automatically processes beauty effects based on the video frame.
+     * 根据视频帧自动处理美颜效果。
+     *
+     * @param videoFrame The video frame to process.
+     *                   要处理的视频帧。
+     * @return The texture ID of the processed frame.
+     *         处理后帧的纹理 ID。
+     */
     private fun processBeautyAuto(videoFrame: VideoFrame): Int {
         val buffer = videoFrame.buffer
         return if (buffer is TextureBuffer) {
@@ -497,6 +641,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         }
     }
 
+    /**
+     * Processes a single texture for beauty effects.
+     * 处理单个纹理以应用美颜效果。
+     *
+     * @param videoFrame The video frame containing the texture to process.
+     *                   包含要处理的纹理的视频帧。
+     * @return The texture ID of the processed frame.
+     *         处理后帧的纹理 ID。
+     */
     private fun processBeautySingleTexture(videoFrame: VideoFrame): Int {
         val texBufferHelper = textureBufferHelper ?: return -1
         val imageUtils = imageUtils ?: return -1
@@ -567,6 +720,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         })
     }
 
+    /**
+     * Processes a single buffer for beauty effects.
+     * 处理单个缓冲区以应用美颜效果。
+     *
+     * @param videoFrame The video frame containing the buffer to process.
+     *                   包含要处理的缓冲区的视频帧。
+     * @return The texture ID of the processed frame.
+     *         处理后帧的纹理 ID。
+     */
     private fun processBeautySingleBuffer(videoFrame: VideoFrame): Int {
         val texBufferHelper = textureBufferHelper ?: return -1
         val imageUtils = imageUtils ?: return -1
@@ -629,6 +791,15 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
         })
     }
 
+    /**
+     * Retrieves the NV21 buffer from the given video frame.
+     * 从给定的视频帧中获取 NV21 缓冲区。
+     *
+     * @param videoFrame The video frame containing the buffer.
+     *                   包含缓冲区的视频帧。
+     * @return ByteArray The NV21 buffer as a byte array, or null if it cannot be retrieved.
+     *                    NV21 缓冲区的字节数组，如果无法获取则返回 null。
+     */
     private fun getNV21Buffer(videoFrame: VideoFrame): ByteArray? {
         val buffer = videoFrame.buffer
         val i420Buffer = buffer as? I420Buffer ?: buffer.toI420()
@@ -658,6 +829,17 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
 
     // IVideoFrameObserver implements
 
+    /**
+     * Callback when a video frame is captured.
+     * 采集视频帧时回调。
+     *
+     * @param sourceType The source type of the video frame.
+     *                   视频帧的源类型。
+     * @param videoFrame The captured video frame.
+     *                   采集的视频帧。
+     * @return true if the frame was processed successfully, false otherwise.
+     *         如果帧处理成功则返回 true，否则返回 false。
+     */
     override fun onCaptureVideoFrame(sourceType: Int, videoFrame: VideoFrame?): Boolean {
         videoFrame ?: return false
         return processBeauty(videoFrame)
@@ -679,6 +861,13 @@ class ByteDanceBeautyAPIImpl : ByteDanceBeautyAPI, IVideoFrameObserver {
 
     override fun getRotationApplied() = false
 
+    /**
+     * Retrieves the current mirror status.
+     * 获取当前镜像状态。
+     *
+     * @return true if mirroring is applied, false if it is not.
+     *         如果应用了镜像，则返回 true；否则返回 false。
+     */
     override fun getMirrorApplied() = captureMirror && !enable
 
     override fun getObservedFramePosition() = IVideoFrameObserver.POSITION_POST_CAPTURER
