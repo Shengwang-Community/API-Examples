@@ -141,6 +141,9 @@
             android:id="@+id/action_mainFragment_to_third_party_beauty"
             app:destination="@id/thirdPartyBeauty" />
         <action
+            android:id="@+id/action_mainFragment_agora_beauty"
+            app:destination="@id/AgoraBeauty" />
+        <action
             android:id="@+id/action_mainFragment_to_face_capture"
             app:destination="@id/faceCapture" />
         <action
@@ -219,6 +222,11 @@
         android:label="@string/bytedance_beauty"
         tools:layout="@layout/fragment_beauty_bytedance" />
 
+    <fragment
+        android:id="@+id/AgoraBeauty"
+        android:name="io.agora.api.example.examples.advanced.AgoraBeauty"
+        android:label="@string/item_agora_beauty"
+        tools:layout="@layout/fragment_agora_beauty" />
 
     <fragment
         android:id="@+id/RTCToRTMP"

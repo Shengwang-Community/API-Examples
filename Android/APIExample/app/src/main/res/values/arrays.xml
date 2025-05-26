@@ -343,4 +343,72 @@
         <item>VIDEO_MODULE_POSITION_POST_CAPTURER_ORIGIN</item>
     </string-array>
 
+    <string-array name="shape_beauty_area2">
+        <item>FACE_SHAPE_AREA_NONE</item>
+        <item>FACE_SHAPE_AREA_HEADSCALE</item>
+        <item>FACE_SHAPE_AREA_FOREHEAD</item>
+        <item>FACE_SHAPE_AREA_FACECONTOUR</item>
+        <item>FACE_SHAPE_AREA_FACELENGTH</item>
+        <item>FACE_SHAPE_AREA_FACEWIDTH</item>
+        <item>FACE_SHAPE_AREA_CHEEKBONE</item>
+        <item>FACE_SHAPE_AREA_CHEEK</item>
+        <item>FACE_SHAPE_AREA_MANDIBLE</item>
+        <item>FACE_SHAPE_AREA_CHIN</item>
+        <item>FACE_SHAPE_AREA_EYESCALE</item>
+        <item>FACE_SHAPE_AREA_EYEDISTANCE</item>
+        <item>FACE_SHAPE_AREA_EYEPOSITION</item>
+        <item>FACE_SHAPE_AREA_EYELID</item>
+        <item>FACE_SHAPE_AREA_EYEPUPILS</item>
+        <item>FACE_SHAPE_AREA_EYEINNERCORNER</item>
+        <item>FACE_SHAPE_AREA_EYEOUTERCORNER</item>
+        <item>FACE_SHAPE_AREA_NOSELENGTH</item>
+        <item>FACE_SHAPE_AREA_NOSEWIDTH</item>
+        <item>FACE_SHAPE_AREA_NOSEWING</item>
+        <item>FACE_SHAPE_AREA_NOSEROOT</item>
+        <item>FACE_SHAPE_AREA_NOSEBRIDGE</item>
+        <item>FACE_SHAPE_AREA_NOSETIP</item>
+        <item>FACE_SHAPE_AREA_NOSEGENERAL</item>
+        <item>FACE_SHAPE_AREA_MOUTHSCALE</item>
+        <item>FACE_SHAPE_AREA_MOUTHPOSITION</item>
+        <item>FACE_SHAPE_AREA_MOUTHSMILE</item>
+        <item>FACE_SHAPE_AREA_MOUTHLIP</item>
+        <item>FACE_SHAPE_AREA_EYEBROWPOSITION</item>
+        <item>FACE_SHAPE_AREA_EYEBROWTHICKNESS</item>
+    </string-array>
+
+    <string-array name="makeup_area_type2" >
+        <item>Close</item>
+        <item>Type 1</item>
+        <item>Type 2</item>
+    </string-array>
+    <string-array name="makeup_area_type3" >
+        <item>Close</item>
+        <item>Type 1</item>
+        <item>Type 2</item>
+        <item>Type 3</item>
+    </string-array>
+    <string-array name="makeup_area_type4" >
+        <item>Close</item>
+        <item>Type 1</item>
+        <item>Type 2</item>
+        <item>Type 3</item>
+        <item>Type 4</item>
+    </string-array>
+
+    <string-array name="agora_beauty_style">
+        <item>模板女</item>
+        <item>模板男</item>
+        <item>模板自然</item>
+    </string-array>
+
+    <string-array name="agora_makeup_style">
+        <item>学姐妆</item>
+        <item>学妹妆</item>
+    </string-array>
+
+    <string-array name="agora_filter_style">
+        <item>原生</item>
+        <item>冷白</item>
+        <item>嫩白</item>
+    </string-array>
 </resources>
