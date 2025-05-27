@@ -402,8 +402,8 @@
     </string-array>
 
     <string-array name="agora_makeup_style">
-        <item>学姐妆</item>
         <item>学妹妆</item>
+        <item>学姐妆</item>
     </string-array>
 
     <string-array name="agora_filter_style">
