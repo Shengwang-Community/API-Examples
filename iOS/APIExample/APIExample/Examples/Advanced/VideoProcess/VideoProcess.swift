@@ -299,6 +299,7 @@ class VideoProcessMain: BaseViewController {
             
         default: break
         }
+        
         source.backgroundSourceType = virtualBgSwitch.isOn ? source.backgroundSourceType : .none
         let result = agoraKit.enableVirtualBackground(virtualBgSwitch.isOn, backData: source, segData: AgoraSegmentationProperty())
         print("result == \(result)")

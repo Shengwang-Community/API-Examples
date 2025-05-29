@@ -235,6 +235,11 @@
 		F728B9DD2CA295D7007813BB /* PixelBufferPIPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F728B9D42CA295D7007813BB /* PixelBufferPIPViewController.swift */; };
 		F728B9DE2CA295D7007813BB /* PixelBufferRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F728B9D52CA295D7007813BB /* PixelBufferRenderView.swift */; };
 		F728B9E02CA29625007813BB /* PictureInPicture.strings in Resources */ = {isa = PBXBuildFile; fileRef = F728B9DF2CA29625007813BB /* PictureInPicture.strings */; };
+		F73478782DE5A0510030C0CE /* AgoraBeauty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F73478762DE5A0510030C0CE /* AgoraBeauty.swift */; };
+		F73478792DE5A0510030C0CE /* AgoraBeauty.strings in Resources */ = {isa = PBXBuildFile; fileRef = F73478752DE5A0510030C0CE /* AgoraBeauty.strings */; };
+		F734787A2DE5A0510030C0CE /* AgoraBeauty.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F73478732DE5A0510030C0CE /* AgoraBeauty.storyboard */; };
+		F734787C2DE5B2BD0030C0CE /* AgoraBeautyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F734787B2DE5B2BD0030C0CE /* AgoraBeautyManager.swift */; };
+		F73478802DE7119F0030C0CE /* beauty_material.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F734787F2DE7119F0030C0CE /* beauty_material.bundle */; };
 		F73B01CE2CCB7E730077B7D2 /* BETimeRecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = F73B01C82CCB7E720077B7D2 /* BETimeRecoder.m */; };
 		F73B01CF2CCB7E730077B7D2 /* BEGLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F73B01CC2CCB7E730077B7D2 /* BEGLUtils.m */; };
 		F73B01D52CCB84590077B7D2 /* APIReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = F73B01D32CCB84590077B7D2 /* APIReporter.m */; };
@@ -597,6 +602,11 @@
 		F728B9D42CA295D7007813BB /* PixelBufferPIPViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PixelBufferPIPViewController.swift; sourceTree = "<group>"; };
 		F728B9D52CA295D7007813BB /* PixelBufferRenderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PixelBufferRenderView.swift; sourceTree = "<group>"; };
 		F728B9DF2CA29625007813BB /* PictureInPicture.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = PictureInPicture.strings; sourceTree = "<group>"; };
+		F73478722DE5A0510030C0CE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/AgoraBeauty.storyboard; sourceTree = "<group>"; };
+		F73478742DE5A0510030C0CE /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AgoraBeauty.strings"; sourceTree = "<group>"; };
+		F73478762DE5A0510030C0CE /* AgoraBeauty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeauty.swift; sourceTree = "<group>"; };
+		F734787B2DE5B2BD0030C0CE /* AgoraBeautyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeautyManager.swift; sourceTree = "<group>"; };
+		F734787F2DE7119F0030C0CE /* beauty_material.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = beauty_material.bundle; sourceTree = "<group>"; };
 		F73B01C82CCB7E720077B7D2 /* BETimeRecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BETimeRecoder.m; sourceTree = "<group>"; };
 		F73B01C92CCB7E720077B7D2 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 		F73B01CA2CCB7E720077B7D2 /* BETimeRecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BETimeRecoder.h; sourceTree = "<group>"; };
@@ -871,6 +881,7 @@
 		03BEED09251C4446005E78F4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F734787F2DE7119F0030C0CE /* beauty_material.bundle */,
 				DD6DCEE12CBD1D68008D7B72 /* hlg-hdr.yuv */,
 				DDFD50292C2065D00050B344 /* yuv_limit_range_alpha_1280_540_right.mp4 */,
 				8B349FE22681E2CE007247F2 /* agora-logo.png */,
@@ -1136,6 +1147,7 @@
 		A75A56D724A0603000D0089E /* Advanced */ = {
 			isa = PBXGroup;
 			children = (
+				F73478772DE5A0510030C0CE /* AgoraBeauty */,
 				DDFD50242C205BDF0050B344 /* TransparentRender */,
 				E7883AE32B074746003CCF44 /* FaceCapture */,
 				E726BFFD2A96FD3A006870E2 /* AudioWaveform */,
@@ -1535,6 +1547,17 @@
 			path = PixelBufferPIPViewController;
 			sourceTree = "<group>";
 		};
+		F73478772DE5A0510030C0CE /* AgoraBeauty */ = {
+			isa = PBXGroup;
+			children = (
+				F73478732DE5A0510030C0CE /* AgoraBeauty.storyboard */,
+				F73478752DE5A0510030C0CE /* AgoraBeauty.strings */,
+				F73478762DE5A0510030C0CE /* AgoraBeauty.swift */,
+				F734787B2DE5B2BD0030C0CE /* AgoraBeautyManager.swift */,
+			);
+			path = AgoraBeauty;
+			sourceTree = "<group>";
+		};
 		F73B01D42CCB84590077B7D2 /* Report */ = {
 			isa = PBXGroup;
 			children = (
@@ -1613,7 +1636,6 @@
 				1B6F6CF9B678035E221EAFDE /* [CP] Embed Pods Frameworks */,
 				0339BEBA25205B80007D4FDD /* Embed App Extensions */,
 				E76F80122AF0A7A200CCB9D6 /* ShellScript */,
-				EA59815E58120166C6FD72B5 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1757,6 +1779,7 @@
 				576CA80A25A9CC3A0091520B /* output.raw in Resources */,
 				E7A49D40290907E200F06DD4 /* BytedEffect.strings in Resources */,
 				03B12DAA251125B700E55818 /* VideoView.xib in Resources */,
+				F73478802DE7119F0030C0CE /* beauty_material.bundle in Resources */,
 				E7163F832964149800EBBD55 /* ARKit.storyboard in Resources */,
 				8BA5459526AFEC8D00ED4295 /* SimpleFilter.storyboard in Resources */,
 				E7163F812964149800EBBD55 /* ARKit.strings in Resources */,
@@ -1774,6 +1797,8 @@
 				DD6ED7F22CB69FFB007B3B5D /* LocalCompositeGraph.strings in Resources */,
 				033A9F30252D860100BC26E1 /* JoinChannelAudio.storyboard in Resources */,
 				033A9F75252D8B4800BC26E1 /* ScreenShare.storyboard in Resources */,
+				F73478792DE5A0510030C0CE /* AgoraBeauty.strings in Resources */,
+				F734787A2DE5A0510030C0CE /* AgoraBeauty.storyboard in Resources */,
 				671BD6B827E1DB2D0076D5E1 /* CustomAudioRender.strings in Resources */,
 				DDFD50282C205CF40050B344 /* TransparentRender.storyboard in Resources */,
 				033A9F5C252D89FD00BC26E1 /* CustomVideoSourcePush.storyboard in Resources */,
@@ -1896,24 +1921,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\" \n";
-		};
-		EA59815E58120166C6FD72B5 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-APIExample/Pods-APIExample-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-APIExample/Pods-APIExample-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-APIExample/Pods-APIExample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "
+";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1958,6 +1967,7 @@
 				0371D8AE250B4A2C00C0DD61 /* JoinChannelAudio.swift in Sources */,
 				E726C0052A96FD3A006870E2 /* AudioWaveform.swift in Sources */,
 				E7A49D5429090FF500F06DD4 /* BELicenseHelper.mm in Sources */,
+				F73478782DE5A0510030C0CE /* AgoraBeauty.swift in Sources */,
 				E7A49D172907DD2600F06DD4 /* EffectsLicense.m in Sources */,
 				E728B84F28B601A300674A4A /* AgoraSampleBufferRender.m in Sources */,
 				8B333DA9267B4BC3002A3785 /* SettingsCells.swift in Sources */,
@@ -1982,6 +1992,7 @@
 				E7A49D41290907E200F06DD4 /* BytedEffectVC.m in Sources */,
 				E7A49D142907DC2800F06DD4 /* EffectsProcess.m in Sources */,
 				03DF1D9324CFC29700DF7151 /* ExternalAudio.mm in Sources */,
+				F734787C2DE5B2BD0030C0CE /* AgoraBeautyManager.swift in Sources */,
 				036CBA4625198F1A00D74FAD /* AgoraCustomEncryption.mm in Sources */,
 				E7899BDE2861673600851463 /* CreateDataStream.swift in Sources */,
 				DD71821E2CBBDF1000523123 /* PlayerObserver.swift in Sources */,
@@ -2628,6 +2639,22 @@
 			name = BytedEffect.storyboard;
 			sourceTree = "<group>";
 		};
+		F73478732DE5A0510030C0CE /* AgoraBeauty.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F73478722DE5A0510030C0CE /* Base */,
+			);
+			name = AgoraBeauty.storyboard;
+			sourceTree = "<group>";
+		};
+		F73478752DE5A0510030C0CE /* AgoraBeauty.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F73478742DE5A0510030C0CE /* zh-Hans */,
+			);
+			name = AgoraBeauty.strings;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -2639,7 +2666,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension/Info.plist";
@@ -2673,7 +2700,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension/Info.plist";
@@ -2829,7 +2856,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = APIExample/Info.plist;
@@ -2900,7 +2927,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = APIExample/Info.plist;
@@ -2969,7 +2996,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3006,7 +3033,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = G726234S43;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
