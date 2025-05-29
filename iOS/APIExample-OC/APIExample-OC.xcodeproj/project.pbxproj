@@ -131,6 +131,10 @@
 		E7361FD52A6E6EE500925BD6 /* ExtensionVideoFilter.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E7361FC52A6E6EE500925BD6 /* ExtensionVideoFilter.hpp */; };
 		E7361FD62A6E6EE500925BD6 /* ExtensionVideoFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7361FC62A6E6EE500925BD6 /* ExtensionVideoFilter.cpp */; };
 		E76347D62AB2E769005D130F /* ContentInspect.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E76347D82AB2E769005D130F /* ContentInspect.storyboard */; };
+		F73478852DE85DEB0030C0CE /* AgoraBeauty.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F73478842DE85DEB0030C0CE /* AgoraBeauty.storyboard */; };
+		F73478862DE85DEB0030C0CE /* AgoraBeauty.m in Sources */ = {isa = PBXBuildFile; fileRef = F73478832DE85DEB0030C0CE /* AgoraBeauty.m */; };
+		F73478892DE862270030C0CE /* AgoraBeautyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F73478882DE862270030C0CE /* AgoraBeautyManager.m */; };
+		F734788B2DE8663C0030C0CE /* beauty_material.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F734788A2DE8663C0030C0CE /* beauty_material.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -369,6 +373,12 @@
 		E76347D72AB2E769005D130F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/ContentInspect.storyboard; sourceTree = "<group>"; };
 		E76347DA2AB2E771005D130F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ContentInspect.strings"; sourceTree = "<group>"; };
 		EE1DD4153A945ADCE1953823 /* Pods_Agora_ScrrenShare_Extension_OC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Agora_ScrrenShare_Extension_OC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F73478822DE85DEB0030C0CE /* AgoraBeauty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AgoraBeauty.h; sourceTree = "<group>"; };
+		F73478832DE85DEB0030C0CE /* AgoraBeauty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AgoraBeauty.m; sourceTree = "<group>"; };
+		F73478842DE85DEB0030C0CE /* AgoraBeauty.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AgoraBeauty.storyboard; sourceTree = "<group>"; };
+		F73478872DE862270030C0CE /* AgoraBeautyManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AgoraBeautyManager.h; sourceTree = "<group>"; };
+		F73478882DE862270030C0CE /* AgoraBeautyManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AgoraBeautyManager.m; sourceTree = "<group>"; };
+		F734788A2DE8663C0030C0CE /* beauty_material.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = beauty_material.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -467,6 +477,7 @@
 		E70ADE0A2A5D009D009947CF /* Advanced */ = {
 			isa = PBXGroup;
 			children = (
+				F73478812DE85D9A0030C0CE /* AgoraBeauty */,
 				E72F62072A78B31B00C963D2 /* MutliCamera */,
 				E72F62012A77A63D00C963D2 /* ContentInspect */,
 				E72F61F72A778ADC00C963D2 /* SpatialAudio */,
@@ -521,6 +532,7 @@
 		E70ADE0C2A5D00C0009947CF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F734788A2DE8663C0030C0CE /* beauty_material.bundle */,
 				E70ADE0E2A5D026D009947CF /* agora-logo.png */,
 				E70ADE0D2A5D026C009947CF /* audioeffect.mp3 */,
 				E70ADE102A5D026D009947CF /* audiomixing.mp3 */,
@@ -955,6 +967,18 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		F73478812DE85D9A0030C0CE /* AgoraBeauty */ = {
+			isa = PBXGroup;
+			children = (
+				F73478822DE85DEB0030C0CE /* AgoraBeauty.h */,
+				F73478832DE85DEB0030C0CE /* AgoraBeauty.m */,
+				F73478872DE862270030C0CE /* AgoraBeautyManager.h */,
+				F73478882DE862270030C0CE /* AgoraBeautyManager.m */,
+				F73478842DE85DEB0030C0CE /* AgoraBeauty.storyboard */,
+			);
+			path = AgoraBeauty;
+			sourceTree = "<group>";
+		};
 		FB95B04C515AA8E46D5A7E6A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1130,6 +1154,7 @@
 				E70ADE1A2A5D026E009947CF /* frames0.yuv in Resources */,
 				E70ADDFF2A5D0050009947CF /* LaunchScreen.storyboard in Resources */,
 				E70ADEC62A66306F009947CF /* VideoMetadata.storyboard in Resources */,
+				F734788B2DE8663C0030C0CE /* beauty_material.bundle in Resources */,
 				E72F61AF2A72179700C963D2 /* ScreenShare.storyboard in Resources */,
 				E7361F512A6E5B3700925BD6 /* CustomVideoRender.storyboard in Resources */,
 				E70ADDFC2A5D0050009947CF /* Assets.xcassets in Resources */,
@@ -1137,6 +1162,7 @@
 				E72F61FE2A778B1400C963D2 /* SpatialAudio.storyboard in Resources */,
 				E70ADE362A5D41C9009947CF /* VideoView.xib in Resources */,
 				E7361F532A6E5C2100925BD6 /* VideoViewMetal.xib in Resources */,
+				F73478852DE85DEB0030C0CE /* AgoraBeauty.storyboard in Resources */,
 				E7361F652A6E64FB00925BD6 /* PictureInPicture.storyboard in Resources */,
 				E72F618E2A70F9B700C963D2 /* StreamEncryption.storyboard in Resources */,
 				E70ADE172A5D026E009947CF /* audiomixing.mp3 in Resources */,
@@ -1290,6 +1316,7 @@
 				E72F61A52A710AB200C963D2 /* MediaPlayer.m in Sources */,
 				DD8A1F7F2CA50749001CEC51 /* AgoraPCMPlayer.m in Sources */,
 				E7361F6B2A6E6B9F00925BD6 /* SimpleFilter.m in Sources */,
+				F73478862DE85DEB0030C0CE /* AgoraBeauty.m in Sources */,
 				E72F618D2A70F8AF00C963D2 /* AgoraCustomEncryption.mm in Sources */,
 				E72F62042A77A63D00C963D2 /* ContentInspect.m in Sources */,
 				E7361F322A6E4C8A00925BD6 /* CustomVideoSourcePush.m in Sources */,
@@ -1303,6 +1330,7 @@
 				E72F61FC2A778ADC00C963D2 /* SpatialAudio.m in Sources */,
 				E7361F642A6E64FB00925BD6 /* PictureInPicture.m in Sources */,
 				E7361F442A6E4CF500925BD6 /* AgoraMetalRender.swift in Sources */,
+				F73478892DE862270030C0CE /* AgoraBeautyManager.m in Sources */,
 				E70ADE252A5D069A009947CF /* JoinChannelVideo.m in Sources */,
 				E70ADEC72A66306F009947CF /* VideoMetadata.m in Sources */,
 				E72F61882A70F16500C963D2 /* StreamEncryption.m in Sources */,
@@ -1571,11 +1599,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "APIExample-OC/Info.plist";
@@ -1596,7 +1622,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples-oc";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1616,11 +1641,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "APIExample-OC/Info.plist";
@@ -1641,7 +1664,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples-oc";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1657,11 +1679,9 @@
 			baseConfigurationReference = B653B1910F3D2DB664FFCA69 /* Pods-Agora-ScreenShare-Extension-OC.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension-OC/Info.plist";
@@ -1677,7 +1697,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples-oc.Agora-ScreenShare-Extension-OC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1689,11 +1708,9 @@
 			baseConfigurationReference = C4F0E8C20AFE260912A60198 /* Pods-Agora-ScreenShare-Extension-OC.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension-OC/Info.plist";
@@ -1709,7 +1726,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples-oc.Agora-ScreenShare-Extension-OC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = wildcard;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1724,10 +1740,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1771,10 +1787,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
