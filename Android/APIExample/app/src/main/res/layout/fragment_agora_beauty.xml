@@ -45,21 +45,43 @@
             <LinearLayout
                 android:id="@+id/controlPanel"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="8dp"
                 android:visibility="invisible"
                 tools:visibility="visible">
 
                 <!-- shape beautify-->
-                <Switch
-                    android:id="@+id/switch_face_shape_beautify"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:text="@string/shape_beautify" />
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
+                    <Switch
+                        android:id="@+id/switch_face_shape_beautify"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="@string/shape_beautify" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_save_beauty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="50dp"
+                        android:textAllCaps="false"
+                        android:text="@string/save" />
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_reset_beauty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAllCaps="false"
+                        android:text="@string/reset" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -156,13 +178,36 @@
                 </LinearLayout>
 
                 <!-- face_makeup -->
-                <Switch
-                    android:id="@+id/switch_face_makeup"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:checked="false"
-                    android:text="@string/face_makeup" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Switch
+                        android:id="@+id/switch_face_makeup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="@string/face_makeup" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_save_makeup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAllCaps="false"
+                        android:layout_marginStart="50dp"
+                        android:text="@string/save" />
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_reset_makeup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAllCaps="false"
+                        android:text="@string/reset" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -679,13 +724,36 @@
                 </LinearLayout>
 
                 <!-- filter -->
-                <Switch
-                    android:id="@+id/switch_filter"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:checked="false"
-                    android:text="@string/beauty_group_filter" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Switch
+                        android:id="@+id/switch_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="@string/beauty_group_filter" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_save_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAllCaps="false"
+                        android:layout_marginStart="50dp"
+                        android:text="@string/save" />
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_reset_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAllCaps="false"
+                        android:text="@string/reset" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1147,6 +1215,7 @@
             android:id="@+id/btn_join"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAllCaps="false"
             android:text="@string/join" />
 
     </LinearLayout>

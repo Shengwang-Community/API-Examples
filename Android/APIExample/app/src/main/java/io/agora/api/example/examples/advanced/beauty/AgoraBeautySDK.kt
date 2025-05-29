@@ -16,9 +16,11 @@ object AgoraBeautySDK {
     private var videoEffectObject: IVideoEffectObject? = null
 
     // Beauty config
+    @JvmStatic
     val beautyConfig = BeautyConfig()
 
 
+    @JvmStatic
     fun initBeautySDK(context: Context, rtcEngine: RtcEngine): Boolean {
         rtcEngine.enableExtension("agora_video_filters_clear_vision", "clear_vision", true)
         val storagePath = context.getExternalFilesDir("")?.absolutePath ?: return false
@@ -34,6 +36,7 @@ object AgoraBeautySDK {
         return true
     }
 
+    @JvmStatic
     fun unInitBeautySDK() {
         Log.d(TAG, "unInitBeautySDK called")
         beautyConfig.reset()
@@ -49,6 +52,55 @@ object AgoraBeautySDK {
             )
         }
     }
+
+    @JvmStatic
+    fun saveBeautyEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.BEAUTY.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.SAVE
+        )
+    }
+
+    @JvmStatic
+    fun resetBeautyEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.BEAUTY.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.RESET
+        )
+    }
+
+    @JvmStatic
+    fun saveMakeupEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.STYLE_MAKEUP.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.SAVE
+        )
+    }
+
+    @JvmStatic
+    fun resetMakeupEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.STYLE_MAKEUP.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.RESET
+        )
+    }
+
+    @JvmStatic
+    fun saveFilterEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.FILTER.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.SAVE
+        )
+    }
+
+    @JvmStatic
+    fun resetFilterEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.FILTER.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.RESET
+        )
+    }
+
 
     class BeautyConfig {
 
@@ -209,7 +261,7 @@ object AgoraBeautySDK {
 
         // Makeup switch
         var makeUpEnable: Boolean = false
-            get() = videoEffectObject?.getVideoEffectBoolParam("makeup_options", "enable_mu") ?: false
+            get() = videoEffectObject?.getVideoEffectBoolParam("makeup_options", "enable") ?: false
             set(value) {
                 field = value
             }
