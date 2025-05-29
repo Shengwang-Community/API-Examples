@@ -425,7 +425,38 @@ public class VideoProcessExtension extends BaseFragment implements View.OnClickL
 
         switch (parent.getId()) {
             case R.id.spinner_shape_beauty_area:
-                faceShapeAreaOptions.shapeArea = position - 1;
+                faceShapeAreaOptions.shapeArea = switch (position) {
+                    case 1 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_HEADSCALE;
+                    case 2 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_FOREHEAD;
+                    case 3 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_FACECONTOUR;
+                    case 4 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_FACELENGTH;
+                    case 5 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_FACEWIDTH;
+                    case 6 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_CHEEKBONE;
+                    case 7 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_CHEEK;
+                    case 8 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_MANDIBLE;
+                    case 9 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_CHIN;
+                    case 10 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_EYESCALE;
+                    case 11 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_EYEDISTANCE;
+                    case 12 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_EYEPOSITION;
+                    case 13 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_EYELID;
+                    case 14 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_EYEPUPILS;
+                    case 15 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_EYEINNERCORNER;
+                    case 16 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_EYEOUTERCORNER;
+                    case 17 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_NOSELENGTH;
+                    case 18 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_NOSEWIDTH;
+                    case 19 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_NOSEWING;
+                    case 20 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_NOSEROOT;
+                    case 21 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_NOSEBRIDGE;
+                    case 22 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_NOSETIP;
+                    case 23 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_NOSEGENERAL;
+                    case 24 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_MOUTHSCALE;
+                    case 25 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_MOUTHPOSITION;
+                    case 26 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_MOUTHSMILE;
+                    case 27 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_MOUTHLIP;
+                    case 28 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_EYEBROWPOSITION;
+                    case 29 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_EYEBROWTHICKNESS;
+                    default -> FaceShapeAreaOptions.FACE_SHAPE_AREA_NONE;
+                };
                 //get origin beauty option params
                 FaceShapeAreaOptions originOptions = engine.getFaceShapeAreaOptions(faceShapeAreaOptions.shapeArea);
                 if (originOptions != null) {
