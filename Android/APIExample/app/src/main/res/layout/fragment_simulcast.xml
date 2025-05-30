@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/colorAccent"
         tools:visibility="visible">
 
         <io.agora.api.example.common.widget.VideoReportLayout
@@ -62,52 +63,46 @@
             android:id="@+id/tv_config"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set Layer Config"
+            android:text="Set Layers Config(Maximum 3)"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_layer1"
-            android:layout_width="wrap_content"
-            app:layout_constraintWidth_percent="0.5"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:checked="true"
-            android:text="Layer1:720p30fps"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_config" />
-
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_layer2"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:checked="true"
-            android:text="Layer2:540p15fps"
+            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_layer1" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_config">
 
+            <CheckBox
+                android:id="@+id/cb_layer1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Layer1:720p30fps" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_layer3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:checked="true"
-            android:text="Layer3:360p15fps"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_layer2" />
+            <CheckBox
+                android:id="@+id/cb_layer2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Layer2:540p15fps" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_layer4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:checked="true"
-            android:text="Layer2:270p15fps"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_layer3" />
+            <CheckBox
+                android:id="@+id/cb_layer3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Layer3:360p15fps" />
+
+            <CheckBox
+                android:id="@+id/cb_layer4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Layer4:270p15fps" />
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout

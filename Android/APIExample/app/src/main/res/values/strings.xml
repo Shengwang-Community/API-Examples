@@ -455,4 +455,5 @@
     <string name="enable_multipath">Multipath</string>
     <string name="multipath_mode">Multipath Mode</string>
     <string name="multipath_type">Multipath Type</string>
+    <string name="set_layers_config">Set Layers Config(Maximum 3)</string>
 </resources>

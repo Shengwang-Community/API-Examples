@@ -435,4 +435,5 @@
     <string name="enable_multipath">Multipath</string>
     <string name="multipath_mode">Multipath Mode</string>
     <string name="multipath_type">Multipath Type</string>
+    <string name="set_layers_config">设置层级配置（最多3层）</string>
 </resources>

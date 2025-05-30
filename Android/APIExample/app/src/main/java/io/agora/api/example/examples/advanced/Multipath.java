@@ -71,6 +71,7 @@ public class Multipath extends BaseFragment implements View.OnClickListener, Com
 
     private String multipathModeStr = "";
     private String networkStr = "unknown";
+    private int activePathNum = 0;
 
     @Nullable
     @Override
@@ -242,26 +243,26 @@ public class Multipath extends BaseFragment implements View.OnClickListener, Com
             return;
         }
 
-       if (broadcast){
-           // Create render view by RtcEngine
-           SurfaceView surfaceView = new SurfaceView(context);
-           if (fl_local.getChildCount() > 0) {
-               fl_local.removeAllViews();
-           }
-           // Add to the local container
-           fl_local.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-           // Setup local video to render your local camera preview
-           engine.setupLocalVideo(new VideoCanvas(surfaceView, RENDER_MODE_HIDDEN, 0));
-           // Set audio route to microPhone
-           engine.setDefaultAudioRoutetoSpeakerphone(true);
+        if (broadcast) {
+            // Create render view by RtcEngine
+            SurfaceView surfaceView = new SurfaceView(context);
+            if (fl_local.getChildCount() > 0) {
+                fl_local.removeAllViews();
+            }
+            // Add to the local container
+            fl_local.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            // Setup local video to render your local camera preview
+            engine.setupLocalVideo(new VideoCanvas(surfaceView, RENDER_MODE_HIDDEN, 0));
+            // Set audio route to microPhone
+            engine.setDefaultAudioRoutetoSpeakerphone(true);
 
-           engine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+            engine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
 
-           // Enable video module
-           engine.enableVideo();
-       }else {
-           engine.setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-       }
+            // Enable video module
+            engine.enableVideo();
+        } else {
+            engine.setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
+        }
 
         // Setup video encoding configs
         engine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
@@ -520,30 +521,31 @@ public class Multipath extends BaseFragment implements View.OnClickListener, Com
         @Override
         public void onLocalAudioStats(LocalAudioStats stats) {
             super.onLocalAudioStats(stats);
-            fl_local.setLocalAudioStats(stats, "Multipath:" + multipathModeStr, "Network:" + networkStr);
+            fl_local.setLocalAudioStats(stats, "Multipath:" + multipathModeStr, "Network:" + networkStr, "ActivePathNum:" + activePathNum);
         }
 
         @Override
         public void onRemoteAudioStats(RemoteAudioStats stats) {
             super.onRemoteAudioStats(stats);
-            fl_remote.setRemoteAudioStats(stats, "Multipath:" + multipathModeStr, "Network:" + networkStr);
+            fl_remote.setRemoteAudioStats(stats, "Multipath:" + multipathModeStr, "Network:" + networkStr, "ActivePathNum:" + activePathNum);
         }
 
         @Override
         public void onLocalVideoStats(Constants.VideoSourceType source, LocalVideoStats stats) {
             super.onLocalVideoStats(source, stats);
-            fl_local.setLocalVideoStats(stats, "Multipath:" + multipathModeStr, "Network:" + networkStr);
+            fl_local.setLocalVideoStats(stats, "Multipath:" + multipathModeStr, "Network:" + networkStr, "ActivePathNum:" + activePathNum);
         }
 
         @Override
         public void onRemoteVideoStats(RemoteVideoStats stats) {
             super.onRemoteVideoStats(stats);
-            fl_remote.setRemoteVideoStats(stats, "Multipath:" + multipathModeStr, "Network:" + networkStr);
+            fl_remote.setRemoteVideoStats(stats, "Multipath:" + multipathModeStr, "Network:" + networkStr, "ActivePathNum:" + activePathNum);
         }
 
         @Override
         public void onMultipathStats(MultipathStats stats) {
             super.onMultipathStats(stats);
+            activePathNum = stats.activePathNum;
         }
 
         @Override
