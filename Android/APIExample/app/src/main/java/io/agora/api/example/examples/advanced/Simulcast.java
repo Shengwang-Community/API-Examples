@@ -5,7 +5,6 @@ import static io.agora.rtc2.Constants.RENDER_MODE_HIDDEN;
 import static io.agora.rtc2.video.VideoEncoderConfiguration.STANDARD_BITRATE;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -23,7 +23,6 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.Map;
 import java.util.Random;
@@ -44,8 +43,8 @@ import io.agora.rtc2.RtcEngineConfig;
 import io.agora.rtc2.SimulcastConfig;
 import io.agora.rtc2.proxy.LocalAccessPointConfiguration;
 import io.agora.rtc2.video.VideoCanvas;
+import io.agora.rtc2.video.VideoEncoderConfiguration;
 import kotlin.Pair;
-import kotlin.Triple;
 
 /**
  * This example demonstrates how to use Simulcast
@@ -63,7 +62,7 @@ public class Simulcast extends BaseFragment implements View.OnClickListener, Com
 
     private VideoReportLayout fl_local, fl_remote;
     private Button btn_join;
-    private SwitchCompat switch_layer_config1, switch_layer_config2, switch_layer_config3, switch_layer_config4;
+    private CheckBox cb_layer1, cb_layer2, cb_layer3, cb_layer4;
     private Spinner spinner_stream_layer, spinner_role;
 
     private EditText et_channel;
@@ -72,6 +71,7 @@ public class Simulcast extends BaseFragment implements View.OnClickListener, Com
     private boolean joined = false;
     private Map<Integer, Pair<VideoReportLayout, Spinner>> remoteViews = new ConcurrentHashMap<>();
     private SimulcastConfig simulcastConfig = new SimulcastConfig();
+    private int selectedLayerCount = 3; // Default selected 3 layers
 
     @Nullable
     @Override
@@ -92,14 +92,14 @@ public class Simulcast extends BaseFragment implements View.OnClickListener, Com
         spinner_role = view.findViewById(R.id.spinner_role);
         spinner_role.setOnItemSelectedListener(this);
 
-        switch_layer_config1 = view.findViewById(R.id.switch_layer1);
-        switch_layer_config2 = view.findViewById(R.id.switch_layer2);
-        switch_layer_config3 = view.findViewById(R.id.switch_layer3);
-        switch_layer_config4 = view.findViewById(R.id.switch_layer4);
-        switch_layer_config1.setOnCheckedChangeListener(this);
-        switch_layer_config2.setOnCheckedChangeListener(this);
-        switch_layer_config3.setOnCheckedChangeListener(this);
-        switch_layer_config4.setOnCheckedChangeListener(this);
+        cb_layer1 = view.findViewById(R.id.cb_layer1);
+        cb_layer2 = view.findViewById(R.id.cb_layer2);
+        cb_layer3 = view.findViewById(R.id.cb_layer3);
+        cb_layer4 = view.findViewById(R.id.cb_layer4);
+        cb_layer1.setOnCheckedChangeListener(this);
+        cb_layer2.setOnCheckedChangeListener(this);
+        cb_layer3.setOnCheckedChangeListener(this);
+        cb_layer4.setOnCheckedChangeListener(this);
 
         fl_local = view.findViewById(R.id.fl_local);
         fl_remote = view.findViewById(R.id.fl_remote);
@@ -221,7 +221,37 @@ public class Simulcast extends BaseFragment implements View.OnClickListener, Com
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            // If already selected 3 layers, cancel the selection
+            if (selectedLayerCount >= 3) {
+                buttonView.setChecked(false);
+                showLongToast("Maximum 3 layers can be selected");
+                return;
+            }
+            selectedLayerCount++;
+        } else {
+            selectedLayerCount--;
+        }
 
+        int id = buttonView.getId();
+        if (id == R.id.cb_layer1) {
+            int layer1 = SimulcastConfig.StreamLayerIndex.STREAM_LAYER_1.getValue();
+            simulcastConfig.configs[layer1].enable = cb_layer1.isChecked();
+        } else if (id == R.id.cb_layer2) {
+            int layer2 = SimulcastConfig.StreamLayerIndex.STREAM_LAYER_2.getValue();
+            simulcastConfig.configs[layer2].enable = cb_layer2.isChecked();
+        } else if (id == R.id.cb_layer3) {
+            int layer3 = SimulcastConfig.StreamLayerIndex.STREAM_LAYER_3.getValue();
+            simulcastConfig.configs[layer3].enable = cb_layer3.isChecked();
+        } else if (id == R.id.cb_layer4) {
+            int layer4 = SimulcastConfig.StreamLayerIndex.STREAM_LAYER_4.getValue();
+            simulcastConfig.configs[layer4].enable = cb_layer4.isChecked();
+        }
+        
+        // Update simulcast configuration
+        if (engine != null && joined) {
+            engine.setSimulcastConfig(simulcastConfig);
+        }
     }
 
     @Override
@@ -246,7 +276,7 @@ public class Simulcast extends BaseFragment implements View.OnClickListener, Com
             return;
         }
 
-        if (broadcast){
+        if (broadcast) {
             // Create render view by RtcEngine
             SurfaceView surfaceView = new SurfaceView(context);
             if (fl_local.getChildCount() > 0) {
@@ -264,14 +294,16 @@ public class Simulcast extends BaseFragment implements View.OnClickListener, Com
 
             // Enable video module
             engine.enableVideo();
+        } else {
+            engine.setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
         }
-        // Setup video encoding configs
-//        engine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
-//                ((MainApplication) getActivity().getApplication()).getGlobalSettings().getVideoEncodingDimensionObject(),
-//                VideoEncoderConfiguration.FRAME_RATE.valueOf(((MainApplication) getActivity().getApplication()).getGlobalSettings().getVideoEncodingFrameRate()),
-//                STANDARD_BITRATE,
-//                VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE
-//        ));
+        // Setup video encoding configs, VideoDimensions should bigger StreamLayerConfig
+        engine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
+                VideoEncoderConfiguration.VD_1280x720,
+                VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_30,
+                STANDARD_BITRATE,
+                VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE
+        ));
 
         ChannelMediaOptions option = new ChannelMediaOptions();
         option.autoSubscribeAudio = true;
@@ -285,22 +317,22 @@ public class Simulcast extends BaseFragment implements View.OnClickListener, Com
             simulcastConfig.configs[layer1].dimensions.width = 1280;
             simulcastConfig.configs[layer1].dimensions.height = 720;
             simulcastConfig.configs[layer1].framerate = 30;
-            simulcastConfig.configs[layer1].enable = switch_layer_config1.isChecked();
+            simulcastConfig.configs[layer1].enable = cb_layer1.isChecked();
             int layer2 = SimulcastConfig.StreamLayerIndex.STREAM_LAYER_2.getValue();
             simulcastConfig.configs[layer2].dimensions.width = 960;
             simulcastConfig.configs[layer2].dimensions.height = 540;
             simulcastConfig.configs[layer2].framerate = 15;
-            simulcastConfig.configs[layer2].enable = switch_layer_config2.isChecked();
+            simulcastConfig.configs[layer2].enable = cb_layer2.isChecked();
             int layer3 = SimulcastConfig.StreamLayerIndex.STREAM_LAYER_3.getValue();
             simulcastConfig.configs[layer3].dimensions.width = 640;
             simulcastConfig.configs[layer3].dimensions.height = 360;
             simulcastConfig.configs[layer3].framerate = 15;
-            simulcastConfig.configs[layer3].enable = switch_layer_config3.isChecked();
+            simulcastConfig.configs[layer3].enable = cb_layer3.isChecked();
             int layer4 = SimulcastConfig.StreamLayerIndex.STREAM_LAYER_4.getValue();
             simulcastConfig.configs[layer4].dimensions.width = 480;
             simulcastConfig.configs[layer4].dimensions.height = 270;
             simulcastConfig.configs[layer4].framerate = 15;
-            simulcastConfig.configs[layer4].enable = switch_layer_config4.isChecked();
+            simulcastConfig.configs[layer4].enable = cb_layer4.isChecked();
             engine.setSimulcastConfig(simulcastConfig);
         }
 
