@@ -261,7 +261,7 @@ object AgoraBeautySDK {
 
         // Makeup switch
         var makeUpEnable: Boolean = false
-            get() = videoEffectObject?.getVideoEffectBoolParam("makeup_options", "enable") ?: false
+            get() = videoEffectObject?.getVideoEffectBoolParam("makeup_options", "enable_mu") ?: false
             set(value) {
                 field = value
             }
