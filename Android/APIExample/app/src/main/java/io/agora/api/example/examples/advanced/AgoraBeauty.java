@@ -68,14 +68,15 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
     private LinearLayout controlPanel;
     private Button join, btn_save_beauty, btn_reset_beauty, btn_save_makeup, btn_reset_makeup, btn_save_filter, btn_reset_filter;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private Switch shapeBeauty, makeUp, filter, basicBeauty, virtualBackground;
+    private Switch shapeBeauty, makeUp, filter, basicBeauty, makeUpFilter, virtualBackground;
     private SeekBar sbLightness, sbRedness, sbSharpness, sbContrastStrength, sbSmoothness, sbEyePouch, sbBrightenEye, sbNasolabialFold, sbWhitenTeeth;
     // Makeup
     private SeekBar sbBrowStrength, sbLashStrength, sbShadowStrength, sbPupilStrength, sbBlushStrength, sbLipStrength;
     private Spinner spinnerFacialStyle, spinnerWocanStyle, spinnerBrowStyle, spinnerLashStyle, spinnerShadowStyle, spinnerPupilStyle, spinnerBlushStyle, spinnerLipStyle;
     private Spinner spinnerBrowColor, spinnerLashColor, spinnerBlushColor, spinnerLipColor;
     // Beauty Shape
-    private SeekBar sbFacialStrength, sbWocanStrength, sbShapeBeautifyAreaIntensity, sbShapeBeautifyStyleIntensity, sbFaceMakeupStyleIntensity, sbFilterStyleIntensity;
+    private SeekBar sbFacialStrength, sbWocanStrength, sbShapeBeautifyAreaIntensity, sbShapeBeautifyStyleIntensity,
+            sbFaceMakeupStyleIntensity, sbMakeupFilterStrength, sbFilterStyleIntensity;
     private Spinner spinnerShapeBeautyArea, spinnerShapeBeautifyStyle, spinnerFaceMakeupStyle, spinnerFilterStyle;
     private EditText et_channel;
     private RadioGroup contrastType, virtualBgType;
@@ -128,6 +129,10 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
         spinnerFaceMakeupStyle.setOnItemSelectedListener(this);
         sbFaceMakeupStyleIntensity = view.findViewById(R.id.sb_face_makeup_style_intensity);
         sbFaceMakeupStyleIntensity.setOnSeekBarChangeListener(this);
+        makeUpFilter = view.findViewById(R.id.switch_makeup_filter);
+        makeUpFilter.setOnCheckedChangeListener(this);
+        sbMakeupFilterStrength = view.findViewById(R.id.sb_makeup_filter_strength);
+        sbMakeupFilterStrength.setOnSeekBarChangeListener(this);
 
         spinnerFacialStyle = view.findViewById(R.id.spinner_facial_style);
         spinnerFacialStyle.setOnItemSelectedListener(this);
@@ -213,7 +218,18 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
         sbWhitenTeeth.setOnSeekBarChangeListener(this);
         contrastType = view.findViewById(R.id.contrast_type);
         contrastType.setOnCheckedChangeListener((group, checkedId) -> {
-            resetContrast();
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
+            if (checkedId == R.id.contrast_low) {
+                AgoraBeautySDK.getBeautyConfig().setContrast(0);
+            } else if (checkedId == R.id.contrast_high) {
+                AgoraBeautySDK.getBeautyConfig().setContrast(2);
+            } else if (checkedId == R.id.contrast_normal) {
+                AgoraBeautySDK.getBeautyConfig().setContrast(1);
+            }
+
+
         });
 
         // Virtual Background
@@ -223,20 +239,6 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
         virtualBgType.setOnCheckedChangeListener((group, checkedId) -> {
             resetVirtualBackground();
         });
-    }
-
-    /**
-     * Update brightness and contrast
-     */
-    private void resetContrast() {
-        int checkedButtonId = contrastType.getCheckedRadioButtonId();
-        if (checkedButtonId == R.id.contrast_low) {
-            AgoraBeautySDK.getBeautyConfig().setContrast(0);
-        } else if (checkedButtonId == R.id.contrast_high) {
-            AgoraBeautySDK.getBeautyConfig().setContrast(2);
-        } else {
-            AgoraBeautySDK.getBeautyConfig().setContrast(1);
-        }
     }
 
     /**
@@ -468,21 +470,27 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
             AgoraBeautySDK.saveBeautyEffect();
         } else if (viewId == R.id.btn_reset_beauty) {
             AgoraBeautySDK.resetBeautyEffect();
-
+            if (!shapeBeauty.isChecked()) {
+                return;
+            }
             sbShapeBeautifyStyleIntensity.setProgress(AgoraBeautySDK.getBeautyConfig().getBeautyShapeStrength());
             updateBasicBeautyOption();
         } else if (viewId == R.id.btn_save_makeup) {
             AgoraBeautySDK.saveMakeupEffect();
         } else if (viewId == R.id.btn_reset_makeup) {
             AgoraBeautySDK.resetMakeupEffect();
-
+            if (!makeUp.isChecked()) {
+                return;
+            }
             sbFaceMakeupStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getBeautyMakeupStrength() * 10));
             updateMakeupOptionsByStyle();
         } else if (viewId == R.id.btn_save_filter) {
             AgoraBeautySDK.saveFilterEffect();
         } else if (viewId == R.id.btn_reset_filter) {
             AgoraBeautySDK.resetFilterEffect();
-
+            if (!filter.isChecked()) {
+                return;
+            }
             sbFilterStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getFilterStrength() * 10));
         }
     }
@@ -492,8 +500,13 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
      */
     private void updateMakeupOptionsByStyle() {
         // Makeup include filter effects
-        checkFilterEnable();
-        sbFilterStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getFilterStrength() * 10));
+        boolean makeupFilterEnable = AgoraBeautySDK.getBeautyConfig().getMakeupFilterEnable();
+        resetCheck(makeUpFilter, makeupFilterEnable);
+
+        if (!makeUp.isChecked()) {
+            return;
+        }
+        sbMakeupFilterStrength.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getMakeupFilterStrength() * 10));
 
         int facialStyleValue = AgoraBeautySDK.getBeautyConfig().getFacialStyle();
         int facialPosition;
@@ -577,7 +590,19 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         switch (parent.getId()) {
+            case R.id.spinner_shape_beautify_style:
+                if (!shapeBeauty.isChecked()) {
+                    return;
+                }
+                AgoraBeautySDK.getBeautyConfig().setBeautyShapeStyle(spinnerShapeBeautifyStyle.getSelectedItem().toString());
+                sbShapeBeautifyStyleIntensity.setProgress(AgoraBeautySDK.getBeautyConfig().getBeautyShapeStrength());
+                updateBasicBeautyOption();
+                checkEnable();
+                return;
             case R.id.spinner_shape_beauty_area:
+                if (!shapeBeauty.isChecked()) {
+                    return;
+                }
                 // Map spinner position to FaceShapeAreaOptions constants
                 faceShapeAreaOptions.shapeArea = switch (position) {
                     case 1 -> FaceShapeAreaOptions.FACE_SHAPE_AREA_HEADSCALE;
@@ -619,40 +644,27 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 }
                 updateFaceShapeBeautyAreaOptions();
                 return;
-            case R.id.spinner_shape_beautify_style:
-                if (shapeBeauty.isChecked()) {
-                    AgoraBeautySDK.getBeautyConfig().setBeautyShapeStyle(spinnerShapeBeautifyStyle.getSelectedItem().toString());
-                    sbShapeBeautifyStyleIntensity.setProgress(AgoraBeautySDK.getBeautyConfig().getBeautyShapeStrength());
-                    updateBasicBeautyOption();
-                    checkEnable();
-                } else {
-                    AgoraBeautySDK.getBeautyConfig().setBeautyShapeStyle(null);
-
-                    isProgrammaticChange = true;
-                    basicBeauty.setChecked(AgoraBeautySDK.getBeautyConfig().getBasicBeautyEnable());
-                    isProgrammaticChange = false;
-                }
-                return;
             case R.id.spinner_face_makeup_style:
-                if (makeUp.isChecked()) {
-                    AgoraBeautySDK.getBeautyConfig().setBeautyMakeupStyle(spinnerFaceMakeupStyle.getSelectedItem().toString());
-                    sbFaceMakeupStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getBeautyMakeupStrength() * 10));
-                    updateMakeupOptionsByStyle();
-                    checkEnable();
-                } else {
-                    AgoraBeautySDK.getBeautyConfig().setBeautyMakeupStyle(null);
+                if (!makeUp.isChecked()) {
+                    return;
                 }
+                AgoraBeautySDK.getBeautyConfig().setBeautyMakeupStyle(spinnerFaceMakeupStyle.getSelectedItem().toString());
+                sbFaceMakeupStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getBeautyMakeupStrength() * 10));
+                updateMakeupOptionsByStyle();
+                checkEnable();
                 return;
             case R.id.spinner_filter_style:
-                if (filter.isChecked()) {
-                    AgoraBeautySDK.getBeautyConfig().setBeautyFilter(spinnerFilterStyle.getSelectedItem().toString());
-                    sbFilterStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getFilterStrength() * 10));
-                    checkEnable();
-                } else {
-                    AgoraBeautySDK.getBeautyConfig().setBeautyFilter(null);
+                if (!filter.isChecked()) {
+                    return;
                 }
+                AgoraBeautySDK.getBeautyConfig().setBeautyFilter(spinnerFilterStyle.getSelectedItem().toString());
+                sbFilterStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getFilterStrength() * 10));
+                checkEnable();
                 return;
             case R.id.spinner_facial_style:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 int facialStyleValue = 0;
                 if (position == 1) {
                     facialStyleValue = 2;
@@ -666,15 +678,27 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 AgoraBeautySDK.getBeautyConfig().setFacialStyle(facialStyleValue);
                 return;
             case R.id.spinner_wocan_style:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 AgoraBeautySDK.getBeautyConfig().setWocanStyle(position);
                 return;
             case R.id.spinner_brow_style:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 AgoraBeautySDK.getBeautyConfig().setBrowStyle(position);
                 return;
             case R.id.spinner_brow_color:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 AgoraBeautySDK.getBeautyConfig().setBrowColor(position);
                 return;
             case R.id.spinner_lash_style:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 int lashStyleValue = 0;
                 if (position == 1) {
                     lashStyleValue = 3;
@@ -684,9 +708,15 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 AgoraBeautySDK.getBeautyConfig().setLashStyle(lashStyleValue);
                 return;
             case R.id.spinner_lash_color:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 AgoraBeautySDK.getBeautyConfig().setLashColor(position);
                 return;
             case R.id.spinner_shadow_style:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 int shadowStyleValue = 0;
                 if (position == 1) {
                     shadowStyleValue = 1;
@@ -696,9 +726,15 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 AgoraBeautySDK.getBeautyConfig().setShadowStyle(shadowStyleValue);
                 return;
             case R.id.spinner_pupil_style:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 AgoraBeautySDK.getBeautyConfig().setPupilStyle(position);
                 return;
             case R.id.spinner_blush_style:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 int blushStyleValue = 0;
                 if (position == 1) {
                     blushStyleValue = 1;
@@ -712,9 +748,15 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 AgoraBeautySDK.getBeautyConfig().setBlushStyle(blushStyleValue);
                 return;
             case R.id.spinner_blush_color:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 AgoraBeautySDK.getBeautyConfig().setBlushColor(position);
                 return;
             case R.id.spinner_lip_style:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 int lipStyleValue = 0;
                 if (position == 1) {
                     lipStyleValue = 1;
@@ -728,6 +770,9 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 AgoraBeautySDK.getBeautyConfig().setLipStyle(lipStyleValue);
                 return;
             case R.id.spinner_lip_color:
+                if (!makeUp.isChecked()) {
+                    return;
+                }
                 AgoraBeautySDK.getBeautyConfig().setLipColor(position);
                 return;
             default: {
@@ -743,50 +788,47 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
 
     private void checkEnable() {
         if (BuildConfig.DEBUG) {
+            boolean beautyShapeEnable = AgoraBeautySDK.getBeautyConfig().getBeautyShapeEnable();
             boolean basicBeautyEnable = AgoraBeautySDK.getBeautyConfig().getBasicBeautyEnable();
             boolean makeUpEnable = AgoraBeautySDK.getBeautyConfig().getMakeUpEnable();
+            boolean makeupFilterEnable = AgoraBeautySDK.getBeautyConfig().getMakeupFilterEnable();
             boolean filterEnable = AgoraBeautySDK.getBeautyConfig().getFilterEnable();
-            boolean beautyShapeEnable = AgoraBeautySDK.getBeautyConfig().getBeautyShapeEnable();
-            Log.d(TAG, "basicBeautyEnable:" + basicBeautyEnable + "\n" + "makeUpEnable:" + makeUpEnable + "\n" + "filterEnable:" + filterEnable + "\n" + "beautyShapeEnable:" + beautyShapeEnable);
+            Log.d(TAG, "beautyShapeEnable:" + beautyShapeEnable + "\n" +
+                    "basicBeautyEnable:" + basicBeautyEnable + "\n" +
+                    "makeUpEnable:" + makeUpEnable + "\n" +
+                    "makeupFilterEnable:" + makeupFilterEnable + "\n" +
+                    "filterEnable:" + filterEnable
+            );
         }
     }
 
     private void updateBasicBeautyOption() {
         // Beauty mode includes basic retouching
-        checkBasicBeautyEnable();
+        boolean basicBeautyEnable = AgoraBeautySDK.getBeautyConfig().getBasicBeautyEnable();
+        resetCheck(basicBeauty, basicBeautyEnable);
 
-        sbSmoothness.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getSmoothness() * 10));
-        sbLightness.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getLightness() * 10));
-        sbRedness.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getLightness() * 10));
-        sbContrastStrength.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getContrastStrength() * 10));
-        sbSharpness.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getSharpness() * 10));
+        if (basicBeautyEnable) {
+            sbSmoothness.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getSmoothness() * 10));
+            sbLightness.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getLightness() * 10));
+            sbRedness.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getLightness() * 10));
+            sbContrastStrength.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getContrastStrength() * 10));
+            sbSharpness.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getSharpness() * 10));
 
-        sbEyePouch.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getEyePouch() * 10));
-        sbBrightenEye.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getBrightenEye() * 10));
-        sbNasolabialFold.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getNasolabialFold() * 10));
-        sbWhitenTeeth.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getWhitenTeeth() * 10));
+            sbEyePouch.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getEyePouch() * 10));
+            sbBrightenEye.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getBrightenEye() * 10));
+            sbNasolabialFold.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getNasolabialFold() * 10));
+            sbWhitenTeeth.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getWhitenTeeth() * 10));
 
-        int contract = AgoraBeautySDK.getBeautyConfig().getContrast();
-        Log.d(TAG, "updateBasicBeautyOption: contract " + contract);
-        if (contract == 0) {
-            contrastType.check(R.id.contrast_low);
-        } else if (contract == 2) {
-            contrastType.check(R.id.contrast_high);
-        } else {
-            contrastType.check(R.id.contrast_normal);
+            int contract = AgoraBeautySDK.getBeautyConfig().getContrast();
+            Log.d(TAG, "updateBasicBeautyOption: contract " + contract);
+            if (contract == 0) {
+                contrastType.check(R.id.contrast_low);
+            } else if (contract == 2) {
+                contrastType.check(R.id.contrast_high);
+            } else {
+                contrastType.check(R.id.contrast_normal);
+            }
         }
-    }
-
-    private void checkBasicBeautyEnable() {
-        isProgrammaticChange = true;
-        basicBeauty.setChecked(AgoraBeautySDK.getBeautyConfig().getBasicBeautyEnable());
-        isProgrammaticChange = false;
-    }
-
-    private void checkFilterEnable() {
-        isProgrammaticChange = true;
-        filter.setChecked(AgoraBeautySDK.getBeautyConfig().getFilterEnable());
-        isProgrammaticChange = false;
     }
 
     @Override
@@ -797,9 +839,7 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
         int id = buttonView.getId();
         if (id == R.id.switch_face_shape_beautify) {
             if (isChecked && !engine.isFeatureAvailableOnDevice(Constants.FEATURE_VIDEO_BEAUTY_EFFECT)) {
-                isProgrammaticChange = true;
-                buttonView.setChecked(false);
-                isProgrammaticChange = false;
+                resetCheck(buttonView, false);
                 Toast.makeText(requireContext(), R.string.feature_unavailable, Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -810,13 +850,11 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 checkEnable();
             } else {
                 AgoraBeautySDK.getBeautyConfig().setBeautyShapeStyle(null);
-                checkBasicBeautyEnable();
+                resetCheck(basicBeauty, false);
             }
         } else if (id == R.id.switch_face_makeup) {
             if (isChecked && !engine.isFeatureAvailableOnDevice(Constants.FEATURE_VIDEO_BEAUTY_EFFECT)) {
-                isProgrammaticChange = true;
-                buttonView.setChecked(false);
-                isProgrammaticChange = false;
+                resetCheck(buttonView, false);
                 Toast.makeText(requireContext(), R.string.feature_unavailable, Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -827,14 +865,30 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 checkEnable();
             } else {
                 AgoraBeautySDK.getBeautyConfig().setBeautyMakeupStyle(null);
-                checkFilterEnable();
+                resetCheck(makeUpFilter, false);
+            }
+
+        } else if (id == R.id.switch_makeup_filter) {
+            if (isChecked && !engine.isFeatureAvailableOnDevice(Constants.FEATURE_VIDEO_BEAUTY_EFFECT)) {
+                resetCheck(buttonView, false);
+                Toast.makeText(requireContext(), R.string.feature_unavailable, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (isChecked) {
+                if (!makeUp.isChecked()) {
+                    // makeup disable
+                    Toast.makeText(requireContext(), R.string.face_makeup_disable_tips, Toast.LENGTH_SHORT).show();
+                    resetCheck(buttonView, false);
+                    return;
+                }
+                sbMakeupFilterStrength.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getMakeupFilterStrength() * 10));
+            } else {
+                AgoraBeautySDK.getBeautyConfig().setMakeupFilterEnable(false);
             }
 
         } else if (id == R.id.switch_filter) {
             if (isChecked && !engine.isFeatureAvailableOnDevice(Constants.FEATURE_VIDEO_BEAUTY_EFFECT)) {
-                isProgrammaticChange = true;
-                buttonView.setChecked(false);
-                isProgrammaticChange = false;
+                resetCheck(buttonView, false);
                 Toast.makeText(requireContext(), R.string.feature_unavailable, Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -847,29 +901,30 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
             }
         } else if (id == R.id.switch_basic_beautify) {
             if (isChecked && !engine.isFeatureAvailableOnDevice(Constants.FEATURE_VIDEO_BEAUTY_EFFECT)) {
-                isProgrammaticChange = true;
-                buttonView.setChecked(false);
-                isProgrammaticChange = false;
+                resetCheck(buttonView, false);
                 Toast.makeText(requireContext(), R.string.feature_unavailable, Toast.LENGTH_SHORT).show();
                 return;
             }
             if (isChecked) {
                 AgoraBeautySDK.getBeautyConfig().setBasicBeautyEnable(true);
                 updateBasicBeautyOption();
-                checkEnable();
             } else {
                 AgoraBeautySDK.getBeautyConfig().setBasicBeautyEnable(false);
             }
         } else if (id == virtualBackground.getId()) {
             if (isChecked && !engine.isFeatureAvailableOnDevice(Constants.FEATURE_VIDEO_VIRTUAL_BACKGROUND)) {
-                isProgrammaticChange = true;
-                buttonView.setChecked(false);
-                isProgrammaticChange = false;
+                resetCheck(buttonView, false);
                 Toast.makeText(requireContext(), R.string.feature_unavailable, Toast.LENGTH_SHORT).show();
                 return;
             }
             resetVirtualBackground();
         }
+    }
+
+    private void resetCheck(CompoundButton buttonView, boolean checked) {
+        isProgrammaticChange = true;
+        buttonView.setChecked(checked);
+        isProgrammaticChange = false;
     }
 
     @Override
@@ -887,49 +942,117 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
         Log.d(TAG, "onStopTrackingTouch " + seekBar.getId() + " " + seekBar.getProgress());
         int progress = seekBar.getProgress();
         float value = ((float) progress) / 10;
-        if (seekBar.getId() == sbShapeBeautifyAreaIntensity.getId()) {
+        if (seekBar.getId() == sbShapeBeautifyStyleIntensity.getId()) {
+            if (!shapeBeauty.isChecked()) {
+                return;
+            }
+            AgoraBeautySDK.getBeautyConfig().setBeautyShapeStrength(progress);
+        } else if (seekBar.getId() == sbShapeBeautifyAreaIntensity.getId()) {
+            if (!shapeBeauty.isChecked()) {
+                return;
+            }
             faceShapeAreaOptions.shapeIntensity = progress;
             updateFaceShapeBeautyAreaOptions();
-        } else if (seekBar.getId() == sbShapeBeautifyStyleIntensity.getId()) {
-            AgoraBeautySDK.getBeautyConfig().setBeautyShapeStrength(progress);
         } else if (seekBar.getId() == sbFaceMakeupStyleIntensity.getId()) {
+            if (!makeUp.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setBeautyMakeupStrength(value);
+        } else if (seekBar.getId() == sbMakeupFilterStrength.getId()) {
+            if (!makeUpFilter.isChecked()) {
+                return;
+            }
+            AgoraBeautySDK.getBeautyConfig().setMakeupFilterStrength(value);
         } else if (seekBar.getId() == sbFacialStrength.getId()) {
+            if (!makeUp.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setFacialStrength(value);
         } else if (seekBar.getId() == sbWocanStrength.getId()) {
+            if (!makeUp.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setWocanStrength(value);
         } else if (seekBar.getId() == sbBrowStrength.getId()) {
+            if (!makeUp.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setBrowStrength(value);
         } else if (seekBar.getId() == sbLashStrength.getId()) {
+            if (!makeUp.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setLashStrength(value);
         } else if (seekBar.getId() == sbShadowStrength.getId()) {
+            if (!makeUp.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setShadowStrength(value);
         } else if (seekBar.getId() == sbPupilStrength.getId()) {
+            if (!makeUp.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setPupilStrength(value);
         } else if (seekBar.getId() == sbBlushStrength.getId()) {
+            if (!makeUp.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setBlushStrength(value);
         } else if (seekBar.getId() == sbLipStrength.getId()) {
+            if (!makeUp.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setLipStrength(value);
         } else if (seekBar.getId() == sbFilterStyleIntensity.getId()) {
+            if (!filter.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setFilterStrength(value);
         } else if (seekBar.getId() == sbLightness.getId()) {
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setLightness(value);
         } else if (seekBar.getId() == sbRedness.getId()) {
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setRedness(value);
         } else if (seekBar.getId() == sbSharpness.getId()) {
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setSharpness(value);
         } else if (seekBar.getId() == sbSmoothness.getId()) {
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setSmoothness(value);
         } else if (seekBar.getId() == sbContrastStrength.getId()) {
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setContrastStrength(value);
         } else if (seekBar.getId() == sbEyePouch.getId()) {
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
             // face_buffing_option Basic Beauty Extension
             AgoraBeautySDK.getBeautyConfig().setEyePouch(value);
         } else if (seekBar.getId() == sbBrightenEye.getId()) {
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setBrightenEye(value);
         } else if (seekBar.getId() == sbNasolabialFold.getId()) {
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setNasolabialFold(value);
         } else if (seekBar.getId() == sbWhitenTeeth.getId()) {
+            if (!basicBeauty.isChecked()) {
+                return;
+            }
             AgoraBeautySDK.getBeautyConfig().setWhitenTeeth(value);
         }
     }

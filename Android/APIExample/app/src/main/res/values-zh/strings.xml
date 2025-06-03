@@ -247,6 +247,9 @@
     <string name="beauty_filter_strength">滤镜强度</string>
     <string name="face_makeup">美妆</string>
     <string name="face_makeup_style">美妆风格</string>
+    <string name="face_makeup_filter">美妆滤镜</string>
+    <string name="face_makeup_filter_strength">美妆滤镜强度</string>
+    <string name="face_makeup_disable_tips">请先打开美妆</string>
     <string name="shape_beautify">美型</string>
     <string name="shape_beautify_area">美型部位</string>
     <string name="shape_beautify_area_intensity">部位强度</string>
