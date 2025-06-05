@@ -16,9 +16,11 @@ object AgoraBeautySDK {
     private var videoEffectObject: IVideoEffectObject? = null
 
     // Beauty config
+    @JvmStatic
     val beautyConfig = BeautyConfig()
 
 
+    @JvmStatic
     fun initBeautySDK(context: Context, rtcEngine: RtcEngine): Boolean {
         rtcEngine.enableExtension("agora_video_filters_clear_vision", "clear_vision", true)
         val storagePath = context.getExternalFilesDir("")?.absolutePath ?: return false
@@ -34,6 +36,7 @@ object AgoraBeautySDK {
         return true
     }
 
+    @JvmStatic
     fun unInitBeautySDK() {
         Log.d(TAG, "unInitBeautySDK called")
         beautyConfig.reset()
@@ -49,6 +52,55 @@ object AgoraBeautySDK {
             )
         }
     }
+
+    @JvmStatic
+    fun saveBeautyEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.BEAUTY.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.SAVE
+        )
+    }
+
+    @JvmStatic
+    fun resetBeautyEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.BEAUTY.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.RESET
+        )
+    }
+
+    @JvmStatic
+    fun saveMakeupEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.STYLE_MAKEUP.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.SAVE
+        )
+    }
+
+    @JvmStatic
+    fun resetMakeupEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.STYLE_MAKEUP.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.RESET
+        )
+    }
+
+    @JvmStatic
+    fun saveFilterEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.FILTER.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.SAVE
+        )
+    }
+
+    @JvmStatic
+    fun resetFilterEffect() {
+        videoEffectObject?.performVideoEffectAction(
+            IVideoEffectObject.VIDEO_EFFECT_NODE_ID.FILTER.value,
+            IVideoEffectObject.VIDEO_EFFECT_ACTION.RESET
+        )
+    }
+
 
     class BeautyConfig {
 
@@ -419,11 +471,22 @@ object AgoraBeautySDK {
                 effectObj.setVideoEffectFloatParam("makeup_options", "lipStrength", value)
             }
 
-        // Filter switch
-        var filterEnable: Boolean = false
-            get() = videoEffectObject?.getVideoEffectBoolParam("filter_effect_option", "enable") ?: false
+        // makeup Filter switch
+        var makeupFilterEnable: Boolean = false
+            get() = videoEffectObject?.getVideoEffectBoolParam("style_makeup_option", "filterEnable") ?: false
             set(value) {
                 field = value
+                val effectObj = videoEffectObject ?: return
+                effectObj.setVideoEffectBoolParam("style_makeup_option", "filterEnable", value)
+            }
+
+        // makeup filter strength
+        var makeupFilterStrength = 0.5f
+            get() = videoEffectObject?.getVideoEffectFloatParam("style_makeup_option", "filterStrength") ?: 0.5f
+            set(value) {
+                field = value
+                val effectObj = videoEffectObject ?: return
+                effectObj.setVideoEffectFloatParam("style_makeup_option", "filterStrength", value)
             }
 
         // Filter
@@ -442,6 +505,13 @@ object AgoraBeautySDK {
                 }
             }
 
+        // Beauty node filter enable
+        var filterEnable: Boolean = false
+            get() = videoEffectObject?.getVideoEffectBoolParam("filter_effect_option", "enable") ?: false
+            set(value) {
+                field = value
+            }
+
         // Filter intensity
         var filterStrength = 0.5f
             get() = videoEffectObject?.getVideoEffectFloatParam("filter_effect_option", "strength") ?: 0.5f
@@ -452,17 +522,6 @@ object AgoraBeautySDK {
             }
 
         internal fun reset() {
-//            smoothness = 0.9f
-//            lightness = 0.9f
-//            redness = 1.0f
-//            contrast = 1
-//            sharpness = 1.0f
-//            contrastStrength = 1.0f
-//            eyePouch = 0.5f
-//            brightenEye = 0.9f
-//            nasolabialFold = 0.5f
-//            whitenTeeth = 0.7f
-
             beautyShapeStyle = null
             beautyMakeupStyle = null
             beautyFilter = null

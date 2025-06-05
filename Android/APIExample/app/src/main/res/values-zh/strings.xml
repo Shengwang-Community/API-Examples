@@ -128,6 +128,8 @@
     <string name="item_media_recorder">本地/远端录制</string>
     <string name="item_localvideotranscoding">本地合图</string>
     <string name="item_face_capture">获取面捕数据</string>
+    <string name="item_simulcast">同源多流</string>
+    <string name="item_multipath">网络传输高级功能</string>
 
     <string name="joinchannelaudio">此示例演示了如何使用SDK加入频道进行纯语音通话的功能。</string>
     <string name="joinchannelvideo">此示例演示了如何使用SDK加入频道进行音视频通话的功能。</string>
@@ -200,6 +202,8 @@
     <string name="face_capture_tip">此示例演示如何使用面捕功能获取面捕数据</string>
     <string name="transparent_rendering">此示例演示如何使用透明渲染功能播放Mp4视频</string>
     <string name="tip_ultra_live_streaming_with_url">此示例演示如何使用URL拉流来极速直播</string>
+    <string name="tip_simulcast">此示例演示如何使用同源多流</string>
+    <string name="tip_multipath">此示例演示如何使用Multipath</string>
 
     <string name="audio_source_play_out">本地</string>
     <string name="audio_source_pre_process">SDK处理前</string>
@@ -243,6 +247,9 @@
     <string name="beauty_filter_strength">滤镜强度</string>
     <string name="face_makeup">美妆</string>
     <string name="face_makeup_style">美妆风格</string>
+    <string name="face_makeup_filter">美妆滤镜</string>
+    <string name="face_makeup_filter_strength">美妆滤镜强度</string>
+    <string name="face_makeup_disable_tips">请先打开美妆</string>
     <string name="shape_beautify">美型</string>
     <string name="shape_beautify_area">美型部位</string>
     <string name="shape_beautify_area_intensity">部位强度</string>
@@ -362,6 +369,7 @@
     <string name="open_in_browser">在默认浏览器打开</string>
     <string name="refresh">刷新</string>
     <string name="save">保存</string>
+    <string name="reset">重置</string>
     <string name="app_id_empty">AppID为空！</string>
     <string name="item_beauty_scenetime">商汤美颜</string>
     <string name="media_player_error">播放器错误: %s</string>
@@ -424,4 +432,11 @@
     <string name="voice_blur">声音模糊</string>
     <string name="airborne_simulation">空气传播模拟</string>
     <string name="attenuation">衰减系数</string>
+    <string name="role">角色</string>
+    <string name="join_as_host">主播</string>
+    <string name="join_as_audience">观众</string>
+    <string name="enable_multipath">Multipath</string>
+    <string name="multipath_mode">Multipath Mode</string>
+    <string name="multipath_type">Multipath Type</string>
+    <string name="set_layers_config">设置层级配置（最多3层）</string>
 </resources>
