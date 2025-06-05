@@ -152,6 +152,12 @@
         <action
             android:id="@+id/action_mainFragment_to_url_live_stream"
             app:destination="@id/urlLiveStream" />
+        <action
+            android:id="@+id/action_mainFragment_to_simulcast"
+            app:destination="@id/simulcast" />
+        <action
+            android:id="@+id/action_mainFragment_to_multipath"
+            app:destination="@id/multipath" />
     </fragment>
 
     <fragment
@@ -458,5 +464,17 @@
         android:name="io.agora.api.example.examples.advanced.UrlLiveStream"
         android:label="@string/ultra_live_streaming_with_url"
         tools:layout="@layout/fragment_url_live_stream" />
+
+    <fragment
+        android:id="@+id/simulcast"
+        android:name="io.agora.api.example.examples.advanced.Simulcast"
+        android:label="@string/item_simulcast"
+        tools:layout="@layout/fragment_simulcast" />
+
+    <fragment
+        android:id="@+id/multipath"
+        android:name="io.agora.api.example.examples.advanced.Multipath"
+        android:label="@string/item_multipath"
+        tools:layout="@layout/fragment_multipath" />
 
 </navigation>
