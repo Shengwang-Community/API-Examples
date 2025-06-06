@@ -50,63 +50,62 @@ echo release_version: $release_version
 echo short_version: $short_version
 echo pwd: `pwd`
 echo sdk_url: $sdk_url
+echo android_direction: $android_direction
 
-# Ensure Android directory exists
-mkdir -p ./Android
-
-# If sdk_url is empty or 'none', use maven repository and skip all SDK zip/unzip logic
+unzip_name=Agora_Native_SDK_for_Android_FULL_DEFAULT
+zip_name=Agora_Native_SDK_for_Android_FULL_DEFAULT.zip
 if [ -z "$sdk_url" ] || [ "$sdk_url" = "none" ]; then
-    echo "sdk_url is empty, use maven repo"
-    # No need to handle unzip_name, zip_name, or any extraction
+   echo "sdk_url is empty"
+   echo unzip_name: $unzip_name 
+   echo zip_name: $zip_name
 else
-    zip_name=${sdk_url##*/}
-    echo zip_name: $zip_name
+	zip_name=${sdk_url##*/}
+	echo zip_name: $zip_name
 
-    # Download SDK zip to Android directory
-    curl -o ./Android/$zip_name $sdk_url || exit 1
-    # Extract SDK zip in Android directory
-    cd ./Android
-    7za x ./$zip_name -y > ../log.txt
-    # Get the extracted SDK directory name
-    unzip_name=`ls -S -d */ | grep Agora | sed 's/\///g'`
-    echo unzip_name: $unzip_name
-    # Clean up unnecessary files and folders from SDK package
-    rm -rf ./$unzip_name/rtc/bin
-    rm -rf ./$unzip_name/rtc/demo
-    rm -f ./$unzip_name/.commits
-    rm -f ./$unzip_name/spec
-    rm -rf ./$unzip_name/pom
-    cd ..
+	# env LC_ALL=en_US.UTF-8 python3 $WORKSPACE/artifactory_utils.py --action=download_file --file=$sdk_url || exit 1
+	curl -o $zip_name $sdk_url || exit 1
+	7za x ./$zip_name -y > log.txt
+
+	# Support top-level directory name containing 'Agora' or 'Shengwang'
+	unzip_name=`ls -S -d */ | grep -E 'Agora|Shengwang' | head -n 1 | sed 's/\///g'`
+	if [ -z "$unzip_name" ]; then
+		echo "Error: Unzipped directory not found. The SDK package structure may be invalid or the top-level directory does not contain 'Agora' or 'Shengwang'"
+		exit 1
+	fi
+	echo unzip_name: $unzip_name
+
+	rm -rf ./$unzip_name/rtc/bin
+	rm -rf ./$unzip_name/rtc/demo
+	rm -f ./$unzip_name/.commits
+	rm -f ./$unzip_name/spec
+	rm -rf ./$unzip_name/pom
 fi
 
-# Create API-Example directory in the extracted SDK path (if unzip_name is set)
-mkdir -p ./Android/$unzip_name/rtc/samples/API-Example || exit 1
+mkdir -p ./$unzip_name/rtc/samples/${android_direction} || exit 1
+rm -rf ./$unzip_name/rtc/samples/${android_direction}/*
 
-# Copy API example source files to the SDK sample directory
 if [ -d "./Android/${android_direction}" ]; then
-    cp -rf ./Android/${android_direction}/* ./Android/$unzip_name/rtc/samples/API-Example/ || exit 1
+    cp -rf ./Android/${android_direction}/* ./$unzip_name/rtc/samples/${android_direction}/ || exit 1
 else
     echo "Error: Source directory ./Android/${android_direction} does not exist"
     exit 1
 fi
 
-# Zip the SDK with API example included
-7za a -tzip result.zip -r ./Android/$unzip_name > log.txt
+7za a -tzip result.zip -r $unzip_name > log.txt
 mv result.zip $WORKSPACE/withAPIExample_${BUILD_NUMBER}_$zip_name
 
-# Optionally zip only the API example if compress_apiexample is true
 if [ $compress_apiexample = true ]; then
-    7za a -tzip result_onlyAPIExample.zip -r ./Android/$unzip_name/rtc/samples/API-Example >> log.txt
-    mv result_onlyAPIExample.zip $WORKSPACE/onlyAPIExample_${BUILD_NUMBER}_$zip_name
+	onlyCodeZipName=${android_direction}_onlyCode.zip
+	7za a -tzip $onlyCodeZipName -r ./$unzip_name/rtc/samples/${android_direction} >> log.txt
+	mv $onlyCodeZipName $WORKSPACE/APIExample_onlyCode_${BUILD_NUMBER}_$zip_name
 fi
 
-# Optionally compile the project if compile_project is true
 if [ $compile_project = true ]; then
-    cd ./Android/$unzip_name/rtc/samples/API-Example || exit 1
-    if [ -z "$sdk_url" ] || [ "$sdk_url" = "none" ]; then
-        ./cloud_build.sh false || exit 1
-    else
-        ./cloud_build.sh true || exit 1
-    fi
+	cd ./$unzip_name/rtc/samples/${android_direction} || exit 1
+	if [ -z "$sdk_url" ] || [ "$sdk_url" = "none" ]; then
+		./cloud_build.sh false || exit 1
+	else
+		./cloud_build.sh true || exit 1
+	fi
 fi
 
