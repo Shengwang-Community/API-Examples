@@ -50,6 +50,8 @@ echo release_version: $release_version
 echo short_version: $short_version
 echo pwd: `pwd`
 echo sdk_url: $sdk_url
+echo android_direction: $android_direction
+
 unzip_name=Agora_Native_SDK_for_Android_FULL_DEFAULT
 zip_name=Agora_Native_SDK_for_Android_FULL_DEFAULT.zip
 if [ -z "$sdk_url" ] || [ "$sdk_url" = "none" ]; then
@@ -64,7 +66,12 @@ else
 	curl -o $zip_name $sdk_url || exit 1
 	7za x ./$zip_name -y > log.txt
 
-	unzip_name=`ls -S -d */ | grep Agora | sed 's/\///g'`
+	# Support top-level directory name containing 'Agora' or 'Shengwang'
+	unzip_name=`ls -S -d */ | grep -E 'Agora|Shengwang' | head -n 1 | sed 's/\///g'`
+	if [ -z "$unzip_name" ]; then
+		echo "Error: Unzipped directory not found. The SDK package structure may be invalid or the top-level directory does not contain 'Agora' or 'Shengwang'"
+		exit 1
+	fi
 	echo unzip_name: $unzip_name
 
 	rm -rf ./$unzip_name/rtc/bin
@@ -74,10 +81,11 @@ else
 	rm -rf ./$unzip_name/pom
 fi
 
-mkdir -p ./$unzip_name/rtc/samples/API-Example || exit 1
+mkdir -p ./$unzip_name/rtc/samples/${android_direction} || exit 1
+rm -rf ./$unzip_name/rtc/samples/${android_direction}/*
 
 if [ -d "./Android/${android_direction}" ]; then
-    cp -rf ./Android/${android_direction}/* ./$unzip_name/rtc/samples/API-Example/ || exit 1
+    cp -rf ./Android/${android_direction}/* ./$unzip_name/rtc/samples/${android_direction}/ || exit 1
 else
     echo "Error: Source directory ./Android/${android_direction} does not exist"
     exit 1
@@ -87,12 +95,13 @@ fi
 mv result.zip $WORKSPACE/withAPIExample_${BUILD_NUMBER}_$zip_name
 
 if [ $compress_apiexample = true ]; then
-	7za a -tzip result_onlyAPIExample.zip -r ./$unzip_name/rtc/samples/API-Example >> log.txt
-	mv result_onlyAPIExample.zip $WORKSPACE/onlyAPIExample_${BUILD_NUMBER}_$zip_name
+	onlyCodeZipName=${android_direction}_onlyCode.zip
+	7za a -tzip $onlyCodeZipName -r ./$unzip_name/rtc/samples/${android_direction} >> log.txt
+	mv $onlyCodeZipName $WORKSPACE/APIExample_onlyCode_${BUILD_NUMBER}_$zip_name
 fi
 
 if [ $compile_project = true ]; then
-	cd ./$unzip_name/rtc/samples/API-Example || exit 1
+	cd ./$unzip_name/rtc/samples/${android_direction} || exit 1
 	if [ -z "$sdk_url" ] || [ "$sdk_url" = "none" ]; then
 		./cloud_build.sh false || exit 1
 	else

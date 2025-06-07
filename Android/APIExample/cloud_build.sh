@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 
-# cache gradle to /tmp/.gradle
-ls ~/.gradle || (mkdir -p /tmp/.gradle && ln -s /tmp/.gradle ~/.gradle && touch ~/.gradle/ln_$(date "+%y%m%d%H") && ls ~/.gradle)
-
 ## use open jdk 17
 SYSTEM=$(uname -s)
 if [ "$SYSTEM" = "Linux" ];then
@@ -84,7 +81,7 @@ rm -f vender_bytedance_resources_apiexample.zip
 curl -L -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -O "https://artifactory-api.bj2.agoralab.co/artifactory/qa_test_data/beauty/vender_sensetime_resources_apiexample.zip"
 unzip -o vender_sensetime_resources_apiexample.zip
 rm -f vender_sensetime_resources_apiexample.zip
-curl -L -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -O "https://artifactory.agoralab.co/artifactory/qa_test_data/beauty/vender_agora_resources_apiexample.zip"
+curl -L -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -O "https://artifactory-api.bj2.agoralab.co/artifactory/qa_test_data/beauty/vender_agora_resources_apiexample.zip"
 unzip -o vender_agora_resources_apiexample.zip
 rm -f vender_agora_resources_apiexample.zip
 cd - || exit 1
