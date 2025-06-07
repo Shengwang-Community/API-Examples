@@ -35,7 +35,6 @@ class AgoraBeautyEntry: UIViewController {
 class AgoraBeautyMain: BaseViewController {
     @IBOutlet weak var container: AGEVideoContainer!
     @IBOutlet weak var beautySwitch: UISwitch!
-    @IBOutlet weak var colorEnhanceSwitch: UISwitch!
     @IBOutlet weak var virtualBgSwitch: UISwitch!
     @IBOutlet weak var virtualBgSegment: UISegmentedControl!
     @IBOutlet weak var lightenSlider: UISlider!
@@ -202,51 +201,9 @@ class AgoraBeautyMain: BaseViewController {
         beautyManager.smoothness = sender.value
     }
     
-    @IBAction func onChangeLowLightEnhance(_ sender: UISwitch) {
-        let options = AgoraLowlightEnhanceOptions()
-        options.level = .fast
-        options.mode = .auto
-        agoraKit.setLowlightEnhanceOptions(sender.isOn, options: options)
-    }
-    
-    @IBAction func onChangeVideoDenoise(_ sender: UISwitch) {
-        let options = AgoraVideoDenoiserOptions()
-        options.level = .highQuality
-        options.mode = .manual
-        agoraKit.setVideoDenoiserOptions(sender.isOn, options: options)
-    }
-    
-    @IBAction func onChangeColorEnhance(_ sender: UISwitch) {
-        let options = AgoraColorEnhanceOptions()
-        options.strengthLevel = Float(strength)
-        options.skinProtectLevel = Float(skinProtect)
-        agoraKit.setColorEnhanceOptions(sender.isOn, options: options)
-    }
-
-    
-    @IBAction func onStrengthSlider(_ sender: UISlider) {
-        strength = Double(sender.value)
-        let options = AgoraColorEnhanceOptions()
-        options.strengthLevel = Float(strength)
-        options.skinProtectLevel = Float(skinProtect)
-        agoraKit.setColorEnhanceOptions(colorEnhanceSwitch.isOn, options: options)
-    }
-    
-    @IBAction func onSkinProtectSlider(_ sender: UISlider) {
-        skinProtect = Double(sender.value)
-        let options = AgoraColorEnhanceOptions()
-        options.strengthLevel = Float(strength)
-        options.skinProtectLevel = Float(skinProtect)
-        agoraKit.setColorEnhanceOptions(colorEnhanceSwitch.isOn, options: options)
-    }
-    
     @IBAction func onWhinteningSlider(_ sender: UISlider) {
+        beautyManager.filterStrength = sender.value
         let options = AgoraFilterEffectOptions()
-        options.path = "built_in_whiten_filter"
-        options.strength = sender.value
-        whintening = Double(sender.value)
-        let ret = agoraKit.setFilterEffectOptions(beautySwitch.isOn, options: options)
-        print("onWhinteningSlider: \(ret), \(options.strength)")
     }
     
     @IBAction func onChangeVirtualBgSwtich(_ sender: UISwitch) {
