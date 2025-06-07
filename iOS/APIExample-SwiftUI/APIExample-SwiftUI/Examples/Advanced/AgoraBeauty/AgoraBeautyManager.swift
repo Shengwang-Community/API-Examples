@@ -112,6 +112,20 @@ class AgoraBeautyManager {
         agoraKit?.setFaceShapeBeautyOptions(beautyShapeEnable, options: faceshapeOption)
     }
     
+    func updateMakeup(parameter: [String : Any]) {
+        guard let json = try? JSONSerialization.data(withJSONObject: parameter, options: []),
+              let jsonString = String(data: json, encoding: .utf8) else {
+            print("updateMakeup fail")
+            return
+        }
+        
+        let ret = self.agoraKit?.setExtensionPropertyWithVendor("agora_video_filters_clear_vision",
+                                                               extension: "clear_vision",
+                                                               key: "makeup_options",
+                                                               value: jsonString) ?? -1
+        print("updateMakeup ret: \(ret) jsonString: \(jsonString)")
+    }
+    
     var basicBeautyEnable: Bool {
         get {
             self.videoEffectObject?.getVideoEffectBoolParam(option: "beauty_effect_option", key: "enable") ?? false
@@ -175,7 +189,7 @@ class AgoraBeautyManager {
 
     /**
      * 0 Low contrast
-     * 1 Normal contrast
+     * 1 Normal contrast  
      * 2 High contrast
      */
     var contrast: Int32 {
@@ -569,7 +583,7 @@ class AgoraBeautyManager {
     // Filter
     var beautyFilter: String? {
         get {
-            return nil
+            return nil 
         }
         set {
             guard videoEffectObject != nil else { return }
@@ -640,7 +654,10 @@ class AgoraBeautyManager {
             "type": "segment",
             "value": ["Eyebrow Style Off".localized,
                       "Eyebrow Style Type 1".localized,
-                      "Eyebrow Style Type 2".localized
+                      "Eyebrow Style Type 2".localized,
+                      "Eyebrow Style Type 3".localized,
+                      "Eyebrow Style Type 4".localized,
+                      "Eyebrow Style Type 5".localized
                      ]
         ], [
             "name": "Eyelash Color".localized,
@@ -658,8 +675,11 @@ class AgoraBeautyManager {
             "type": "segment",
             "value": ["Eyebrow Style Off".localized,
                       "Eyebrow Style Type 1".localized,
-                      "Eyebrow Style Type 2".localized
-                     ]
+                      "Eyebrow Style Type 2".localized,
+                      "Eyebrow Style Type 3".localized,
+                      "Eyebrow Style Type 4".localized,
+                      "Eyebrow Style Type 5".localized,
+                      "Eyebrow Style Type 6".localized]
         ], [
             "name": "Eyeshadow Strength".localized,
             "key": "shadowStrength",
@@ -688,7 +708,9 @@ class AgoraBeautyManager {
                 "Blush Color None".localized,
                 "Blush Color Shade 1".localized,
                 "Blush Color Shade 2".localized,
-                "Blush Color Shade 3".localized
+                "Blush Color Shade 3".localized,
+                "Blush Color Shade 4".localized,
+                "Blush Color Shade 5".localized
             ]
         ], [
             "name": "Blush Strength".localized,
@@ -708,7 +730,9 @@ class AgoraBeautyManager {
                 "Blush Color None".localized,
                 "Blush Color Shade 1".localized,
                 "Blush Color Shade 2".localized,
-                "Blush Color Shade 3".localized
+                "Blush Color Shade 3".localized,
+                "Blush Color Shade 4".localized,
+                "Blush Color Shade 5".localized
             ]
         ], [
             "name": "Lip Strength".localized,
@@ -718,4 +742,3 @@ class AgoraBeautyManager {
         ]
     ]
 }
-
