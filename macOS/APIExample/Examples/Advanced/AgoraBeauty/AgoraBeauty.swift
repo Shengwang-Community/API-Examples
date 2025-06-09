@@ -585,9 +585,12 @@ extension AgoraBeauty {
                 switchView.state = state ? NSControl.StateValue.on : NSControl.StateValue.off
                 valueView = switchView
             } else if type == "segment" {
-                let value = makeupList[i]["value"] as? [String] ?? []
-                let segmentedControl = NSSegmentedControl(labels: value, trackingMode: .selectOne, target: self, action: #selector(makeupSegmentAction(_:)))
-                segmentedControl.selectedSegment = Int(getDefaultSegmentValueForKey(key: key))
+                let titles = makeupList[i]["title"] as? [String] ?? []
+                let segmentedControl = NSSegmentedControl(labels: titles, trackingMode: .selectOne, target: self, action: #selector(makeupSegmentAction(_:)))
+                let defaultValue = Int(getDefaultSegmentValueForKey(key: key))
+                let values = makeupList[i]["value"] as? [Int] ?? []
+                let defaultIndex = values.firstIndex(of: defaultValue) ?? 0
+                segmentedControl.selectedSegment = defaultIndex
                 valueView = segmentedControl
             }
 
@@ -633,6 +636,8 @@ extension AgoraBeauty {
             beautyManager.lashStrength = value
         } else if key == "browStrength" {
             beautyManager.browStrength = value
+        } else if key == "wocanStrength" {
+            beautyManager.wocanStrength = value
         }
     }
     
@@ -641,9 +646,9 @@ extension AgoraBeauty {
         let index = (Int(view.identifier?.rawValue ?? "") ?? 0) - 1000
         let key = makeupList[index]["key"] as? String ?? ""
         let state = view.state == .on
-        if state {
-            beautyManager.beautyMakeupStyle = "default makeup style".localized
-        }
+//        if state {
+//            beautyManager.beautyMakeupStyle = "default makeup style".localized
+//        }
         makeupParams[key] = state
         beautyManager.makeUpEnable = state
     }
@@ -652,7 +657,8 @@ extension AgoraBeauty {
         let makeupList = beautyManager.makeupList
         let index = (Int(view.identifier?.rawValue ?? "") ?? 0) - 1000
         let key = makeupList[index]["key"] as? String ?? ""
-        let value = Int32(view.selectedSegment)
+        let values = makeupList[index]["value"] as? [Int] ?? []
+        let value = Int32(values[view.selectedSegment])
         makeupParams[key] = value
         if key == "pupilStyle" {
             beautyManager.pupilStyle = value
@@ -676,6 +682,8 @@ extension AgoraBeauty {
             beautyManager.lipStyle = value
         } else if key == "lipColor" {
             beautyManager.lipColor = value
+        } else if key == "wocanStyle" {
+            beautyManager.wocanStyle = value
         }
     }
 
@@ -696,6 +704,8 @@ extension AgoraBeauty {
             return beautyManager.lashStrength
         } else if key == "browStrength" {
             return beautyManager.browStrength
+        } else if key == "wocanStrength" {
+            return beautyManager.wocanStrength
         }
         return 0
     }
@@ -723,6 +733,8 @@ extension AgoraBeauty {
             return beautyManager.lipStyle
         } else if key == "lipColor" {
             return beautyManager.lipColor
+        } else if key == "wocanStyle" {
+            return beautyManager.wocanStyle 
         }
         return 0
     }

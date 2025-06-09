@@ -255,6 +255,7 @@
 "Eyeshadow Color" = "眼影颜色";
 "Eyeshadow Strength" = "眼影强度";
 "Pupil Style" = "瞳孔类型";
+"Facial Style" = "面部类型";
 "Pupil Color" = "瞳孔颜色";
 "Pupil Strength" = "瞳孔强度";
 "Blush Style" = "腮红类型";
@@ -262,6 +263,8 @@
 "Blush Strength" = "腮红强度";
 "Lip Style" = "唇彩类型";
 "Lip Color" = "唇彩颜色";
+"Wocan" = "卧蚕";
+"Wocan Strength" = "卧蚕强度";
 "Lip Strength" = "唇彩强度";
 
 "Eyebrow Style Off" = "关闭";
