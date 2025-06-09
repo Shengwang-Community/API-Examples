@@ -35,7 +35,6 @@ class AgoraBeautyEntry: UIViewController {
 class AgoraBeautyMain: BaseViewController {
     @IBOutlet weak var container: AGEVideoContainer!
     @IBOutlet weak var beautySwitch: UISwitch!
-    @IBOutlet weak var colorEnhanceSwitch: UISwitch!
     @IBOutlet weak var virtualBgSwitch: UISwitch!
     @IBOutlet weak var virtualBgSegment: UISegmentedControl!
     @IBOutlet weak var lightenSlider: UISlider!
@@ -140,7 +139,8 @@ class AgoraBeautyMain: BaseViewController {
         })
         
         beautyManager = AgoraBeautyManager(agoraKit: agoraKit)
-        
+        beautyManager.beautyMakeupStyle = "default makeup style".localized
+        beautyManager.makeUpEnable = false
         setupUI()
     }
     
@@ -202,51 +202,8 @@ class AgoraBeautyMain: BaseViewController {
         beautyManager.smoothness = sender.value
     }
     
-    @IBAction func onChangeLowLightEnhance(_ sender: UISwitch) {
-        let options = AgoraLowlightEnhanceOptions()
-        options.level = .fast
-        options.mode = .auto
-        agoraKit.setLowlightEnhanceOptions(sender.isOn, options: options)
-    }
-    
-    @IBAction func onChangeVideoDenoise(_ sender: UISwitch) {
-        let options = AgoraVideoDenoiserOptions()
-        options.level = .highQuality
-        options.mode = .manual
-        agoraKit.setVideoDenoiserOptions(sender.isOn, options: options)
-    }
-    
-    @IBAction func onChangeColorEnhance(_ sender: UISwitch) {
-        let options = AgoraColorEnhanceOptions()
-        options.strengthLevel = Float(strength)
-        options.skinProtectLevel = Float(skinProtect)
-        agoraKit.setColorEnhanceOptions(sender.isOn, options: options)
-    }
-
-    
-    @IBAction func onStrengthSlider(_ sender: UISlider) {
-        strength = Double(sender.value)
-        let options = AgoraColorEnhanceOptions()
-        options.strengthLevel = Float(strength)
-        options.skinProtectLevel = Float(skinProtect)
-        agoraKit.setColorEnhanceOptions(colorEnhanceSwitch.isOn, options: options)
-    }
-    
-    @IBAction func onSkinProtectSlider(_ sender: UISlider) {
-        skinProtect = Double(sender.value)
-        let options = AgoraColorEnhanceOptions()
-        options.strengthLevel = Float(strength)
-        options.skinProtectLevel = Float(skinProtect)
-        agoraKit.setColorEnhanceOptions(colorEnhanceSwitch.isOn, options: options)
-    }
-    
     @IBAction func onWhinteningSlider(_ sender: UISlider) {
-        let options = AgoraFilterEffectOptions()
-        options.path = "built_in_whiten_filter"
-        options.strength = sender.value
-        whintening = Double(sender.value)
-        let ret = agoraKit.setFilterEffectOptions(beautySwitch.isOn, options: options)
-        print("onWhinteningSlider: \(ret), \(options.strength)")
+        beautyManager.filterStrength = sender.value
     }
     
     @IBAction func onChangeVirtualBgSwtich(_ sender: UISwitch) {
@@ -444,22 +401,28 @@ extension AgoraBeautyMain {
             let type = makeupList[i]["type"] as? String ?? ""
             if type == "slider" {
                 let value = makeupList[i]["value"] as? [Float] ?? []
+                let defaultStrengthValue = Double(getDefaultStrengthValueForKey(key: key))
                 let sliderView = UISlider()
-                label.text = String(format: "%@[%.f]", label.text ?? "none", sliderView.value)
+                label.text = String(format: "%@[%.f]", label.text ?? "none", defaultStrengthValue)
                 sliderView.minimumValue = value.first ?? 0
                 sliderView.maximumValue = value.last ?? 1
-                sliderView.value = makeupParams[key] as? Float ?? 0
+                sliderView.value = Float(defaultStrengthValue)
                 sliderView.addTarget(self, action: #selector(makeupSliderAction(_:)), for: .valueChanged)
                 valueView = sliderView
             } else if type == "switch" {
                 let switchView = UISwitch()
-                switchView.isOn = makeupParams[key] as? Bool ?? false
+                let state = beautyManager.makeUpEnable
+                switchView.isOn = state
                 switchView.addTarget(self, action: #selector(makeupSwitchAction(_:)), for: .valueChanged)
                 valueView = switchView
             } else if type == "segment" {
-                let value = makeupList[i]["value"] as? [String] ?? []
+                let value = makeupList[i]["title"] as? [String] ?? []
                 let segmentView = UISegmentedControl(items: value)
-                segmentView.selectedSegmentIndex = makeupParams[key] as? Int ?? 0
+                let defaultValue = Int(getDefaultSegmentValueForKey(key: key))
+                let values = makeupList[i]["value"] as? [Int] ?? []
+                let defaultIndex = values.firstIndex(of: defaultValue) ?? 0
+                
+                segmentView.selectedSegmentIndex = Int(getDefaultSegmentValueForKey(key: key))
                 segmentView.addTarget(self, action: #selector(makeupSegmentAction(_:)), for: .valueChanged)
                 valueView = segmentView
             }
@@ -498,40 +461,134 @@ extension AgoraBeautyMain {
         self.present(customAlertVC, animated: true, completion: nil)
     }
     
+    private func getDefaultStrengthValueForKey(key: String) -> Float {
+        if key == "lipStrength" {
+            return beautyManager.lipStrength
+        } else if key == "blushStrength" {
+            return beautyManager.blushStrength
+        } else if key == "pupilStrength" {
+            return beautyManager.pupilStrength
+        } else if key == "shadowStrength" {
+            return beautyManager.shadowStrength
+        } else if key == "lashStrength" {
+            return beautyManager.lashStrength
+        } else if key == "browStrength" {
+            return beautyManager.browStrength
+        } else if key == "wocanStrength" {
+            return beautyManager.wocanStrength
+        }
+        return 0
+    }
+    
+    private func getDefaultSegmentValueForKey(key: String) -> Int32 {
+        if key == "pupilStyle" {
+            return beautyManager.pupilStyle
+        } else if key == "browStyle" {
+            return beautyManager.browStyle
+        } else if key == "browColor" {
+            return beautyManager.browColor
+        } else if key == "lashStyle" {
+            return beautyManager.lashStyle
+        } else if key == "lashColor" {
+            return beautyManager.lashColor
+        } else if key == "shadowStyle" {
+            return beautyManager.shadowStyle
+        } else if key == "pupilStyle" {
+            return beautyManager.pupilStyle
+        } else if key == "blushStyle" {
+            return beautyManager.blushStyle
+        } else if key == "blushColor" {
+            return beautyManager.blushColor
+        } else if key == "lipStyle" {
+            return beautyManager.lipStyle
+        } else if key == "lipColor" {
+            return beautyManager.lipColor
+        } else if key == "wocanStyle" {
+            return beautyManager.wocanStyle
+        }
+        return 0
+    }
+    
+    
     @objc func makeupSliderAction(_ view: UISlider) {
         let index = view.tag - 1000
         let makeupList = beautyManager.makeupList
         let key = makeupList[index]["key"] as? String ?? ""
-        makeupParams[key] = view.value
-        
+        let value = view.value
+        makeupParams[key] = value
+
         if let label = view.superview?.viewWithTag(index + 2000) as? UILabel {
             label.text = String(format: "%@[%.f]", makeupList[index]["name"] as? String ?? "none", view.value)
         }
-        updateMakeup()
+        
+        if key == "lipStrength" {
+            beautyManager.lipStrength = value
+        } else if key == "blushStrength" {
+            beautyManager.blushStrength = value
+        } else if key == "pupilStrength" {
+            beautyManager.pupilStrength = value
+        } else if key == "shadowStrength" {
+            beautyManager.shadowStrength = value
+        } else if key == "lashStrength" {
+            beautyManager.lashStrength = value
+        } else if key == "browStrength" {
+            beautyManager.browStrength = value
+        } else if key == "wocanStrength" {
+            beautyManager.wocanStrength = value
+        }
+
     }
     
     @objc func makeupSwitchAction(_ view: UISwitch) {
         let index = view.tag - 1000
         let makeupList = beautyManager.makeupList
         let key = makeupList[index]["key"] as? String ?? ""
-        makeupParams[key] = view.isOn
-        updateMakeup()
+        let state = view.isOn
+        if state {
+            beautyManager.beautyMakeupStyle = "default makeup style".localized
+        }
+        makeupParams[key] = state
+        beautyManager.makeUpEnable = state
     }
     
     @objc func makeupSegmentAction(_ view: UISegmentedControl) {
         let index = view.tag - 1000
         let makeupList = beautyManager.makeupList
         let key = makeupList[index]["key"] as? String ?? ""
-        makeupParams[key] = view.selectedSegmentIndex
-        updateMakeup()
+        let values = makeupList[index]["value"] as? [Int] ?? []
+        let value = Int32(values[view.selectedSegmentIndex])
+
+        makeupParams[key] = value
+        if key == "pupilStyle" {
+            beautyManager.pupilStyle = value
+        } else if key == "browStyle" {
+            beautyManager.browStyle = value
+        } else if key == "browColor" {
+            beautyManager.browColor = value
+        } else if key == "lashStyle" {
+            beautyManager.lashStyle = value
+        } else if key == "lashColor" {
+            beautyManager.lashColor = value
+        } else if key == "shadowStyle" {
+            beautyManager.shadowStyle = value
+        } else if key == "pupilStyle" {
+            beautyManager.pupilStyle = value
+        } else if key == "blushStyle" {
+            beautyManager.blushStyle = value
+        } else if key == "blushColor" {
+            beautyManager.blushColor = value
+        } else if key == "lipStyle" {
+            beautyManager.lipStyle = value
+        } else if key == "lipColor" {
+            beautyManager.lipColor = value
+        } else if key == "wocanStyle" {
+            beautyManager.wocanStyle = value
+        }
+
     }
     
     @objc func confirmAction() {
         self.dismiss(animated: true, completion: nil)
-    }
-    
-    private func updateMakeup() {
-        beautyManager.updateMakeup(parameter: makeupParams)
     }
 }
 
