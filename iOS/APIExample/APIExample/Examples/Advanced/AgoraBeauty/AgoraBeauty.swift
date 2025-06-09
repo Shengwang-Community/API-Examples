@@ -416,8 +416,12 @@ extension AgoraBeautyMain {
                 switchView.addTarget(self, action: #selector(makeupSwitchAction(_:)), for: .valueChanged)
                 valueView = switchView
             } else if type == "segment" {
-                let value = makeupList[i]["value"] as? [String] ?? []
+                let value = makeupList[i]["title"] as? [String] ?? []
                 let segmentView = UISegmentedControl(items: value)
+                let defaultValue = Int(getDefaultSegmentValueForKey(key: key))
+                let values = makeupList[i]["value"] as? [Int] ?? []
+                let defaultIndex = values.firstIndex(of: defaultValue) ?? 0
+                
                 segmentView.selectedSegmentIndex = Int(getDefaultSegmentValueForKey(key: key))
                 segmentView.addTarget(self, action: #selector(makeupSegmentAction(_:)), for: .valueChanged)
                 valueView = segmentView
@@ -470,6 +474,8 @@ extension AgoraBeautyMain {
             return beautyManager.lashStrength
         } else if key == "browStrength" {
             return beautyManager.browStrength
+        } else if key == "wocanStrength" {
+            return beautyManager.wocanStrength
         }
         return 0
     }
@@ -497,6 +503,8 @@ extension AgoraBeautyMain {
             return beautyManager.lipStyle
         } else if key == "lipColor" {
             return beautyManager.lipColor
+        } else if key == "wocanStyle" {
+            return beautyManager.wocanStyle
         }
         return 0
     }
@@ -525,7 +533,10 @@ extension AgoraBeautyMain {
             beautyManager.lashStrength = value
         } else if key == "browStrength" {
             beautyManager.browStrength = value
+        } else if key == "wocanStrength" {
+            beautyManager.wocanStrength = value
         }
+
     }
     
     @objc func makeupSwitchAction(_ view: UISwitch) {
@@ -544,7 +555,9 @@ extension AgoraBeautyMain {
         let index = view.tag - 1000
         let makeupList = beautyManager.makeupList
         let key = makeupList[index]["key"] as? String ?? ""
-        let value = Int32(view.selectedSegmentIndex)
+        let values = makeupList[index]["value"] as? [Int] ?? []
+        let value = Int32(values[view.selectedSegmentIndex])
+
         makeupParams[key] = value
         if key == "pupilStyle" {
             beautyManager.pupilStyle = value
@@ -568,7 +581,10 @@ extension AgoraBeautyMain {
             beautyManager.lipStyle = value
         } else if key == "lipColor" {
             beautyManager.lipColor = value
+        } else if key == "wocanStyle" {
+            beautyManager.wocanStyle = value
         }
+
     }
     
     @objc func confirmAction() {
