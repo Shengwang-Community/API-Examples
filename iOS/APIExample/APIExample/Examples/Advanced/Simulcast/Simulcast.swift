@@ -2,13 +2,12 @@ import UIKit
 import AgoraRtcKit
 import AGEVideoLayout
 
-class MultipathEntry: UIViewController {
+class SimulcastEntry: UIViewController {
     @IBOutlet weak var joinButton: AGButton!
     @IBOutlet weak var channelTextField: AGTextField!
     @IBOutlet weak var roleSegment: UISegmentedControl!
-    @IBOutlet weak var multipathModeSegment: UISegmentedControl!
         
-    let identifier = "Multipath"
+    let identifier = "Simulcast"
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -25,24 +24,35 @@ class MultipathEntry: UIViewController {
         }
         newViewController.title = channelName
         newViewController.configs = ["channelName": channelName,
-                                     "role_index": roleSegment.selectedSegmentIndex,
-                                     "mode_index": multipathModeSegment.selectedSegmentIndex]
+                                     "role_index": roleSegment.selectedSegmentIndex]
         navigationController?.pushViewController(newViewController, animated: true)
     }
 }
 
-class MultipathViewController: BaseViewController {
-    
-    @IBOutlet weak var modeLabel: UILabel!
-    
+class SimulcastViewController: BaseViewController {
+        
     var localVideo = Bundle.loadVideoView(type: .local, audioOnly: false)
     var remoteVideo = Bundle.loadVideoView(type: .remote, audioOnly: false)
+    
+    @IBOutlet weak var hostSettingContainer: UIView!
+    @IBOutlet weak var audienceLayerSegment: UISegmentedControl!
+    @IBOutlet weak var tipsLabel: UILabel!
+    
+    @IBOutlet weak var layer1Switch: UISwitch!
+    
+    @IBOutlet weak var layer2Switch: UISwitch!
+    
+    @IBOutlet weak var layer3Switch: UISwitch!
+    
+    @IBOutlet weak var layer4Switch: UISwitch!
     
     @IBOutlet weak var container: AGEVideoContainer!
     var agoraKit: AgoraRtcEngineKit!
     
     // indicate if current instance has joined channel
     var isJoined: Bool = false
+    
+    private var remoteUid: UInt? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,13 +75,19 @@ class MultipathViewController: BaseViewController {
         // get channel name from configs
         guard let channelName = configs["channelName"] as? String else {return}
         guard let roleIndex = configs["role_index"] as? Int else {return}
-        guard let modeIndex = configs["mode_index"] as? Int else {return}
-        modeLabel.text = (modeIndex == 0) ? "dynamic" : "duplicate"
-        
+        // set up view
+        if roleIndex == 0 {
+            hostSettingContainer.isHidden = false
+            audienceLayerSegment.isHidden = true
+        } else {
+            hostSettingContainer.isHidden = true
+            audienceLayerSegment.isHidden = false
+        }
         // enable video module and set up video encoding configs
         agoraKit.enableVideo()
         agoraKit.enableAudio()
         agoraKit.setClientRole((roleIndex == 0) ? .broadcaster : .audience)
+        
         if (roleIndex == 0) {
             // Set video encoder configuration
             let videoConfig = AgoraVideoEncoderConfiguration()
@@ -91,6 +107,9 @@ class MultipathViewController: BaseViewController {
             agoraKit.setupLocalVideo(videoCanvas)
             // you have to call startPreview to see local video
             agoraKit.startPreview()
+            setupSimulcast()
+        } else {
+            
         }
                 
         // Set audio route to speaker
@@ -101,9 +120,6 @@ class MultipathViewController: BaseViewController {
         option.publishCameraTrack = (roleIndex == 0)
         option.publishMicrophoneTrack = (roleIndex == 0)
         option.clientRoleType = (roleIndex == 0) ? .broadcaster : .audience
-        option.enableMultipath = true
-        option.uplinkMultipathMode = (modeIndex == 0) ? .dynamic : .duplicate
-        option.downlinkMultipathMode = (modeIndex == 0) ? .dynamic : .duplicate
         option.autoSubscribeVideo = true
         option.autoSubscribeAudio = true
         NetworkManager.shared.generateToken(channelName: channelName, success: { token in
@@ -125,17 +141,78 @@ class MultipathViewController: BaseViewController {
             }
         }
     }
+    
     // enabel/disable multipath
-    @IBAction func onClickMultipathSwitch(_ sender: UISwitch) {
-        sender.isSelected.toggle()
-        let option = AgoraRtcChannelMediaOptions()
-        option.enableMultipath = sender.isOn
-        agoraKit.updateChannel(with: option)
+    @IBAction func onClickSimulcastSwitch(_ sender: UISwitch) {
+        if self.layer1Switch.isOn == true,
+           self.layer2Switch.isOn == true,
+           self.layer3Switch.isOn == true,
+           self.layer4Switch.isOn == true
+        {
+            ToastView.show(text: "Maxmum 3 layers can be selected".localized)
+            sender.isOn.toggle()
+            return
+        }
+        setupSimulcast()
+    }
+    
+    @IBAction func onClickLaye1rSegment(_ sender: UISegmentedControl) {
+        guard let uid = remoteUid else {
+            ToastView.show(text: "No remote user".localized)
+            return
+        }
+        var layer = AgoraVideoStreamType.init(rawValue: sender.selectedSegmentIndex) ?? .high
+        let ret = agoraKit.setRemoteVideoStream(uid, type: layer)
+        LogUtils.log(message: "set remote layer:\(layer.rawValue), ret: \(ret) ", level: .info)
+    }
+
+    private func setupSimulcast() {
+        let layer1_index = AgoraStreamLayerIndex.layer1.rawValue
+        let layer2_index = AgoraStreamLayerIndex.layer2.rawValue
+        let layer3_index = AgoraStreamLayerIndex.layer3.rawValue
+        let layer4_index = AgoraStreamLayerIndex.layer4.rawValue
+        let conf = AgoraSimulcastConfig()
+        if (layer1Switch.isOn) {
+            conf.configs[layer1_index].dimensions.width = 1280
+            conf.configs[layer1_index].dimensions.height = 720
+            conf.configs[layer1_index].framerate = 30
+            conf.configs[layer1_index].enable = true
+        } else {
+            conf.configs[layer1_index].enable = false
+        }
+        if (layer2Switch.isOn) {
+            conf.configs[layer2_index].dimensions.width = 960
+            conf.configs[layer2_index].dimensions.height = 540
+            conf.configs[layer2_index].framerate = 15
+            conf.configs[layer2_index].enable = true
+        } else {
+            conf.configs[layer2_index].enable = false
+        }
+
+        if (layer3Switch.isOn) {
+            conf.configs[layer3_index].dimensions.width = 640
+            conf.configs[layer3_index].dimensions.height = 360
+            conf.configs[layer3_index].framerate = 15
+            conf.configs[layer3_index].enable = true
+        } else {
+            conf.configs[layer3_index].enable = false
+        }
+
+        if (layer4Switch.isOn) {
+            conf.configs[layer4_index].dimensions.width = 480
+            conf.configs[layer4_index].dimensions.height = 270
+            conf.configs[layer4_index].framerate = 15
+            conf.configs[layer4_index].enable = true
+        } else {
+            conf.configs[layer4_index].enable = false
+        }
+        let ret = agoraKit.setSimulcastConfig(conf)
+        LogUtils.log(message: "setSimulcastConfig: \(ret) ", level: .info)
     }
 }
 
 /// agora rtc engine delegate events
-extension MultipathViewController: AgoraRtcEngineDelegate {
+extension SimulcastViewController: AgoraRtcEngineDelegate {
     /// callback when warning occured for agora sdk, warning can usually be ignored, still it's nice to check out
     /// what is happening
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode) {
@@ -161,6 +238,10 @@ extension MultipathViewController: AgoraRtcEngineDelegate {
         videoCanvas.view = remoteVideo.videoView
         videoCanvas.renderMode = .hidden
         agoraKit.setupRemoteVideo(videoCanvas)
+        let ret = agoraKit.setRemoteVideoStream(uid, type: .layer1)
+        LogUtils.log(message: "set remote layer, ret: \(ret) ", level: .info)
+        
+        self.remoteUid = uid
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
@@ -185,10 +266,6 @@ extension MultipathViewController: AgoraRtcEngineDelegate {
         localVideo.statsInfo?.updateLocalAudioStats(stats)
     }
     
-    func rtcEngine(_ engine: AgoraRtcEngineKit, multiPathStats stats: AgoraMultipathStats) {
-        localVideo.statsInfo?.updateMultipathStats(stats)
-    }
-    
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteVideoStats stats: AgoraRtcRemoteVideoStats) {
         remoteVideo.statsInfo?.updateVideoStats(stats)
     }
@@ -196,4 +273,4 @@ extension MultipathViewController: AgoraRtcEngineDelegate {
     func rtcEngine(_ engine: AgoraRtcEngineKit, remoteAudioStats stats: AgoraRtcRemoteAudioStats) {
         remoteVideo.statsInfo?.updateAudioStats(stats)
     }
-}
+} 

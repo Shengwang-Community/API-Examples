@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		749177BD2429C778B3C6D520 /* Pods_APIExample_OC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D931C433C0CD269F3C3323D /* Pods_APIExample_OC.framework */; };
 		961E8DCA7B4A6B12564DDC18 /* Pods_SimpleFilter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D0773F7A8BA9611CF846635 /* Pods_SimpleFilter.framework */; };
+		ABB90AAD2DF6C95A007FDDEB /* Multipath.m in Sources */ = {isa = PBXBuildFile; fileRef = ABB90AAC2DF6C95A007FDDEB /* Multipath.m */; };
+		ABB90AB02DF6C976007FDDEB /* Simulcast.m in Sources */ = {isa = PBXBuildFile; fileRef = ABB90AAF2DF6C976007FDDEB /* Simulcast.m */; };
+		ABB90AC32DF7288D007FDDEB /* Simulcast.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ABB90AC22DF7288D007FDDEB /* Simulcast.storyboard */; };
+		ABB90AC72DF728A0007FDDEB /* Multipath.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ABB90AC62DF728A0007FDDEB /* Multipath.storyboard */; };
 		C2C764A5CC78FAC392BE5584 /* Pods_Agora_ScreenShare_Extension_OC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27A6720DD8507EB2C642C0FD /* Pods_Agora_ScreenShare_Extension_OC.framework */; };
 		DD8A1F7F2CA50749001CEC51 /* AgoraPCMPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8A1F7E2CA50749001CEC51 /* AgoraPCMPlayer.m */; };
 		E70ADDF12A5D004F009947CF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E70ADDF02A5D004F009947CF /* AppDelegate.m */; };
@@ -180,6 +184,14 @@
 		6D0773F7A8BA9611CF846635 /* Pods_SimpleFilter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SimpleFilter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E437BC9AAAA1A6431B353C9 /* Pods-APIExample-OC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIExample-OC.debug.xcconfig"; path = "Target Support Files/Pods-APIExample-OC/Pods-APIExample-OC.debug.xcconfig"; sourceTree = "<group>"; };
 		A0C8D95022D679A807C9CA1F /* Pods-APIExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIExample.debug.xcconfig"; path = "Target Support Files/Pods-APIExample/Pods-APIExample.debug.xcconfig"; sourceTree = "<group>"; };
+		ABB90AAB2DF6C95A007FDDEB /* Multipath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Multipath.h; sourceTree = "<group>"; };
+		ABB90AAC2DF6C95A007FDDEB /* Multipath.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Multipath.m; sourceTree = "<group>"; };
+		ABB90AAE2DF6C976007FDDEB /* Simulcast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Simulcast.h; sourceTree = "<group>"; };
+		ABB90AAF2DF6C976007FDDEB /* Simulcast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Simulcast.m; sourceTree = "<group>"; };
+		ABB90AC12DF7288D007FDDEB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Simulcast.storyboard; sourceTree = "<group>"; };
+		ABB90AC52DF728A0007FDDEB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Multipath.storyboard; sourceTree = "<group>"; };
+		ABB90ACA2DF728F8007FDDEB /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Multipath.strings"; sourceTree = "<group>"; };
+		ABB90ACC2DF7293C007FDDEB /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Simulcast.strings"; sourceTree = "<group>"; };
 		B653B1910F3D2DB664FFCA69 /* Pods-Agora-ScreenShare-Extension-OC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agora-ScreenShare-Extension-OC.debug.xcconfig"; path = "Target Support Files/Pods-Agora-ScreenShare-Extension-OC/Pods-Agora-ScreenShare-Extension-OC.debug.xcconfig"; sourceTree = "<group>"; };
 		BBBCB16091148F518866D952 /* Pods-SimpleFilter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimpleFilter.release.xcconfig"; path = "Target Support Files/Pods-SimpleFilter/Pods-SimpleFilter.release.xcconfig"; sourceTree = "<group>"; };
 		C4F0E8C20AFE260912A60198 /* Pods-Agora-ScreenShare-Extension-OC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agora-ScreenShare-Extension-OC.release.xcconfig"; path = "Target Support Files/Pods-Agora-ScreenShare-Extension-OC/Pods-Agora-ScreenShare-Extension-OC.release.xcconfig"; sourceTree = "<group>"; };
@@ -411,6 +423,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		ABB90A9E2DF6C673007FDDEB /* Multipath */ = {
+			isa = PBXGroup;
+			children = (
+				ABB90AAB2DF6C95A007FDDEB /* Multipath.h */,
+				ABB90AAC2DF6C95A007FDDEB /* Multipath.m */,
+				ABB90AC62DF728A0007FDDEB /* Multipath.storyboard */,
+			);
+			path = Multipath;
+			sourceTree = "<group>";
+		};
+		ABB90AA42DF6C673007FDDEB /* Simulcast */ = {
+			isa = PBXGroup;
+			children = (
+				ABB90AAE2DF6C976007FDDEB /* Simulcast.h */,
+				ABB90AAF2DF6C976007FDDEB /* Simulcast.m */,
+				ABB90AC22DF7288D007FDDEB /* Simulcast.storyboard */,
+			);
+			path = Simulcast;
+			sourceTree = "<group>";
+		};
 		E70ADDE32A5D004F009947CF = {
 			isa = PBXGroup;
 			children = (
@@ -477,6 +509,8 @@
 		E70ADE0A2A5D009D009947CF /* Advanced */ = {
 			isa = PBXGroup;
 			children = (
+				ABB90A9E2DF6C673007FDDEB /* Multipath */,
+				ABB90AA42DF6C673007FDDEB /* Simulcast */,
 				F73478812DE85D9A0030C0CE /* AgoraBeauty */,
 				E72F62072A78B31B00C963D2 /* MutliCamera */,
 				E72F62012A77A63D00C963D2 /* ContentInspect */,
@@ -1140,6 +1174,7 @@
 				E72F61832A70C71200C963D2 /* JoinMultiChannel.storyboard in Resources */,
 				E70ADE4E2A5E57FF009947CF /* JoinChannelAudio.storyboard in Resources */,
 				E70ADE142A5D026E009947CF /* audioeffect.mp3 in Resources */,
+				ABB90AC32DF7288D007FDDEB /* Simulcast.storyboard in Resources */,
 				E76347D62AB2E769005D130F /* ContentInspect.storyboard in Resources */,
 				E72F61A72A710B1500C963D2 /* MediaPlayer.storyboard in Resources */,
 				E7361F332A6E4C8A00925BD6 /* CustomVideoSourcePush.storyboard in Resources */,
@@ -1158,6 +1193,7 @@
 				E72F61AF2A72179700C963D2 /* ScreenShare.storyboard in Resources */,
 				E7361F512A6E5B3700925BD6 /* CustomVideoRender.storyboard in Resources */,
 				E70ADDFC2A5D0050009947CF /* Assets.xcassets in Resources */,
+				ABB90AC72DF728A0007FDDEB /* Multipath.storyboard in Resources */,
 				E70ADE682A5FAAEB009947CF /* Localizable.strings in Resources */,
 				E72F61FE2A778B1400C963D2 /* SpatialAudio.storyboard in Resources */,
 				E70ADE362A5D41C9009947CF /* VideoView.xib in Resources */,
@@ -1288,6 +1324,7 @@
 				E7361F452A6E4CF500925BD6 /* AgoraSampleBufferRender.m in Sources */,
 				E70ADE292A5D0A15009947CF /* KeyCenter.m in Sources */,
 				E70ADE312A5D35BA009947CF /* BaseViewController.m in Sources */,
+				ABB90AAD2DF6C95A007FDDEB /* Multipath.m in Sources */,
 				E70ADEE22A6A7177009947CF /* CustomAudioRender.m in Sources */,
 				E7361F482A6E4CF500925BD6 /* CircularBuffer.c in Sources */,
 				E72F61DB2A7258F800C963D2 /* VideoProcess.m in Sources */,
@@ -1304,6 +1341,7 @@
 				E70ADE402A5D4D05009947CF /* JSONObject.swift in Sources */,
 				E70ADEEE2A6A728E009947CF /* UIView+CSshortFrame.m in Sources */,
 				E7361F5E2A6E60B100925BD6 /* RawVideoData.m in Sources */,
+				ABB90AB02DF6C976007FDDEB /* Simulcast.m in Sources */,
 				E70ADE4F2A5E57FF009947CF /* JoinChannelAudio.m in Sources */,
 				E7361F422A6E4CF500925BD6 /* AgoraPictureInPictureController.m in Sources */,
 				E70ADE7B2A60F214009947CF /* PickerView.swift in Sources */,
@@ -1381,6 +1419,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		ABB90AC22DF7288D007FDDEB /* Simulcast.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				ABB90AC12DF7288D007FDDEB /* Base */,
+				ABB90ACC2DF7293C007FDDEB /* zh-Hans */,
+			);
+			name = Simulcast.storyboard;
+			sourceTree = "<group>";
+		};
+		ABB90AC62DF728A0007FDDEB /* Multipath.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				ABB90AC52DF728A0007FDDEB /* Base */,
+				ABB90ACA2DF728F8007FDDEB /* zh-Hans */,
+			);
+			name = Multipath.storyboard;
+			sourceTree = "<group>";
+		};
 		E70ADDF82A5D004F009947CF /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

@@ -14,6 +14,7 @@ struct StatisticsInfo {
         var channelStats = AgoraChannelStats()
         var videoStats = AgoraRtcLocalVideoStats()
         var audioStats = AgoraRtcLocalAudioStats()
+        var multipathStats = AgoraMultipathStats()
     }
     
     struct RemoteInfo {
@@ -44,6 +45,20 @@ struct StatisticsInfo {
     
     init(type: StatisticsType) {
         self.type = type
+    }
+    
+    mutating func updateMultipathStats(_ stats: AgoraMultipathStats) {
+        guard self.type.isLocal else {
+            return
+        }
+        switch type {
+        case .local(let info):
+            var new = info
+            new.multipathStats = stats
+            self.type = .local(new)
+        default:
+            break
+        }
     }
     
     mutating func updateChannelStats(_ stats: AgoraChannelStats) {
@@ -152,6 +167,7 @@ struct StatisticsInfo {
 //        let aSendLoss = "ASend Loss: \(info.audioStats.txPacketLossRate)%"
         let vSendLoss = "VSend Loss: MISSING%"
         let aSendLoss = "ASend Loss: MISSING%"
+        let multipath = "Multi Path: \(info.multipathStats.activePathNum)"
         
         let firstFrame = "firstFrameTime: \(firstFrameElapsedTime)"
         
@@ -162,8 +178,8 @@ struct StatisticsInfo {
             return array.joined(separator: "\n")
         }
         var array = firstFrameElapsedTime > 0
-        ? [localUid, firstFrame, dimensionFps, lastmile, videoSend, audioSend, cpu, vSendLoss, aSendLoss]
-        : [localUid, dimensionFps, lastmile, videoSend, audioSend, cpu, vSendLoss, aSendLoss]
+        ? [localUid, firstFrame, dimensionFps, lastmile, videoSend, audioSend, cpu, vSendLoss, aSendLoss, multipath]
+        : [localUid, dimensionFps, lastmile, videoSend, audioSend, cpu, vSendLoss, aSendLoss, multipath]
         if let metaInfo = metaInfo {
             array.append(metaInfo)
         }
