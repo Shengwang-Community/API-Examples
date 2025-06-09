@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Agora API Example</string>
+    <string name="app_name">Shengwang API Example</string>
     <string name="inject">Inject</string>
     <string name="stopinject">StopInject</string>
     <string name="publish">Publish</string>

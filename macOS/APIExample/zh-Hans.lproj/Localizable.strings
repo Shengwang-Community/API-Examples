@@ -175,6 +175,7 @@
 "Simple Filter" = "插件系统";
 "Enable Grey" = "开启去色";
 "Video Process" = "视频增强";
+"Agora Beauty" = "声网美颜";
 "Low light Enhancement" = "暗光增强";
 "Video Denoise" = "视频降噪";
 "Color Enhancement" = "色彩增强";
@@ -254,6 +255,7 @@
 "Eyeshadow Color" = "眼影颜色";
 "Eyeshadow Strength" = "眼影强度";
 "Pupil Style" = "瞳孔类型";
+"Facial Style" = "面部类型";
 "Pupil Color" = "瞳孔颜色";
 "Pupil Strength" = "瞳孔强度";
 "Blush Style" = "腮红类型";
@@ -261,11 +263,17 @@
 "Blush Strength" = "腮红强度";
 "Lip Style" = "唇彩类型";
 "Lip Color" = "唇彩颜色";
+"Wocan" = "卧蚕";
+"Wocan Strength" = "卧蚕强度";
 "Lip Strength" = "唇彩强度";
 
 "Eyebrow Style Off" = "关闭";
 "Eyebrow Style Type 1" = "类型1";
 "Eyebrow Style Type 2" = "类型2";
+"Eyebrow Style Type 3" = "类型3";
+"Eyebrow Style Type 4" = "类型4";
+"Eyebrow Style Type 5" = "类型5";
+"Eyebrow Style Type 6" = "类型5";
 
 "Eyebrow Color None" = "无";
 "Eyebrow Color Black" = "黑色";
@@ -301,3 +309,5 @@
 
 "Play" = "播放";
 "Stop" = "停止";
+
+"default makeup style" = "学妹妆";

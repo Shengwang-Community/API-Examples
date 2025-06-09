@@ -129,6 +129,10 @@
 		4C9309EC2CBA95530085EFF9 /* SpatialAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9309EA2CBA95530085EFF9 /* SpatialAudio.swift */; };
 		4C9309ED2CBA95530085EFF9 /* SpatialAudioRTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9309EB2CBA95530085EFF9 /* SpatialAudioRTC.swift */; };
 		B47E9CD9BABE21C5B5B1ED09 /* Pods_Agora_ScreenShare_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7585632841723316B616C1AB /* Pods_Agora_ScreenShare_Extension.framework */; };
+		F73479152DF4A9910030C0CE /* AgoraBeautyRTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F73479142DF4A9910030C0CE /* AgoraBeautyRTC.swift */; };
+		F73479162DF4A9910030C0CE /* AgoraBeauty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F73479132DF4A9910030C0CE /* AgoraBeauty.swift */; };
+		F73479182DF4AABF0030C0CE /* AgoraBeautyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F73479172DF4AABF0030C0CE /* AgoraBeautyManager.swift */; };
+		F734791A2DF4AB890030C0CE /* beauty_material.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F73479192DF4AB890030C0CE /* beauty_material.bundle */; };
 		F73B016B2CBA1AC60077B7D2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F73B016A2CBA1AC60077B7D2 /* Accelerate.framework */; };
 		F73B016C2CBA1ADE0077B7D2 /* JSONObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9306B32CB961150085EFF9 /* JSONObject.swift */; };
 		F73B016D2CBA1AE40077B7D2 /* KeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9306E12CB961150085EFF9 /* KeyCenter.swift */; };
@@ -308,6 +312,10 @@
 		7585632841723316B616C1AB /* Pods_Agora_ScreenShare_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Agora_ScreenShare_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7DAC714DCF967FD618502DC /* Pods-APIExample-SwiftUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIExample-SwiftUI.debug.xcconfig"; path = "Target Support Files/Pods-APIExample-SwiftUI/Pods-APIExample-SwiftUI.debug.xcconfig"; sourceTree = "<group>"; };
 		E633FB65347D029555FE8BDB /* Pods_APIExample_SwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_APIExample_SwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F73479132DF4A9910030C0CE /* AgoraBeauty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeauty.swift; sourceTree = "<group>"; };
+		F73479142DF4A9910030C0CE /* AgoraBeautyRTC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeautyRTC.swift; sourceTree = "<group>"; };
+		F73479172DF4AABF0030C0CE /* AgoraBeautyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeautyManager.swift; sourceTree = "<group>"; };
+		F73479192DF4AB890030C0CE /* beauty_material.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = beauty_material.bundle; sourceTree = "<group>"; };
 		F73B016A2CBA1AC60077B7D2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		F73B018C2CC10E240077B7D2 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		F89807E42BC51A25F44D3692 /* Pods-Agora-ScreenShare-Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agora-ScreenShare-Extension.debug.xcconfig"; path = "Target Support Files/Pods-Agora-ScreenShare-Extension/Pods-Agora-ScreenShare-Extension.debug.xcconfig"; sourceTree = "<group>"; };
@@ -385,6 +393,7 @@
 		4C93069C2CB961150085EFF9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F73479192DF4AB890030C0CE /* beauty_material.bundle */,
 				4C93069D2CB961150085EFF9 /* output.raw */,
 				4C93069E2CB961150085EFF9 /* sample.mov */,
 				4C93069F2CB961150085EFF9 /* audioeffect.mp3 */,
@@ -608,6 +617,7 @@
 		4C9308122CBA7F9B0085EFF9 /* Advanced */ = {
 			isa = PBXGroup;
 			children = (
+				F73479122DF4A9770030C0CE /* AgoraBeauty */,
 				4C9309E92CBA95530085EFF9 /* SpatialAudio */,
 				4C9309572CBA91520085EFF9 /* ARKit */,
 				4C9309A82CBA91530085EFF9 /* AudioMixing */,
@@ -922,6 +932,16 @@
 			path = SpatialAudio;
 			sourceTree = "<group>";
 		};
+		F73479122DF4A9770030C0CE /* AgoraBeauty */ = {
+			isa = PBXGroup;
+			children = (
+				F73479132DF4A9910030C0CE /* AgoraBeauty.swift */,
+				F73479172DF4AABF0030C0CE /* AgoraBeautyManager.swift */,
+				F73479142DF4A9910030C0CE /* AgoraBeautyRTC.swift */,
+			);
+			path = AgoraBeauty;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1006,6 +1026,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F734791A2DF4AB890030C0CE /* beauty_material.bundle in Resources */,
 				4C9307532CB961150085EFF9 /* sample.mov in Resources */,
 				4C93075C2CB961150085EFF9 /* Preview Assets.xcassets in Resources */,
 				4C9307552CB961150085EFF9 /* agora-logo.png in Resources */,
@@ -1121,6 +1142,7 @@
 				4C9307772CB961150085EFF9 /* UIView+CSshortFrame.m in Sources */,
 				4C9309C92CBA91530085EFF9 /* PixelBufferRenderView.swift in Sources */,
 				4C93075D2CB961150085EFF9 /* AgoraCustomEncryption.mm in Sources */,
+				F73479182DF4AABF0030C0CE /* AgoraBeautyManager.swift in Sources */,
 				4C9307652CB961150085EFF9 /* AgoraCameraSourcePush.swift in Sources */,
 				4C9309CC2CBA91530085EFF9 /* CustomRenderExample.swift in Sources */,
 				4C9308012CBA6F8D0085EFF9 /* JoinChannelVideoRTC.swift in Sources */,
@@ -1129,6 +1151,8 @@
 				4C93080B2CBA712F0085EFF9 /* JoinChannelVideoTokenRTC.swift in Sources */,
 				4C9307702CB961150085EFF9 /* Util.swift in Sources */,
 				4C9309E52CBA91530085EFF9 /* MediaPlayerRTC.swift in Sources */,
+				F73479152DF4A9910030C0CE /* AgoraBeautyRTC.swift in Sources */,
+				F73479162DF4A9910030C0CE /* AgoraBeauty.swift in Sources */,
 				4C9309B12CBA91530085EFF9 /* ARKit.swift in Sources */,
 				4C9309B52CBA91530085EFF9 /* MutliCamera.swift in Sources */,
 				4C9308022CBA6F8D0085EFF9 /* JoinChannelVideo.swift in Sources */,
