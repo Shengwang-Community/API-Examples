@@ -1,0 +1,138 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "CnA-Yb-o6A.segmentTitles[0]" : {
+      "comment" : "Class = \"UISegmentedControl\"; CnA-Yb-o6A.segmentTitles[0] = \"dynamic\"; ObjectID = \"CnA-Yb-o6A\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "dynamic"
+          }
+        }
+      }
+    },
+    "CnA-Yb-o6A.segmentTitles[1]" : {
+      "comment" : "Class = \"UISegmentedControl\"; CnA-Yb-o6A.segmentTitles[1] = \"duplicate\"; ObjectID = \"CnA-Yb-o6A\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "duplicate"
+          }
+        }
+      }
+    },
+    "CQP-o3-nsl.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Mode\"; ObjectID = \"CQP-o3-nsl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mode"
+          }
+        }
+      }
+    },
+    "G2E-c3-kzq.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Role\"; ObjectID = \"G2E-c3-kzq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Role"
+          }
+        }
+      }
+    },
+    "mcr-bl-bnc.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"--\"; ObjectID = \"mcr-bl-bnc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "--"
+          }
+        }
+      }
+    },
+    "Nh9-6c-VAa.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Mode\"; ObjectID = \"Nh9-6c-VAa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mode"
+          }
+        }
+      }
+    },
+    "sd1-uc-igv.normalTitle" : {
+      "comment" : "Class = \"UIButton\"; normalTitle = \"Join\"; ObjectID = \"sd1-uc-igv\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Join"
+          }
+        }
+      }
+    },
+    "vn7-ux-djR.segmentTitles[0]" : {
+      "comment" : "Class = \"UISegmentedControl\"; vn7-ux-djR.segmentTitles[0] = \"broadcaster\"; ObjectID = \"vn7-ux-djR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "broadcaster"
+          }
+        }
+      }
+    },
+    "vn7-ux-djR.segmentTitles[1]" : {
+      "comment" : "Class = \"UISegmentedControl\"; vn7-ux-djR.segmentTitles[1] = \"audience\"; ObjectID = \"vn7-ux-djR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "audience"
+          }
+        }
+      }
+    },
+    "VTF-4P-n1I.placeholder" : {
+      "comment" : "Class = \"UITextField\"; placeholder = \"Enter channel name\"; ObjectID = \"VTF-4P-n1I\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enter channel name"
+          }
+        }
+      }
+    },
+    "yx2-9h-YtM.text" : {
+      "comment" : "Class = \"UILabel\"; text = \"Enable\"; ObjectID = \"yx2-9h-YtM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
