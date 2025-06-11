@@ -123,6 +123,7 @@
 "Broadcaster" = "主播";
 "Audience" = "观众";
 "Pick Role" = "选择角色";
+"Role" = "角色";
 "Create Data Stream" = "创建数据流";
 "Raw Audio Data" = "音频裸数据";
 "Group Video Chat" = "多人音视频通话";
@@ -182,6 +183,8 @@
 "BALANCED" = "(默认)均衡降噪模式";
 "ULTRALOWLATENCY" = "低延时强降噪模式";
 "Face Capture" = "面捕数据";
+"Multipath" = "网络传输高级功能";
+"Simulcast" = "同源多流";
 "Please contact Agora customer service to obtain a face capture certificate" = "请联系声网客服获取面捕证书";
 "Audio Scenario" = "音频使用场景";
 "Audio Profile" = "音频参数配置";

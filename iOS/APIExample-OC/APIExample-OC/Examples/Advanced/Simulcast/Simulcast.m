@@ -23,6 +23,7 @@
     
     UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"Simulcast" bundle:nil];
     BaseViewController *newViewController = [storyBoard instantiateViewControllerWithIdentifier:@"Simulcast"];
+    newViewController.title = self.textField.text;
     newViewController.configs = @{
         @"channelName": self.textField.text,
         @"role_index": @(self.roleSegment.selectedSegmentIndex)
@@ -43,11 +44,14 @@
 
 @property (weak, nonatomic) IBOutlet UIView *hostSettingContainer;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *audienceLayerSegment;
-@property (weak, nonatomic) IBOutlet UILabel *tipsLabel;
+
 @property (weak, nonatomic) IBOutlet UISwitch *layer1Switch;
 @property (weak, nonatomic) IBOutlet UISwitch *layer2Switch;
 @property (weak, nonatomic) IBOutlet UISwitch *layer3Switch;
 @property (weak, nonatomic) IBOutlet UISwitch *layer4Switch;
+
+@property (nonatomic, strong) AgoraSimulcastConfig *simulcastConfig;
+
 @end
 
 @implementation SimulcastViewController
@@ -83,6 +87,7 @@
     config.appId = KeyCenter.AppId;
     config.channelProfile = AgoraChannelProfileLiveBroadcasting;
     
+    self.simulcastConfig = [[AgoraSimulcastConfig alloc] init];
     self.agoraKit = [AgoraRtcEngineKit sharedEngineWithConfig:config delegate:self];
     
     // set up view
@@ -96,8 +101,8 @@
     
     if (roleIndex == 0) {
         // Set video encoder configuration
-        AgoraVideoEncoderConfiguration *videoConfig = [[AgoraVideoEncoderConfiguration alloc] initWithSize:CGSizeMake(640, 360)
-                                                                                                 frameRate:AgoraVideoFrameRateFps15
+        AgoraVideoEncoderConfiguration *videoConfig = [[AgoraVideoEncoderConfiguration alloc] initWithSize:CGSizeMake(1280, 720)
+                                                                                                 frameRate:AgoraVideoFrameRateFps30
                                                                                                    bitrate:AgoraVideoBitrateStandard
                                                                                            orientationMode:AgoraVideoOutputOrientationModeAdaptative
                                                                                                 mirrorMode:AgoraVideoMirrorModeAuto];
@@ -114,7 +119,7 @@
     }
     
     // Set audio route to speaker
-    [self.agoraKit setEnableSpeakerphone:YES];
+    [self.agoraKit setDefaultAudioRouteToSpeakerphone:YES];
     
     // start joining channel
     AgoraRtcChannelMediaOptions *options = [[AgoraRtcChannelMediaOptions alloc] init];
@@ -127,7 +132,7 @@
     [[NetworkManager shared] generateTokenWithChannelName:channelName uid:0 success:^(NSString * _Nullable token) {
         int result = [self.agoraKit joinChannelByToken:token channelId:channelName uid:0 mediaOptions:options joinSuccess:nil];
         if (result != 0) {
-            NSLog(@"joinChannel call failed: %d, please check your params", result);
+            [self showAlertWithTitle:@"Error" message:[NSString stringWithFormat:@"Join channel failed: %d, please check your params", result]];
         }
     }];
 }
@@ -150,7 +155,18 @@
         sender.on = !sender.isOn;
         return;
     }
-    [self setupSimulcast];
+    if (sender == self.layer1Switch) {
+        self.simulcastConfig.configs[AgoraStreamLayer1].enable = sender.isOn;
+    } else if (sender == self.layer2Switch) {
+        self.simulcastConfig.configs[AgoraStreamLayer2].enable = sender.isOn;
+    } else if (sender == self.layer3Switch) {
+        self.simulcastConfig.configs[AgoraStreamLayer3].enable = sender.isOn;
+    } else if (sender == self.layer4Switch) {
+        self.simulcastConfig.configs[AgoraStreamLayer4].enable = sender.isOn;
+    }
+    
+    int ret = [self.agoraKit setSimulcastConfig:self.simulcastConfig];
+    [LogUtil log:[NSString stringWithFormat:@"updateSimulcast: %d", ret] level:LogLevelInfo];
 }
 
 - (IBAction)onClickLayerSegment:(UISegmentedControl *)sender {
@@ -158,64 +174,69 @@
         [ToastView showWithText:@"No remote user".localized postion:ToastViewPostionCenter];
         return;
     }
-    AgoraVideoStreamType layer = (AgoraVideoStreamType)sender.selectedSegmentIndex;
-    int ret = [self.agoraKit setRemoteVideoStream:self.remoteUid type:layer];
-    [LogUtil log:[NSString stringWithFormat:@"set remote layer:%ld, ret: %d", (long)layer, ret] level:LogLevelInfo];
+    
+    AgoraVideoStreamType type;
+    switch (sender.selectedSegmentIndex) {
+        case 0:
+            type = AgoraVideoStreamTypeLayer1;
+            break;
+        case 1:
+            type = AgoraVideoStreamTypeLayer2;
+            break;
+        case 2:
+            type = AgoraVideoStreamTypeLayer3;
+            break;
+        case 3:
+            type = AgoraVideoStreamTypeLayer4;
+            break;
+        default:
+            type = AgoraVideoStreamTypeLayer1;
+            break;
+    }
+    
+    int ret = [self.agoraKit setRemoteVideoStream:self.remoteUid type:type];
+    [LogUtil log:[NSString stringWithFormat:@"set remote uid: %lu, layer:%ld, ret: %d", (unsigned long)self.remoteUid, (long)type, ret] level:LogLevelInfo];
 }
 
 - (void)setupSimulcast {
-    AgoraSimulcastConfig *conf = [[AgoraSimulcastConfig alloc] init];
+    self.simulcastConfig.configs[AgoraStreamLayer1].dimensions = CGSizeMake(1280, 720);
+    self.simulcastConfig.configs[AgoraStreamLayer1].framerate = 30;
+    self.simulcastConfig.configs[AgoraStreamLayer1].enable = self.layer1Switch.isOn;
     
-    if (self.layer1Switch.isOn) {
-        conf.configs[AgoraStreamLayer1].dimensions = CGSizeMake(1280, 720);
-        conf.configs[AgoraStreamLayer1].framerate = 30;
-        conf.configs[AgoraStreamLayer1].enable = YES;
-    } else {
-        conf.configs[AgoraStreamLayer1].enable = NO;
-    }
+    self.simulcastConfig.configs[AgoraStreamLayer2].dimensions = CGSizeMake(960, 540);
+    self.simulcastConfig.configs[AgoraStreamLayer2].framerate = 15;
+    self.simulcastConfig.configs[AgoraStreamLayer2].enable = self.layer2Switch.isOn;
     
-    if (self.layer2Switch.isOn) {
-        conf.configs[AgoraStreamLayer2].dimensions = CGSizeMake(960, 540);
-        conf.configs[AgoraStreamLayer2].framerate = 15;
-        conf.configs[AgoraStreamLayer2].enable = YES;
-    } else {
-        conf.configs[AgoraStreamLayer2].enable = NO;
-    }
+    self.simulcastConfig.configs[AgoraStreamLayer3].dimensions = CGSizeMake(640, 360);
+    self.simulcastConfig.configs[AgoraStreamLayer3].framerate = 15;
+    self.simulcastConfig.configs[AgoraStreamLayer3].enable = self.layer3Switch.isOn;
     
-    if (self.layer3Switch.isOn) {
-        conf.configs[AgoraStreamLayer3].dimensions = CGSizeMake(640, 360);
-        conf.configs[AgoraStreamLayer3].framerate = 15;
-        conf.configs[AgoraStreamLayer3].enable = YES;
-    } else {
-        conf.configs[AgoraStreamLayer3].enable = NO;
-    }
+    self.simulcastConfig.configs[AgoraStreamLayer4].dimensions = CGSizeMake(480, 270);
+    self.simulcastConfig.configs[AgoraStreamLayer4].framerate = 15;
+    self.simulcastConfig.configs[AgoraStreamLayer4].enable = self.layer4Switch.isOn;
     
-    if (self.layer4Switch.isOn) {
-        conf.configs[AgoraStreamLayer4].dimensions = CGSizeMake(480, 270);
-        conf.configs[AgoraStreamLayer4].framerate = 15;
-        conf.configs[AgoraStreamLayer4].enable = YES;
-    } else {
-        conf.configs[AgoraStreamLayer4].enable = NO;
-    }
-    
-    int ret = [self.agoraKit setSimulcastConfig:conf];
+    int ret = [self.agoraKit setSimulcastConfig:self.simulcastConfig];
     [LogUtil log:[NSString stringWithFormat:@"setSimulcastConfig: %d", ret] level:LogLevelInfo];
 }
 
 #pragma mark - AgoraRtcEngineDelegate
 
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurWarning:(AgoraWarningCode)warningCode {
+    [LogUtil log:[NSString stringWithFormat:@"Warning: %ld", (long)warningCode] level:LogLevelError];
+}
+
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOccurError:(AgoraErrorCode)errorCode {
-    [LogUtil log:[NSString stringWithFormat:@"Error %ld occur",(long)errorCode] level:LogLevelError];
+    [LogUtil log:[NSString stringWithFormat:@"Error: %ld", (long)errorCode] level:LogLevelError];
+    [self showAlertWithTitle:@"Error" message:[NSString stringWithFormat:@"Error occurred: %ld", (long)errorCode]];
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didJoinChannel:(NSString *)channel withUid:(NSUInteger)uid elapsed:(NSInteger)elapsed {
     self.isJoined = YES;
     [LogUtil log:[NSString stringWithFormat:@"Join %@ with uid %lu elapsed %ldms", channel, (unsigned long)uid, (long)elapsed] level:LogLevelInfo];
-    self.localView.uid = uid;
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didJoinedOfUid:(NSUInteger)uid elapsed:(NSInteger)elapsed {
-    [LogUtil log:[NSString stringWithFormat:@"remote user join: %lu %ldms", (unsigned long)uid, (long)elapsed] level:LogLevelInfo];
+    [LogUtil log:[NSString stringWithFormat:@"Remote user joined: %lu %ldms", (unsigned long)uid, (long)elapsed] level:LogLevelInfo];
     
     AgoraRtcVideoCanvas *videoCanvas = [[AgoraRtcVideoCanvas alloc] init];
     videoCanvas.uid = uid;
@@ -223,19 +244,25 @@
     videoCanvas.renderMode = AgoraVideoRenderModeHidden;
     [self.agoraKit setupRemoteVideo:videoCanvas];
     
-    int ret = [self.agoraKit setRemoteVideoStream:uid type:AgoraVideoStreamTypeHigh];
+    int ret = [self.agoraKit setRemoteVideoStream:uid type:AgoraVideoStreamTypeLayer1];
     [LogUtil log:[NSString stringWithFormat:@"set remote layer, ret: %d", ret] level:LogLevelInfo];
     
     self.remoteUid = uid;
 }
 
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didOfflineOfUid:(NSUInteger)uid reason:(AgoraUserOfflineReason)reason {
+    [LogUtil log:[NSString stringWithFormat:@"Remote user left: %lu reason %ld", (unsigned long)uid, (long)reason] level:LogLevelInfo];
+    
     AgoraRtcVideoCanvas *videoCanvas = [[AgoraRtcVideoCanvas alloc] init];
     videoCanvas.uid = uid;
     videoCanvas.view = nil;
+    videoCanvas.renderMode = AgoraVideoRenderModeHidden;
     [self.agoraKit setupRemoteVideo:videoCanvas];
     self.remoteUid = 0;
-    [LogUtil log:[NSString stringWithFormat:@"remote user left: %lu", (unsigned long)uid] level:LogLevelInfo];
+}
+
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine connectionChangedToState:(AgoraConnectionState)state reason:(AgoraConnectionChangedReason)reason {
+    [LogUtil log:[NSString stringWithFormat:@"Connection state changed: %ld %ld", (long)state, (long)reason] level:LogLevelInfo];
 }
 
 @end 

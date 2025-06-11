@@ -34,7 +34,8 @@
 "Screen Share" = "屏幕共享";
 "Media Channel Relay" = "跨频道流转发";
 "URL Streaming(RTE Player)"="URL拉流(RTE Player)";
-
+"Multipath" = "网络传输高级功能";
+"Simulcast" = "同源多流";
 "Super Resolution" = "超级分辨率";
 "Set Resolution" = "设置视频分辨率";
 "Set Fps" = "设置视频帧率";
