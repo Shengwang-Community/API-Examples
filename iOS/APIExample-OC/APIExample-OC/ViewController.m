@@ -79,8 +79,8 @@
         [[MenuItem alloc]initWithName:@"Spatial Audio".localized storyboard:@"SpatialAudio" controller:@""],
         [[MenuItem alloc]initWithName:@"Content Inspect".localized storyboard:@"ContentInspect" controller:@""],
         [[MenuItem alloc]initWithName:@"Mutli Camera(iOS13.0+)".localized storyboard:@"MutliCamera" controller:@""],
+        [[MenuItem alloc]initWithName:@"Simulcast".localized storyboard:@"Simulcast" controller:@""],
         [[MenuItem alloc]initWithName:@"Multipath".localized storyboard:@"Multipath" controller:@""],
-        [[MenuItem alloc]initWithName:@"Simulcast".localized storyboard:@"Simulcast" controller:@""]
     ]];
     [array addObject:anvancedSection];
     

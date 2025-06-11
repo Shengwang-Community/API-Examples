@@ -1157,6 +1157,8 @@
 		A75A56D724A0603000D0089E /* Advanced */ = {
 			isa = PBXGroup;
 			children = (
+				ABB90A7E2DF1801C007FDDEB /* Multipath */,
+				ABB90A902DF6800F007FDDEB /* Simulcast */,
 				F73478772DE5A0510030C0CE /* AgoraBeauty */,
 				DDFD50242C205BDF0050B344 /* TransparentRender */,
 				E7883AE32B074746003CCF44 /* FaceCapture */,
@@ -1197,8 +1199,6 @@
 				67CB2F0927EB312200CB19D2 /* SpatialAudio */,
 				67450167282D5C7A00E79F2F /* ContentInspect */,
 				DDCED0332CBAA093004B1C9D /* RtePlayer */,
-				ABB90A7E2DF1801C007FDDEB /* Multipath */,
-				ABB90A902DF6800F007FDDEB /* Simulcast */,
 			);
 			path = Advanced;
 			sourceTree = "<group>";
