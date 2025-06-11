@@ -7,6 +7,7 @@
 import UIKit
 import AVKit
 import AgoraRtcKit
+import SnapKit
 
 @available(iOS 15.0, *)
 class PixelBufferPIPViewController: PIPBaseViewController {
