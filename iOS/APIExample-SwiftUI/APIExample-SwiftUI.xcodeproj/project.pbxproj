@@ -128,6 +128,10 @@
 		4C9309E82CBA91530085EFF9 /* AudioMixing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9309AA2CBA91530085EFF9 /* AudioMixing.swift */; };
 		4C9309EC2CBA95530085EFF9 /* SpatialAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9309EA2CBA95530085EFF9 /* SpatialAudio.swift */; };
 		4C9309ED2CBA95530085EFF9 /* SpatialAudioRTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9309EB2CBA95530085EFF9 /* SpatialAudioRTC.swift */; };
+		ABB90ADD2DF81B78007FDDEB /* Simulcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB90ADB2DF81B78007FDDEB /* Simulcast.swift */; };
+		ABB90ADE2DF81B78007FDDEB /* Multipath.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB90AD52DF81B78007FDDEB /* Multipath.swift */; };
+		ABB90AE42DF8218D007FDDEB /* MultipathRTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB90AE32DF8218D007FDDEB /* MultipathRTC.swift */; };
+		ABB90AE62DF82199007FDDEB /* SimulcastRTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB90AE52DF82199007FDDEB /* SimulcastRTC.swift */; };
 		B47E9CD9BABE21C5B5B1ED09 /* Pods_Agora_ScreenShare_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7585632841723316B616C1AB /* Pods_Agora_ScreenShare_Extension.framework */; };
 		F73479152DF4A9910030C0CE /* AgoraBeautyRTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F73479142DF4A9910030C0CE /* AgoraBeautyRTC.swift */; };
 		F73479162DF4A9910030C0CE /* AgoraBeauty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F73479132DF4A9910030C0CE /* AgoraBeauty.swift */; };
@@ -310,6 +314,10 @@
 		4C9309EA2CBA95530085EFF9 /* SpatialAudio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpatialAudio.swift; sourceTree = "<group>"; };
 		4C9309EB2CBA95530085EFF9 /* SpatialAudioRTC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpatialAudioRTC.swift; sourceTree = "<group>"; };
 		7585632841723316B616C1AB /* Pods_Agora_ScreenShare_Extension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Agora_ScreenShare_Extension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ABB90AD52DF81B78007FDDEB /* Multipath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Multipath.swift; sourceTree = "<group>"; };
+		ABB90ADB2DF81B78007FDDEB /* Simulcast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simulcast.swift; sourceTree = "<group>"; };
+		ABB90AE32DF8218D007FDDEB /* MultipathRTC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipathRTC.swift; sourceTree = "<group>"; };
+		ABB90AE52DF82199007FDDEB /* SimulcastRTC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulcastRTC.swift; sourceTree = "<group>"; };
 		D7DAC714DCF967FD618502DC /* Pods-APIExample-SwiftUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIExample-SwiftUI.debug.xcconfig"; path = "Target Support Files/Pods-APIExample-SwiftUI/Pods-APIExample-SwiftUI.debug.xcconfig"; sourceTree = "<group>"; };
 		E633FB65347D029555FE8BDB /* Pods_APIExample_SwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_APIExample_SwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F73479132DF4A9910030C0CE /* AgoraBeauty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeauty.swift; sourceTree = "<group>"; };
@@ -617,6 +625,8 @@
 		4C9308122CBA7F9B0085EFF9 /* Advanced */ = {
 			isa = PBXGroup;
 			children = (
+				ABB90AD62DF81B78007FDDEB /* Multipath */,
+				ABB90ADC2DF81B78007FDDEB /* Simulcast */,
 				F73479122DF4A9770030C0CE /* AgoraBeauty */,
 				4C9309E92CBA95530085EFF9 /* SpatialAudio */,
 				4C9309572CBA91520085EFF9 /* ARKit */,
@@ -932,6 +942,24 @@
 			path = SpatialAudio;
 			sourceTree = "<group>";
 		};
+		ABB90AD62DF81B78007FDDEB /* Multipath */ = {
+			isa = PBXGroup;
+			children = (
+				ABB90AD52DF81B78007FDDEB /* Multipath.swift */,
+				ABB90AE32DF8218D007FDDEB /* MultipathRTC.swift */,
+			);
+			path = Multipath;
+			sourceTree = "<group>";
+		};
+		ABB90ADC2DF81B78007FDDEB /* Simulcast */ = {
+			isa = PBXGroup;
+			children = (
+				ABB90ADB2DF81B78007FDDEB /* Simulcast.swift */,
+				ABB90AE52DF82199007FDDEB /* SimulcastRTC.swift */,
+			);
+			path = Simulcast;
+			sourceTree = "<group>";
+		};
 		F73479122DF4A9770030C0CE /* AgoraBeauty */ = {
 			isa = PBXGroup;
 			children = (
@@ -954,7 +982,7 @@
 				4C9306862CB9607E0085EFF9 /* Frameworks */,
 				4C9306872CB9607E0085EFF9 /* Resources */,
 				4C9307F22CB9633A0085EFF9 /* Embed App Extensions */,
-				F07648240F807435A198F5E3 /* [CP] Embed Pods Frameworks */,
+				2E79DFE9C143DA9CA318EC49 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1009,6 +1037,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 4C9306802CB9607E0085EFF9;
 			productRefGroup = 4C93068A2CB9607E0085EFF9 /* Products */;
@@ -1052,6 +1081,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		2E79DFE9C143DA9CA318EC49 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-APIExample-SwiftUI/Pods-APIExample-SwiftUI-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-APIExample-SwiftUI/Pods-APIExample-SwiftUI-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-APIExample-SwiftUI/Pods-APIExample-SwiftUI-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		C9EAEDEF9EC186B75FAAF0E1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1096,23 +1142,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F07648240F807435A198F5E3 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-APIExample-SwiftUI/Pods-APIExample-SwiftUI-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-APIExample-SwiftUI/Pods-APIExample-SwiftUI-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-APIExample-SwiftUI/Pods-APIExample-SwiftUI-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1121,6 +1150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C93076A2CB961150085EFF9 /* CircularBuffer.c in Sources */,
+				ABB90AE42DF8218D007FDDEB /* MultipathRTC.swift in Sources */,
 				4C9309CA2CBA91530085EFF9 /* CustomRenderViewModel.swift in Sources */,
 				4C9309D52CBA91530085EFF9 /* AudioWaveformRTC.swift in Sources */,
 				4C9309CE2CBA91530085EFF9 /* VideoMetaDataRTC.swift in Sources */,
@@ -1192,8 +1222,11 @@
 				4C9309D02CBA91530085EFF9 /* RTMPStream.swift in Sources */,
 				4C9309E12CBA91530085EFF9 /* QuickSwitchChannelRTC.swift in Sources */,
 				4C9307BE2CB961160085EFF9 /* JoinChannelVideoRecorderRTC.swift in Sources */,
+				ABB90AE62DF82199007FDDEB /* SimulcastRTC.swift in Sources */,
 				4C9309BC2CBA91530085EFF9 /* CreateDataStreamRTC.swift in Sources */,
 				4C9307662CB961150085EFF9 /* AgoraMetalRender.swift in Sources */,
+				ABB90ADD2DF81B78007FDDEB /* Simulcast.swift in Sources */,
+				ABB90ADE2DF81B78007FDDEB /* Multipath.swift in Sources */,
 				4C9307642CB961150085EFF9 /* AgoraPictureInPictureController.m in Sources */,
 				4C93075E2CB961150085EFF9 /* SettingsView.swift in Sources */,
 				4C93080C2CBA712F0085EFF9 /* JoinChannelVideoToken.swift in Sources */,
@@ -1380,7 +1413,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"APIExample-SwiftUI/Preview Content\"";
-				DEVELOPMENT_TEAM = G726234S43;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1419,7 +1452,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"APIExample-SwiftUI/Preview Content\"";
-				DEVELOPMENT_TEAM = G726234S43;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1454,7 +1487,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = G726234S43;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension/Info.plist";
@@ -1485,7 +1518,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = G726234S43;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension/Info.plist";

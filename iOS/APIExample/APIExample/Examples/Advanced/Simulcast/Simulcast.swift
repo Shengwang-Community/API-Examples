@@ -45,7 +45,7 @@ class SimulcastViewController: BaseViewController {
     @IBOutlet weak var layer3Switch: UISwitch!
     
     @IBOutlet weak var layer4Switch: UISwitch!
-    
+        
     @IBOutlet weak var container: AGEVideoContainer!
     var agoraKit: AgoraRtcEngineKit!
     
@@ -53,6 +53,8 @@ class SimulcastViewController: BaseViewController {
     var isJoined: Bool = false
     
     private var remoteUid: UInt? = nil
+    
+    let simulcastConfig = AgoraSimulcastConfig()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,8 +93,8 @@ class SimulcastViewController: BaseViewController {
         if (roleIndex == 0) {
             // Set video encoder configuration
             let videoConfig = AgoraVideoEncoderConfiguration()
-            videoConfig.dimensions = CGSize(width: 640, height: 360)
-            videoConfig.frameRate = .fps15
+            videoConfig.dimensions = CGSize(width: 1280, height: 720)
+            videoConfig.frameRate = .fps30
             videoConfig.bitrate = AgoraVideoBitrateStandard
             videoConfig.orientationMode = .adaptative
             videoConfig.mirrorMode = .auto
@@ -107,9 +109,8 @@ class SimulcastViewController: BaseViewController {
             agoraKit.setupLocalVideo(videoCanvas)
             // you have to call startPreview to see local video
             agoraKit.startPreview()
-            setupSimulcast()
-        } else {
             
+            setupSimulcast()
         }
                 
         // Set audio route to speaker
@@ -153,7 +154,23 @@ class SimulcastViewController: BaseViewController {
             sender.isOn.toggle()
             return
         }
-        setupSimulcast()
+        if sender == self.layer1Switch {
+            let layer1_index = AgoraStreamLayerIndex.layer1.rawValue
+            simulcastConfig.configs[layer1_index].enable = sender.isOn
+        } else if sender == self.layer2Switch {
+            let layer2_index = AgoraStreamLayerIndex.layer2.rawValue
+            simulcastConfig.configs[layer2_index].enable = sender.isOn
+
+        } else if sender == self.layer3Switch {
+            let layer3_index = AgoraStreamLayerIndex.layer3.rawValue
+            simulcastConfig.configs[layer3_index].enable = sender.isOn
+
+        } else if sender == self.layer4Switch {
+            let layer4_index = AgoraStreamLayerIndex.layer4.rawValue
+            simulcastConfig.configs[layer4_index].enable = sender.isOn
+        }
+        let ret = agoraKit.setSimulcastConfig(simulcastConfig)
+        LogUtils.log(message: "updateSimulcast: \(ret) ", level: .info)
     }
     
     @IBAction func onClickLaye1rSegment(_ sender: UISegmentedControl) {
@@ -161,52 +178,49 @@ class SimulcastViewController: BaseViewController {
             ToastView.show(text: "No remote user".localized)
             return
         }
-        var layer = AgoraVideoStreamType.init(rawValue: sender.selectedSegmentIndex) ?? .high
-        let ret = agoraKit.setRemoteVideoStream(uid, type: layer)
-        LogUtils.log(message: "set remote layer:\(layer.rawValue), ret: \(ret) ", level: .info)
+        let type: AgoraVideoStreamType
+        switch sender.selectedSegmentIndex {
+        case 0:
+            type = .layer1
+        case 1:
+            type = .layer2
+        case 2:
+            type = .layer3
+        case 3:
+            type = .layer4
+        default:
+            type = .layer1
+        }
+        let ret = agoraKit.setRemoteVideoStream(uid, type: type)
+        LogUtils.log(message: "set remote uid: \(uid), layer:\(type), ret: \(ret) ", level: .info)
     }
-
+    
     private func setupSimulcast() {
         let layer1_index = AgoraStreamLayerIndex.layer1.rawValue
         let layer2_index = AgoraStreamLayerIndex.layer2.rawValue
         let layer3_index = AgoraStreamLayerIndex.layer3.rawValue
         let layer4_index = AgoraStreamLayerIndex.layer4.rawValue
-        let conf = AgoraSimulcastConfig()
-        if (layer1Switch.isOn) {
-            conf.configs[layer1_index].dimensions.width = 1280
-            conf.configs[layer1_index].dimensions.height = 720
-            conf.configs[layer1_index].framerate = 30
-            conf.configs[layer1_index].enable = true
-        } else {
-            conf.configs[layer1_index].enable = false
-        }
-        if (layer2Switch.isOn) {
-            conf.configs[layer2_index].dimensions.width = 960
-            conf.configs[layer2_index].dimensions.height = 540
-            conf.configs[layer2_index].framerate = 15
-            conf.configs[layer2_index].enable = true
-        } else {
-            conf.configs[layer2_index].enable = false
-        }
+        simulcastConfig.configs[layer1_index].dimensions.width = 1280
+        simulcastConfig.configs[layer1_index].dimensions.height = 720
+        simulcastConfig.configs[layer1_index].framerate = 30
+        simulcastConfig.configs[layer1_index].enable = layer1Switch.isOn
+        
+        simulcastConfig.configs[layer2_index].dimensions.width = 960
+        simulcastConfig.configs[layer2_index].dimensions.height = 540
+        simulcastConfig.configs[layer2_index].framerate = 15
+        simulcastConfig.configs[layer2_index].enable = layer2Switch.isOn
 
-        if (layer3Switch.isOn) {
-            conf.configs[layer3_index].dimensions.width = 640
-            conf.configs[layer3_index].dimensions.height = 360
-            conf.configs[layer3_index].framerate = 15
-            conf.configs[layer3_index].enable = true
-        } else {
-            conf.configs[layer3_index].enable = false
-        }
+        simulcastConfig.configs[layer3_index].dimensions.width = 640
+        simulcastConfig.configs[layer3_index].dimensions.height = 360
+        simulcastConfig.configs[layer3_index].framerate = 15
+        simulcastConfig.configs[layer3_index].enable = layer3Switch.isOn
 
-        if (layer4Switch.isOn) {
-            conf.configs[layer4_index].dimensions.width = 480
-            conf.configs[layer4_index].dimensions.height = 270
-            conf.configs[layer4_index].framerate = 15
-            conf.configs[layer4_index].enable = true
-        } else {
-            conf.configs[layer4_index].enable = false
-        }
-        let ret = agoraKit.setSimulcastConfig(conf)
+        simulcastConfig.configs[layer4_index].dimensions.width = 480
+        simulcastConfig.configs[layer4_index].dimensions.height = 270
+        simulcastConfig.configs[layer4_index].framerate = 15
+        simulcastConfig.configs[layer4_index].enable = layer4Switch.isOn
+
+        let ret = agoraKit.setSimulcastConfig(simulcastConfig)
         LogUtils.log(message: "setSimulcastConfig: \(ret) ", level: .info)
     }
 }

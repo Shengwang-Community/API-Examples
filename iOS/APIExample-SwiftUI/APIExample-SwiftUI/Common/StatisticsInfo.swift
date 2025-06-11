@@ -14,6 +14,7 @@ struct StatisticsInfo {
         var channelStats = AgoraChannelStats()
         var videoStats = AgoraRtcLocalVideoStats()
         var audioStats = AgoraRtcLocalAudioStats()
+        var multipathStats: AgoraMultipathStats?
     }
     
     struct RemoteInfo {
@@ -90,6 +91,20 @@ struct StatisticsInfo {
         }
     }
     
+    mutating func updateMultipathStats(_ stats: AgoraMultipathStats) {
+        guard self.type.isLocal else {
+            return
+        }
+        switch type {
+        case .local(let info):
+            var new = info
+            new.multipathStats = stats
+            self.type = .local(new)
+        default:
+            break
+        }
+    }
+    
     mutating func updateVideoStats(_ stats: AgoraRtcRemoteVideoStats) {
         switch type {
         case .remote(let info):
@@ -113,13 +128,15 @@ struct StatisticsInfo {
             break
         }
     }
+    
     mutating func updateUid(uid: UInt) {
         self.uid = uid
-        
     }
+    
     mutating func updateRemoteUid(remoteUid: UInt) {
         self.remoteUid = remoteUid
     }
+    
     mutating func updateFirstFrameInfo(_ info: AgoraVideoRenderingTracingInfo) {
         firstFrameElapsedTime = Double(info.elapsedTime)
         preloadElapsedTime = Double(info.join2JoinSuccess)
@@ -139,7 +156,6 @@ struct StatisticsInfo {
     }
     
     func localDescription(info: LocalInfo, audioOnly: Bool) -> String {
-        
         let localUid = "uid: \(uid)"
         let dimensionFps = "\(Int(dimension.width))×\(Int(dimension.height)),\(fps)fps"
         
@@ -147,9 +163,6 @@ struct StatisticsInfo {
         let videoSend = "VSend: \(info.videoStats.sentBitrate)kbps"
         let audioSend = "ASend: \(info.audioStats.sentBitrate)kbps"
         let cpu = "CPU: \(info.channelStats.cpuAppUsage)%/\(info.channelStats.cpuTotalUsage)%"
-        // TODO
-//        let vSendLoss = "VSend Loss: \(info.videoStats.txPacketLossRate)%"
-//        let aSendLoss = "ASend Loss: \(info.audioStats.txPacketLossRate)%"
         let vSendLoss = "VSend Loss: MISSING%"
         let aSendLoss = "ASend Loss: MISSING%"
         
@@ -166,6 +179,10 @@ struct StatisticsInfo {
         : [localUid, dimensionFps, lastmile, videoSend, audioSend, cpu, vSendLoss, aSendLoss]
         if let metaInfo = metaInfo {
             array.append(metaInfo)
+        }
+        if let state = info.multipathStats {
+            let multipath = "Multi Path: \(state.activePathNum)"
+            array.append(multipath)
         }
         return array.joined(separator: "\n")
     }

@@ -44,6 +44,7 @@
 @property (nonatomic, strong) AgoraRtcEngineKit *agoraKit;
 @property (nonatomic, copy) NSString *channelName;
 @property (nonatomic, assign) BOOL isJoined;
+@property (nonatomic, strong) AgoraRtcChannelMediaOptions *channelMediaOption;
 @end
 
 @implementation MultipathViewController
@@ -77,6 +78,7 @@
     [self.containerView layoutStream:@[self.localView, self.remoteView]];
     
     // set up agora instance when view loaded
+    self.channelMediaOption = [[AgoraRtcChannelMediaOptions alloc] init];
     AgoraRtcEngineConfig *config = [[AgoraRtcEngineConfig alloc] init];
     config.appId = KeyCenter.AppId;
     config.channelProfile = AgoraChannelProfileLiveBroadcasting;
@@ -111,18 +113,17 @@
     [self.agoraKit setEnableSpeakerphone:YES];
     
     // start joining channel
-    AgoraRtcChannelMediaOptions *options = [[AgoraRtcChannelMediaOptions alloc] init];
-    options.autoSubscribeAudio = YES;
-    options.autoSubscribeVideo = YES;
-    options.publishCameraTrack = (roleIndex == 0);
-    options.publishMicrophoneTrack = (roleIndex == 0);
-    options.clientRoleType = (roleIndex == 0) ? AgoraClientRoleBroadcaster : AgoraClientRoleAudience;
-    options.enableMultipath = YES;
-    options.uplinkMultipathMode = (modeIndex == 0) ? AgoraMultipathModeDynamic : AgoraMultipathModeDuplicate;
-    options.downlinkMultipathMode = (modeIndex == 0) ? AgoraMultipathModeDynamic : AgoraMultipathModeDuplicate;
+    self.channelMediaOption.autoSubscribeAudio = YES;
+    self.channelMediaOption.autoSubscribeVideo = YES;
+    self.channelMediaOption.publishCameraTrack = (roleIndex == 0);
+    self.channelMediaOption.publishMicrophoneTrack = (roleIndex == 0);
+    self.channelMediaOption.clientRoleType = (roleIndex == 0) ? AgoraClientRoleBroadcaster : AgoraClientRoleAudience;
+    self.channelMediaOption.enableMultipath = YES;
+    self.channelMediaOption.uplinkMultipathMode = (modeIndex == 0) ? AgoraMultipathModeDynamic : AgoraMultipathModeDuplicate;
+    self.channelMediaOption.downlinkMultipathMode = (modeIndex == 0) ? AgoraMultipathModeDynamic : AgoraMultipathModeDuplicate;
     
     [[NetworkManager shared] generateTokenWithChannelName:channelName uid:0 success:^(NSString * _Nullable token) {
-        int result = [self.agoraKit joinChannelByToken:token channelId:channelName uid:0 mediaOptions:options joinSuccess:nil];
+        int result = [self.agoraKit joinChannelByToken:token channelId:channelName uid:0 mediaOptions:self.channelMediaOption joinSuccess:nil];
         if (result != 0) {
             [self showAlertWithTitle:@"Error" message:[NSString stringWithFormat:@"Join channel failed: %d, please check your params", result]];
         }
@@ -141,10 +142,8 @@
 }
 
 - (IBAction)onClickMultipathSwitch:(UISwitch *)sender {
-    sender.selected = !sender.selected;
-    AgoraRtcChannelMediaOptions *options = [[AgoraRtcChannelMediaOptions alloc] init];
-    options.enableMultipath = sender.isOn;
-    [self.agoraKit updateChannelWithMediaOptions:options];
+    self.channelMediaOption.enableMultipath = sender.isOn;
+    [self.agoraKit updateChannelWithMediaOptions:self.channelMediaOption];
 }
 
 #pragma mark - AgoraRtcEngineDelegate

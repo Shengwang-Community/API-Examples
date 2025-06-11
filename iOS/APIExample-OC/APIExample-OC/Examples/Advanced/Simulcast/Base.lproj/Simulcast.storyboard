@@ -135,7 +135,7 @@
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="49Y-AY-uy6">
                                         <rect key="frame" x="34" y="48" width="51" height="31"/>
                                         <connections>
-                                            <action selector="onClickSimulcastSwitch:" destination="p8p-WL-qFG" eventType="valueChanged" id="ryc-9i-wf8"/>
+                                            <action selector="onClickSimulcastSwitch:" destination="p8p-WL-qFG" eventType="valueChanged" id="Xdt-GX-iIa"/>
                                         </connections>
                                     </switch>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Layer2:540p15fps" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E1y-tK-d1x">
@@ -204,7 +204,7 @@
                         <outlet property="audienceLayerSegment" destination="Zza-Qr-9E6" id="arz-0i-bah"/>
                         <outlet property="containerView" destination="4Fs-AT-vWa" id="Tqf-Sd-5Xh"/>
                         <outlet property="hostSettingContainer" destination="zXG-S9-kiA" id="0jI-Yq-HXq"/>
-                        <outlet property="layer1Switch" destination="49Y-AY-uy6" id="YEr-z9-csO"/>
+                        <outlet property="layer1Switch" destination="49Y-AY-uy6" id="jjl-hF-jPF"/>
                         <outlet property="layer2Switch" destination="nNn-bw-OOg" id="hub-7Z-wsh"/>
                         <outlet property="layer3Switch" destination="nXq-z1-QrF" id="WFJ-Hd-0V4"/>
                         <outlet property="layer4Switch" destination="JO2-XT-wtQ" id="69c-Ea-rZ5"/>
