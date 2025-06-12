@@ -27,7 +27,7 @@
 "UWR-35-F2N.text" = "Layer1:720p30fps";
 
 /* Class = "UILabel"; text = "Set Layers Config(Maxmum 3)"; ObjectID = "hpC-Ye-fr0"; */
-"hpC-Ye-fr0.text" = "配置多流(最大3个)";
+"hpC-Ye-fr0.text" = "配置多流(最多3个)";
 
 /* Class = "UILabel"; text = "Role"; ObjectID = "jqT-oo-y5b"; */
 "jqT-oo-y5b.text" = "角色";

@@ -1,6 +1,6 @@
 
 /* Class = "UILabel"; text = "Set Layers Config(Maxmum 3)"; ObjectID = "22s-iU-9VA"; */
-"22s-iU-9VA.text" = "配置多流(最大3个)";
+"22s-iU-9VA.text" = "配置多流(最多3个)";
 
 /* Class = "UISegmentedControl"; 6b2-UN-Hug.segmentTitles[0] = "broadcaster"; ObjectID = "6b2-UN-Hug"; */
 "6b2-UN-Hug.segmentTitles[0]" = "broadcaster";
