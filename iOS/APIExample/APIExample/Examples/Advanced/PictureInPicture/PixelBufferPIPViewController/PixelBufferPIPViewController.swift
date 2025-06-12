@@ -7,6 +7,7 @@
 import UIKit
 import AVKit
 import AgoraRtcKit
+import SnapKit
 
 @available(iOS 15.0, *)
 class PixelBufferPIPViewController: PIPBaseViewController {
@@ -256,7 +257,11 @@ extension PixelBufferPIPViewController: AgoraVideoFrameDelegate {
     
     func onRenderVideoFrame(_ videoFrame: AgoraOutputVideoFrame, uid: UInt, channelId: String) -> Bool {
         if let view = displayViews.allObjects.first(where: { $0.uid == uid }) {
-            view.renderFromVideoFrameData(videoData: videoFrame, uid: Int(uid))
+            if let pixelBuffer = videoFrame.pixelBuffer {
+                view.renderVideoPixelBuffer(pixelBuffer: pixelBuffer, width: videoFrame.width, height: videoFrame.height)
+            } else {
+                view.renderFromVideoFrameData(videoData: videoFrame, uid: Int(uid))
+            }
         }
         
         return true
