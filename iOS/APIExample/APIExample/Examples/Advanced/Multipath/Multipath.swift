@@ -129,6 +129,9 @@ class MultipathViewController: BaseViewController {
     @IBAction func onClickMultipathSwitch(_ sender: UISwitch) {
         channelMediaOption.enableMultipath = sender.isOn
         agoraKit.updateChannel(with: channelMediaOption)
+        if !sender.isOn {
+            localVideo.statsInfo?.updateMultipathStats(nil)
+        }
     }
 }
 
