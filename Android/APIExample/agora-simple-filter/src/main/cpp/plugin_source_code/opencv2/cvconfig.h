@@ -1,7 +1,7 @@
 #ifndef OPENCV_CVCONFIG_H_INCLUDED
 #define OPENCV_CVCONFIG_H_INCLUDED
 
-/* OpenCV compiled as static or dynamic libs */
+/* OpenCV compiled as static or dynamic jniLibs */
 #define BUILD_SHARED_LIBS
 
 /* OpenCV intrinsics optimized code */
