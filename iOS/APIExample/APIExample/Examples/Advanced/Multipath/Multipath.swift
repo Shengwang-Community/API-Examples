@@ -62,7 +62,6 @@ class MultipathViewController: BaseViewController {
         Util.configPrivatization(agoraKit: agoraKit)
         
         agoraKit.setLogFile(LogUtils.sdkLogPath())
-        
         // get channel name from configs
         guard let channelName = configs["channelName"] as? String else {return}
         guard let roleIndex = configs["role_index"] as? Int else {return}
