@@ -204,7 +204,7 @@
 
     Default detection implemented with reference to
     \li https://gcc.gnu.org/onlinedocs/gcc-4.6.0/cpp/Common-Predefined-Macros.html
-    \li http://www.boost.org/doc/libs/1_42_0/boost/detail/endian.hpp
+    \li http://www.boost.org/doc/jniLibs/1_42_0/boost/detail/endian.hpp
 */
 #ifndef RAPIDJSON_ENDIAN
 // Detect with GCC 4.6's macro

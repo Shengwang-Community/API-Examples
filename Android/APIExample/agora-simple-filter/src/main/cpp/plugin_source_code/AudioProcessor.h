@@ -12,6 +12,7 @@
 #include <AgoraRtcKit/AgoraRefPtr.h>
 #include "AgoraRtcKit/NGIAgoraMediaNode.h"
 #include "AgoraRtcKit/AgoraMediaBase.h"
+#include "AgoraRtcKit/AgoraExtensions.h"
 
 namespace agora {
     namespace extension {
@@ -22,7 +23,7 @@ namespace agora {
 
             void dataCallback(const char* data);
 
-            void setVolume(int volume) { volume_ = volume / 100.0f; }
+            void setVolume(int volume) { volume_ = volume / 100.0f;}
 
             int setExtensionControl(agora::agora_refptr<rtc::IExtensionVideoFilter::Control> control){
                 control_ = control;
