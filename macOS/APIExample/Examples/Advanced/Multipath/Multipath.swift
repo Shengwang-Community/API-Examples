@@ -233,6 +233,7 @@ class MultipathMain: BaseViewController {
         if isOn {
             videos[0].statsInfo?.updateMultipathStats(nil)
         }
+        LogUtils.log(message: "updateChannel Multipath ret: \(ret) isOn: \(isOn)", level: .info)
     }
 }
 
