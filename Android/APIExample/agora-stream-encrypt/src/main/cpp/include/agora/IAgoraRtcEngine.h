@@ -8835,12 +8835,12 @@ class IRtcEngine : public agora::base::IEngineBase {
 
   /**
    * @brief Queries the HDR capability of the video module
+   * @since v4.6.0
    * @param videoModule The video module. See VIDEO_MODULE_TYPE
    * @param capability HDR capability of video module. See HDR_CAPABILITY
    * @return
    * - 0: success
    * - <0: failure
-   * @technical preview
   */
   virtual int queryHDRCapability(VIDEO_MODULE_TYPE videoModule, HDR_CAPABILITY& capability) = 0;
 };
