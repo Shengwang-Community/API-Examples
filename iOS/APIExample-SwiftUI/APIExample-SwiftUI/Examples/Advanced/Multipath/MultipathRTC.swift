@@ -55,7 +55,6 @@ class MultipathRTC: NSObject, ObservableObject {
             // you have to call startPreview to see local video
             agoraKit.startPreview()
         }
-        
         // Set audio route to speaker
         agoraKit.setDefaultAudioRouteToSpeakerphone(true)
         
