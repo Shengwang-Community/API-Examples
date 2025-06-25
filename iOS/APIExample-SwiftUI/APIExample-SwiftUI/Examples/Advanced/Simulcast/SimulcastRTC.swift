@@ -143,7 +143,6 @@ class SimulcastRTC: NSObject, ObservableObject {
             LogUtils.log(message: "No remote user", level: .warning)
             return
         }
-        
         let ret = agoraKit.setRemoteVideoStream(uid, type: type)
         LogUtils.log(message: "set remote uid: \(uid), layer:\(type), ret: \(String(describing: ret))", level: .info)
     }
