@@ -5656,22 +5656,53 @@ struct VirtualBackgroundSource {
         blur_degree(BLUR_DEGREE_HIGH) {}
 };
 
+/**
+ * The properties for virtual background algorithm.
+ */
 struct SegmentationProperty {
+  /** The type of algorithms for segmentation processing.
+   */
   enum SEG_MODEL_TYPE {
+    /** 1: (Default) AI segmentation algorithm.
+     */
     SEG_MODEL_AI = 1,
+    /** 2: Green screen segmentation algorithm.
+     */
     SEG_MODEL_GREEN = 2
   };
 
+  /** The color of the screen for green screen segmentation.
+   */
   enum SCREEN_COLOR_TYPE {
+    /** 0: (Default) Automatically recognizes the screen color.
+     */
     SCREEN_COLOR_AUTO = 0,
+    /** 1: Green.
+     */
     SCREEN_COLOR_GREEN = 1,
+    /** 2: Blue.
+     */
     SCREEN_COLOR_BLUE = 2
   };
 
+  /** The type of segmentation algorithm. See #SEG_MODEL_TYPE.
+   * The default value is `SEG_MODEL_AI`.
+   */
   SEG_MODEL_TYPE modelType;
 
+  /** The color tolerance for green screen segmentation.
+   *
+   * This parameter is only effective when `modelType` is set to `SEG_MODEL_GREEN`.
+   * The value ranges from 0.0 to 1.0, with a default of 0.5.
+   * A larger value widens the range of identifiable shades of the screen color. Setting the value too high may cause parts of the portrait to be detected as the background.
+   * Agora recommends dynamically adjusting this value based on the observed segmentation effect.
+   */
   float greenCapacity;
 
+  /** The color of the screen for green screen segmentation. See #SCREEN_COLOR_TYPE.
+   *
+   * This property is only for green screen segmentation. The default value is `SCREEN_COLOR_AUTO`.
+   */
   SCREEN_COLOR_TYPE screenColorType;
 
   SegmentationProperty() : modelType(SEG_MODEL_AI), greenCapacity(0.5), screenColorType(SCREEN_COLOR_AUTO) {}
