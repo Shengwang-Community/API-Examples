@@ -25,7 +25,7 @@ class KeyCenter: NSObject {
      进入声网控制台(https://console.agora.io/)，创建一个项目，进入项目配置页，即可看到APP ID。
      */
     @objc
-    static let AppId: String = <#YOUR AppId#>
+    static let AppId: String = "aab8b8f5a8cd4469a63042fcfafe7063"
 
     /**
      Certificate.
@@ -43,5 +43,5 @@ class KeyCenter: NSObject {
     static let Certificate: String? = nil
     
     
-    static let FaceCaptureLicense: String? = nil
+    static let FaceCaptureLicense: String? = "jGqfHkmAQokVE8bpTZSgc6maUUouGBLzYbgZt6oh3pWQBC4J1bFesVpejK0CR5VMmrvE3NLNmhPuh4K0dofv1KUL1JEfjgOjSy+dtZbaUesKWXWtcmJU29p49gJIVWpNn4kflm04soYF4o8fjg+QFq6+JSfyPcgfe08oxaqiW7w="
 }

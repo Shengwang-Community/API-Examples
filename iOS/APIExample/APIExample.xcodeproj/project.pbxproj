@@ -129,6 +129,7 @@
 		A7847F942458089E00469187 /* AgoraExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7847F932458089E00469187 /* AgoraExtension.swift */; };
 		A7BD7660247CC6920062A6B3 /* UITypeAlias.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BD765F247CC6920062A6B3 /* UITypeAlias.swift */; };
 		A7CA48C424553CF700507435 /* Popover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7CA48C224553CF600507435 /* Popover.storyboard */; };
+		AB8F78AD2E155540007CB767 /* common_resource.zip in Resources */ = {isa = PBXBuildFile; fileRef = AB8F78AC2E155540007CB767 /* common_resource.zip */; };
 		ABB90A7F2DF1801C007FDDEB /* Multipath.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB90A7D2DF1801C007FDDEB /* Multipath.swift */; };
 		ABB90A8A2DF1824D007FDDEB /* Multipath.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ABB90A892DF1824D007FDDEB /* Multipath.storyboard */; };
 		ABB90A912DF6800F007FDDEB /* Simulcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB90A8C2DF6800F007FDDEB /* Simulcast.swift */; };
@@ -460,6 +461,7 @@
 		A7847F932458089E00469187 /* AgoraExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgoraExtension.swift; sourceTree = "<group>"; };
 		A7BD765F247CC6920062A6B3 /* UITypeAlias.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITypeAlias.swift; sourceTree = "<group>"; };
 		A7CA48C324553CF600507435 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Popover.storyboard; sourceTree = "<group>"; };
+		AB8F78AC2E155540007CB767 /* common_resource.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = common_resource.zip; sourceTree = "<group>"; };
 		ABB90A7D2DF1801C007FDDEB /* Multipath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Multipath.swift; sourceTree = "<group>"; };
 		ABB90A882DF1824D007FDDEB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Multipath.storyboard; sourceTree = "<group>"; };
 		ABB90A8C2DF6800F007FDDEB /* Simulcast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simulcast.swift; sourceTree = "<group>"; };
@@ -919,6 +921,7 @@
 		03D13BCE2448758900B599B3 /* APIExample */ = {
 			isa = PBXGroup;
 			children = (
+				AB8F78AC2E155540007CB767 /* common_resource.zip */,
 				8BAEA7B426C253FC0006B0F1 /* APIExample.entitlements */,
 				03D13BD52448758900B599B3 /* Main.storyboard */,
 				A7CA48C224553CF600507435 /* Popover.storyboard */,
@@ -1805,6 +1808,7 @@
 				E726BFFA2A949F70006870E2 /* AudioRouterPlayer.strings in Resources */,
 				033A9F6B252D8B3500BC26E1 /* MediaChannelRelay.storyboard in Resources */,
 				671BD6B927E1DB2D0076D5E1 /* CustomAudioRender.storyboard in Resources */,
+				AB8F78AD2E155540007CB767 /* common_resource.zip in Resources */,
 				E728B85128B60D5B00674A4A /* VideoViewSampleBufferDisplayView.xib in Resources */,
 				03D13BD72448758900B599B3 /* Main.storyboard in Resources */,
 				F728B9D72CA295D7007813BB /* PictureInPicture.storyboard in Resources */,
