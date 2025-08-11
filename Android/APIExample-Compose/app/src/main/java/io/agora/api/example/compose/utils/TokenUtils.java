@@ -1,5 +1,6 @@
 package io.agora.api.example.compose.utils;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -40,6 +41,28 @@ public final class TokenUtils {
         CLIENT = new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
                 .build();
+    }
+
+    public static void genToken(String channelName, int uid, OnTokenGenCallback<String> onGetToken) {
+        String cert = BuildConfig.AGORA_APP_CERT;
+        if (cert.isEmpty()) {
+            onGetToken.onTokenGen("");
+        } else {
+            gen(BuildConfig.AGORA_APP_ID, BuildConfig.AGORA_APP_CERT, channelName, uid, ret -> {
+                if (onGetToken != null) {
+                    runOnUiThread(() -> {
+                        onGetToken.onTokenGen(ret);
+                    });
+                }
+            }, ret -> {
+                Log.e(TAG, "for requesting token error.", ret);
+                if (onGetToken != null) {
+                    runOnUiThread(() -> {
+                        onGetToken.onTokenGen(null);
+                    });
+                }
+            });
+        }
     }
 
     /**
