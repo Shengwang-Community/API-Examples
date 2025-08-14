@@ -50,4 +50,4 @@ def doPublish(buildVariables) {
     bat "del /f /Q *.zip"
 }
 
-pipelineLoad(this, "ApiExample", "build", "windows", "apiexample_windows")
+pipelineLoad(this, "api_examples_shengwang", "build", "windows", "apiexample_windows")
