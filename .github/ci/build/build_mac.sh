@@ -103,12 +103,13 @@ echo "start compress"
 cp result.zip $WORKSPACE/withAPIExample_${BUILD_NUMBER}_$zip_name
 
 if [ $compress_apiexample = true ]; then
-    sdk_version=$(grep "pod 'ShengwangRtcEngine_iOS'" ./macOS/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p")
+    sdk_version=$(grep "pod 'ShengwangRtcEngine_macOS'" ./macOS/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p")
     echo "sdk_version: $sdk_version"
     
     mkdir -p $cn_dir
+    echo "cn_dir: $cn_dir"
     cp -rf ./macOS $cn_dir/
-    cd $cn_dir/
+    cd $cn_dir
     echo pwd: `pwd`
     ./cloud_project.sh || exit 1
     cd -
