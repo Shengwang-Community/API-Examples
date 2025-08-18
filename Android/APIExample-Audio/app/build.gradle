@@ -88,14 +88,14 @@ dependencies {
     }
     else{
         // case 1: full single lib with voice only
-        implementation "io.agora.rtc:voice-sdk:${agoraSdkVersion}"
+        implementation "cn.shengwang.rtc:voice-sdk:${agoraSdkVersion}"
         // case 2: partial libs with voice only
-        // implementation "io.agora.rtc:voice-rtc-basic:${agoraSdkVersion}"
-        // implementation "io.agora.rtc:spatial-audio:${agoraSdkVersion}"
-        // implementation "io.agora.rtc:audio-beauty:${agoraSdkVersion}"
-        // implementation "io.agora.rtc:aiaec:${agoraSdkVersion}"
-        // implementation "io.agora.rtc:drm-loader:${agoraSdkVersion}"
-        // implementation "io.agora.rtc:drm:${agoraSdkVersion}"
+        // implementation "cn.shengwang.rtc:voice-rtc-basic:${agoraSdkVersion}"
+        // implementation "cn.shengwang.rtc:spatial-audio:${agoraSdkVersion}"
+        // implementation "cn.shengwang.rtc:audio-beauty:${agoraSdkVersion}"
+        // implementation "cn.shengwang.rtc:aiaec:${agoraSdkVersion}"
+        // implementation "cn.shengwang.rtc:drm-loader:${agoraSdkVersion}"
+        // implementation "cn.shengwang.rtc:drm:${agoraSdkVersion}"
     }
 
     implementation 'androidx.appcompat:appcompat:1.7.0'
