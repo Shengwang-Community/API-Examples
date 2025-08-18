@@ -111,7 +111,7 @@ if [ $compress_apiexample = true ]; then
     mkdir -p $cn_dir
     echo "cn_dir: $cn_dir"
     cp -rf ./macOS $cn_dir/
-    cd $cn_dir
+    cd $cn_dir/macOS
     echo pwd: `pwd`
     ls -al
     ./cloud_project.sh || exit 1
