@@ -103,22 +103,26 @@ echo "start compress"
 cp result.zip $WORKSPACE/withAPIExample_${BUILD_NUMBER}_$zip_name
 
 if [ $compress_apiexample = true ]; then
-    sdk_version=$(grep "pod 'AgoraRtcEngine_iOS'" ./iOS/${ios_direction}/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p")
+    sdk_version=$(grep "pod 'ShengwangRtcEngine_iOS'" ./macOS/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p")
     echo "sdk_version: $sdk_version"
     
-    mkdir -p $cn_dir $global_dir
-    cp -rf ./iOS/${ios_direction} $cn_dir/
-    cp -rf ./iOS/${ios_direction} $global_dir/
-    cd $cn_dir/${ios_direction}
+    mkdir -p $cn_dir
+    cp -rf ./macOS $cn_dir/
+    cd $cn_dir
     ./cloud_project.sh || exit 1
     cd -
     echo "start compress api example"
-    7za a -tzip cn_result.zip $cn_dir > log.txt
-    7za a -tzip global_result.zip $global_dir > log.txt     
-
-    mv cn_result.zip $WORKSPACE/${apiexample_cn_name}_${sdk_version}_${BUILD_NUMBER}_APIExample.zip
-    mv global_result.zip $WORKSPACE/${apiexample_global_name}_${sdk_version}${BUILD_NUMBER}_APIExample.zip 
-fi 
+    7za a -tzip cn_result.zip $cn_dir
+    echo "complete compress api example"
+    echo "current path: `pwd`"
+    ls -al
+    cn_des_path=$WORKSPACE/${apiexample_cn_name}_${sdk_version}_${BUILD_NUMBER}_APIExample.zip
+    echo "cn_des_path: $cn_des_path"
+    echo "Moving cn_result.zip to $cn_des_path"
+    mv cn_result.zip $cn_des_path
+    
+    ls -al $WORKSPACE/
+fi
 
 #if [ $compile_project = true ]; then
 #    cd ./$unzip_name/samples/APIExample
