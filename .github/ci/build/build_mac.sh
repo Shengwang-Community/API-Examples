@@ -99,8 +99,10 @@ fi
 python3 ./.github/ci/build/modify_podfile.py ./$unzip_name/samples/APIExample/Podfile $sdk_url_flag
 
 echo "start compress"
-7za a -tzip result.zip -r $unzip_name
-cp result.zip $WORKSPACE/withAPIExample_${BUILD_NUMBER}_$zip_name
+7za a -tzip result.zip -r $unzip_name > log.txt
+echo "start move to"
+echo $WORKSPACE/with${BUILD_NUMBER}_$zip_name
+mv result.zip $WORKSPACE/with_${BUILD_NUMBER}_$zip_name
 
 if [ $compress_apiexample = true ]; then
     sdk_version=$(grep "pod 'ShengwangRtcEngine_macOS'" ./macOS/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p")
