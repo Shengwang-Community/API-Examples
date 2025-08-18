@@ -108,7 +108,8 @@ if [ $compress_apiexample = true ]; then
     
     mkdir -p $cn_dir
     cp -rf ./macOS $cn_dir/
-    cd $cn_dir
+    cd $cn_dir/
+    echo pwd: `pwd`
     ./cloud_project.sh || exit 1
     cd -
     echo "start compress api example"
