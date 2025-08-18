@@ -132,7 +132,7 @@ dependencies {
     if (File(localSdkPath).exists()) {
         implementation(fileTree(localSdkPath).include("*.jar", "*.aar"))
     } else {
-        implementation("io.agora.rtc:full-sdk:${agoraSdkVersion}")
-        implementation("io.agora.rtc:full-screen-sharing:${agoraSdkVersion}")
+        implementation("cn.shengwang.rtc:full-sdk:${agoraSdkVersion}")
+        implementation("cn.shengwang.rtc:full-screen-sharing:${agoraSdkVersion}")
     }
 }
