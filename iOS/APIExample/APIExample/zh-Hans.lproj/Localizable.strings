@@ -123,6 +123,7 @@
 "Group Video Chat" = "多人音视频通话";
 "Screen Share + Camera" = "屏幕共享 + 摄像头";
 "please input channel name!" = "请输入频道名！";
+"Agora Beauty" = "声网美颜";
 "Video Process" = "视频增强";
 "Rhythm Player" = "虚拟节拍器";
 "Spatial Audio" = "空间音效";
@@ -140,6 +141,8 @@
 "stopMicrophoneRecording" = "停止麦克风采集";
 "Ktv copyright music" = "KTV版权音乐";
 "Mutli Camera(iOS13.0+)" = "多路摄像头(iOS13.0+)";
+"Multipath" = "网络传输高级功能";
+"Simulcast" = "同源多流";
 "Open Rear Camera" = "打开后摄像头";
 "Close Rear Camera" = "关闭后摄像头";
 "Third Beautify" = "第三方美颜";
@@ -235,6 +238,9 @@
 "Eyebrow Style Off" = "关闭";
 "Eyebrow Style Type 1" = "类型1";
 "Eyebrow Style Type 2" = "类型2";
+"Eyebrow Style Type 3" = "类型3";
+"Eyebrow Style Type 4" = "类型4";
+
 
 "Eyebrow Color None" = "无";
 "Eyebrow Color Black" = "类型1";
@@ -267,3 +273,9 @@
 "Face Shape Area Mouth Scale" = "嘴巴比例";
 
 "Live Channel Name" = "直播频道名";
+"Male Template Title" = "模板男";
+"Female Template Title" = "模板女";
+"default makeup style" = "学妹妆";
+"Facial Style" = "面部类型";
+"Wocan" = "卧蚕";
+"Wocan Strength" = "卧蚕强度";

@@ -70,6 +70,8 @@ struct ContentView: View {
                      view: AnyView(MediaPlayerEntry())),
             MenuItem(name: "Screen Share".localized,
                      view: AnyView(ScreenShareEntry())),
+            MenuItem(name: "Agora Beauty".localized,
+                     view: AnyView(AgoraBeautyEntry())),
             MenuItem(name: "Video Process".localized,
                      view: AnyView(VideoProcessEntry())),
             MenuItem(name: "Rhythm Player".localized,
@@ -91,7 +93,11 @@ struct ContentView: View {
             MenuItem(name: "Audio Waveform".localized,
                      view: AnyView(AudioWaveformEntry())),
             MenuItem(name: "Face Capture".localized,
-                     view: AnyView(FaceCaptureEntry()))
+                     view: AnyView(FaceCaptureEntry())),
+            MenuItem(name: "Simulcast".localized,
+                     view: AnyView(SimulcastEntry())),
+            MenuItem(name: "Multipath".localized,
+                     view: AnyView(MultipathEntry()))
         ])
     ]
 

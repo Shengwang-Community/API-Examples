@@ -55,7 +55,6 @@
     MenuSection *anvancedSection = [[MenuSection alloc] initWithName:@"Anvanced" rows:@[
         [[MenuItem alloc]initWithName:@"Live Streaming".localized storyboard:@"LiveStreaming" controller:@"LiveStreaming"],
         [[MenuItem alloc]initWithName:@"RTMP Streaming".localized storyboard:@"RTMPStreaming" controller:@""],
-        [[MenuItem alloc]initWithName:@"Fusion CDN Streaming".localized storyboard:@"FusionCDN" controller:@"FusionCDN"],
         [[MenuItem alloc]initWithName:@"Video Metadata".localized storyboard:@"VideoMetadata" controller:@""],
         [[MenuItem alloc]initWithName:@"Voice Changer".localized storyboard:@"VoiceChanger" controller:@""],
         [[MenuItem alloc]initWithName:@"Custom Audio Source".localized storyboard:@"CustomPcmAudioSource" controller:@""],
@@ -72,12 +71,15 @@
         [[MenuItem alloc]initWithName:@"Media Player".localized storyboard:@"MediaPlayer" controller:@""],
         [[MenuItem alloc]initWithName:@"Screen Share".localized storyboard:@"ScreenShare" controller:@""],
         [[MenuItem alloc]initWithName:@"Video Process".localized storyboard:@"VideoProcess" controller:@""],
+        [[MenuItem alloc]initWithName:@"Agora Beauty".localized storyboard:@"AgoraBeauty" controller:@""],
         [[MenuItem alloc]initWithName:@"Rhythm Player".localized storyboard:@"RhythmPlayer" controller:@""],
         [[MenuItem alloc]initWithName:@"Create Data Stream".localized storyboard:@"CreateDataStream" controller:@""],
         [[MenuItem alloc]initWithName:@"Media Channel Relay".localized storyboard:@"MediaChannelRelay" controller:@""],
         [[MenuItem alloc]initWithName:@"Spatial Audio".localized storyboard:@"SpatialAudio" controller:@""],
         [[MenuItem alloc]initWithName:@"Content Inspect".localized storyboard:@"ContentInspect" controller:@""],
-        [[MenuItem alloc]initWithName:@"Mutli Camera(iOS13.0+)".localized storyboard:@"MutliCamera" controller:@""]
+        [[MenuItem alloc]initWithName:@"Mutli Camera(iOS13.0+)".localized storyboard:@"MutliCamera" controller:@""],
+        [[MenuItem alloc]initWithName:@"Simulcast".localized storyboard:@"Simulcast" controller:@""],
+        [[MenuItem alloc]initWithName:@"Multipath".localized storyboard:@"Multipath" controller:@""],
     ]];
     [array addObject:anvancedSection];
     

@@ -38,6 +38,8 @@
 # pr: output test.zip to workspace dir
 # others: Rename the zip package name yourself, But need copy it to workspace dir
 ##################################
+export PATH=$PATH:/opt/homebrew/bin
+
 xcode_version=$(xcodebuild -version | grep Xcode | awk '{print $2}')
 echo "Xcode Version: $xcode_version"
 echo ios_direction: $ios_direction
@@ -61,7 +63,11 @@ export LANG=en_US.UTF-8
 unzip_name=Agora_Native_SDK_for_iOS_FULL
 zip_name=output.zip
 sdk_url_flag=false
-if [ -z "$sdk_url" ]; then
+apiexample_cn_name=Shengwang_Native_SDK_for_iOS
+apiexample_global_name=Agora_Native_SDK_for_iOS
+cn_dir=CN
+
+if [ -z "$sdk_url" -o "$sdk_url" = "none" ]; then
    sdk_url_flag=false
    echo "sdk_url is empty"
    echo unzip_name: $unzip_name 
@@ -74,7 +80,7 @@ else
    echo zip_name: $zip_name
    curl -o $zip_name $sdk_url || exit 1
    7za x ./$zip_name -y > log.txt
-   unzip_name=`ls -S -d */ | grep Agora | sed 's/\///g'`
+   unzip_name=`ls -S -d */ | egrep 'Agora|Shengwang' | sed 's/\///g'`
    echo unzip_name: $unzip_name
    rm -rf ./$unzip_name/bin
    rm -f ./$unzip_name/commits
@@ -98,6 +104,28 @@ echo "start compress"
 echo "start move to"
 echo $WORKSPACE/with${ios_direction}_${BUILD_NUMBER}_$zip_name
 mv result.zip $WORKSPACE/with${ios_direction}_${BUILD_NUMBER}_$zip_name
+
+if [ $compress_apiexample = true ]; then
+    sdk_version=$(grep "pod 'AgoraRtcEngine_iOS'" ./iOS/${ios_direction}/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p")
+    echo "sdk_version: $sdk_version"
+    
+    mkdir -p $cn_dir
+    cp -rf ./iOS/${ios_direction} $cn_dir/
+    cd $cn_dir/${ios_direction}
+    ./cloud_project.sh || exit 1
+    cd -
+    echo "start compress api example"
+    7za a -tzip cn_result.zip $cn_dir
+    echo "complete compress api example"
+    echo "current path: `pwd`"
+    ls -al
+    cn_des_path=$WORKSPACE/${apiexample_cn_name}_${sdk_version}_${BUILD_NUMBER}_APIExample.zip
+    echo "cn_des_path: $cn_des_path"
+    echo "Moving cn_result.zip to $cn_des_path"
+    mv cn_result.zip $cn_des_path
+    
+    ls -al $WORKSPACE/
+fi 
 
 if [ $compile_project = true ]; then
 	cd ./$unzip_name/samples/${ios_direction}
