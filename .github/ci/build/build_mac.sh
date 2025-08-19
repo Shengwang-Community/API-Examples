@@ -37,6 +37,7 @@
 # pr: output test.zip to workspace dir
 # others: Rename the zip package name yourself, But need copy it to workspace dir
 ##################################
+export PATH=$PATH:/opt/homebrew/bin
 
 echo compile_project:$compile_project
 echo Package_Publish: $Package_Publish
@@ -59,6 +60,10 @@ export LANG=en_US.UTF-8
 unzip_name=Agora_Native_SDK_for_iOS_FULL
 zip_name=output.zip
 sdk_url_flag=false
+apiexample_cn_name=Shengwang_Native_SDK_for_Mac
+apiexample_global_name=Agora_Native_SDK_for_Mac
+cn_dir=CN
+global_dir=Global
 
 echo zip_name: $zip_name
 if [ -z "$sdk_url" ]; then
@@ -74,7 +79,7 @@ else
    echo unzip_name: $unzip_name
    curl -o $zip_name $sdk_url || exit 1
    7za x ./$zip_name -y > log.txt
-   unzip_name=`ls -S -d */ | grep Agora`
+   unzip_name=`ls -S -d */ | egrep 'Agora|Shengwang' | sed 's/\///g'`
    echo unzip_name: $unzip_name
 
    rm -rf ./$unzip_name/bin
@@ -92,13 +97,42 @@ else
 fi
 
 python3 ./.github/ci/build/modify_podfile.py ./$unzip_name/samples/APIExample/Podfile $sdk_url_flag
-7za a -tzip result.zip -r $unzip_name
-cp result.zip $WORKSPACE/withAPIExample_${BUILD_NUMBER}_$zip_name
 
-if [ $compile_project = true ]; then
-    cd ./$unzip_name/samples/APIExample
-    ./cloud_build.sh || exit 1
+echo "start compress"
+7za a -tzip result.zip -r $unzip_name > log.txt
+echo "start move to"
+echo $WORKSPACE/with${BUILD_NUMBER}_$zip_name
+mv result.zip $WORKSPACE/with_${BUILD_NUMBER}_$zip_name
+
+if [ $compress_apiexample = true ]; then
+    sdk_version=$(grep "pod 'ShengwangRtcEngine_macOS'" ./macOS/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p")
+    echo "sdk_version: $sdk_version"
+    
+    mkdir -p $cn_dir
+    echo "cn_dir: $cn_dir"
+    cp -rf ./macOS $cn_dir/
+    cd $cn_dir/macOS
+    echo pwd: `pwd`
+    ls -al
+    ./cloud_project.sh || exit 1
     cd -
+    echo "start compress api example"
+    7za a -tzip cn_result.zip $cn_dir
+    echo "complete compress api example"
+    echo "current path: `pwd`"
+    ls -al
+    cn_des_path=$WORKSPACE/${apiexample_cn_name}_${sdk_version}_${BUILD_NUMBER}_APIExample.zip
+    echo "cn_des_path: $cn_des_path"
+    echo "Moving cn_result.zip to $cn_des_path"
+    mv cn_result.zip $cn_des_path
+    
+    ls -al $WORKSPACE/
 fi
+
+#if [ $compile_project = true ]; then
+#    cd ./$unzip_name/samples/APIExample
+#    ./cloud_build.sh || exit 1
+#    cd -
+#fi
 
 

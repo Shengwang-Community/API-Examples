@@ -45,12 +45,14 @@ public class EGLContextHelper {
     private final int mDepthSize = 16;
     private final int mStencilSize = 0;
     private final int mRenderType = 4;
-    public EGLContextHelper(){}
+
+    public EGLContextHelper() {
+    }
 
     public void initEGL(EGLContext shareContext) throws Exception {
         mEGL = (EGL10) GLDebugHelper.wrap(EGLContext.getEGL(),
                 GLDebugHelper.CONFIG_CHECK_GL_ERROR
-                        | GLDebugHelper.CONFIG_CHECK_THREAD,  null);
+                        | GLDebugHelper.CONFIG_CHECK_THREAD, null);
 
         if (mEGL == null) {
             throw new Exception("Couldn't get EGL");
@@ -69,8 +71,8 @@ public class EGLContextHelper {
                 + curGLVersion[1]);
 
         int[] num_config = new int[1];
-        if(!mEGL.eglChooseConfig(mGLDisplay, mConfigSpec, null, 1,
-                num_config)){
+        if (!mEGL.eglChooseConfig(mGLDisplay, mConfigSpec, null, 1,
+                num_config)) {
             throw new IllegalArgumentException("eglChooseConfig failed");
         }
         int numConfigs = num_config[0];
@@ -148,7 +150,7 @@ public class EGLContextHelper {
             EGL10.EGL_ALPHA_SIZE, mAlphaSize,
             EGL10.EGL_DEPTH_SIZE, mDepthSize,
             EGL10.EGL_STENCIL_SIZE, mStencilSize,
-            EGL10.EGL_RENDERABLE_TYPE, mRenderType,//egl版本  2.0
+            EGL10.EGL_RENDERABLE_TYPE, mRenderType,// EGL version 2.0
             EGL10.EGL_NONE};
 
     public void release() {
@@ -161,15 +163,15 @@ public class EGLContextHelper {
         LogUtils.i(DEBUG_TAG, "GL Cleaned up");
     }
 
-    public boolean eglMakeCurrent(){
-        if(mGLContext == EGL10.EGL_NO_CONTEXT){
+    public boolean eglMakeCurrent() {
+        if (mGLContext == EGL10.EGL_NO_CONTEXT) {
             return false;
-        }else{
+        } else {
             return mEGL.eglMakeCurrent(mGLDisplay, mGLSurface, mGLSurface, mGLContext);
         }
     }
 
-    public boolean eglMakeNoCurrent(){
+    public boolean eglMakeNoCurrent() {
         return mEGL.eglMakeCurrent(mGLDisplay, EGL10.EGL_NO_SURFACE,
                 EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
     }

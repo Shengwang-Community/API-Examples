@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">APIExample-Compose</string>
+    <string name="app_name" translatable="false">Shengwang APIExample-Compose</string>
     <string name="example_join_channel_video">Join Video Channel</string>
     <string name="example_join_channel_audio">Join Audio Channel</string>
     <string name="example_live_streaming">Live Streaming</string>

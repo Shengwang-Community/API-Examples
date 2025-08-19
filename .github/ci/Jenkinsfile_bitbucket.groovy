@@ -1,3 +1,3 @@
 @Library('agora-build-pipeline-library') _
 
-pipelineLoad(this, "ApiExample", "workflow", "", "", "api-examples")
+pipelineLoad(this, "api_examples_shengwang", "workflow", "", "", "api-examples-shengwang")
