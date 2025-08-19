@@ -18,8 +18,15 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.GITEE_PI_SSH }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          ls -la ~/.ssh/id_rsa
+          echo "Testing SSH key format:"
+          head -n 1 ~/.ssh/id_rsa
+          tail -n 1 ~/.ssh/id_rsa
+          ssh-keygen -l -f ~/.ssh/id_rsa || true
+          echo "Adding gitee.com to known_hosts:"
           ssh-keyscan gitee.com >> ~/.ssh/known_hosts
-          ssh -T git@gitee.com || true
+          echo "Testing SSH connection:"
+          ssh -vT git@gitee.com || true
           
       - name: Gitee sync repo
         uses: xgfd3/hub-mirror-action@v1.4
