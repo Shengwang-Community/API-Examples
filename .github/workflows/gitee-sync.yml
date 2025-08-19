@@ -13,6 +13,14 @@ jobs:
       cancel-in-progress: true
     if: github.actor != 'dependabot[bot]'
     steps:
+      - name: Debug SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GITEE_PI_SSH }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan gitee.com >> ~/.ssh/known_hosts
+          ssh -T git@gitee.com || true
+          
       - name: Gitee sync repo
         uses: xgfd3/hub-mirror-action@v1.4
         with:
@@ -27,3 +35,4 @@ jobs:
           account_type: org
           shell_path: ./.github/workflows/gitee-sync-shell.sh
           github_ref: ${{ github.ref }}
+          debug: true  
