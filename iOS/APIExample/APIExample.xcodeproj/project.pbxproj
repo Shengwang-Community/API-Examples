@@ -239,6 +239,9 @@
 		F73B01CF2CCB7E730077B7D2 /* BEGLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F73B01CC2CCB7E730077B7D2 /* BEGLUtils.m */; };
 		F73B01D52CCB84590077B7D2 /* APIReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = F73B01D32CCB84590077B7D2 /* APIReporter.m */; };
 		F73B01D82CCB862A0077B7D2 /* EFGlobalSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = F73B01D72CCB862A0077B7D2 /* EFGlobalSingleton.m */; };
+		F7F416B12EA7336900E82046 /* SttMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F416B02EA7336900E82046 /* SttMessage.swift */; };
+		F7F416BA2EA7358400E82046 /* SttMessage.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7F416B92EA7358400E82046 /* SttMessage.storyboard */; };
+		F7F416C02EA8C42300E82046 /* SttMessageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F416BF2EA8C42300E82046 /* SttMessageRenderer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -607,6 +610,9 @@
 		F73B01D32CCB84590077B7D2 /* APIReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APIReporter.m; sourceTree = "<group>"; };
 		F73B01D62CCB862A0077B7D2 /* EFGlobalSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EFGlobalSingleton.h; sourceTree = "<group>"; };
 		F73B01D72CCB862A0077B7D2 /* EFGlobalSingleton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EFGlobalSingleton.m; sourceTree = "<group>"; };
+		F7F416B02EA7336900E82046 /* SttMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SttMessage.swift; sourceTree = "<group>"; };
+		F7F416B82EA7358400E82046 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/SttMessage.storyboard; sourceTree = "<group>"; };
+		F7F416BF2EA8C42300E82046 /* SttMessageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SttMessageRenderer.swift; sourceTree = "<group>"; };
 		FAAC2AEE355D103B9E8527B5 /* Pods-Agora-ScreenShare-Extension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Agora-ScreenShare-Extension.debug.xcconfig"; path = "Target Support Files/Pods-Agora-ScreenShare-Extension/Pods-Agora-ScreenShare-Extension.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1136,6 +1142,7 @@
 		A75A56D724A0603000D0089E /* Advanced */ = {
 			isa = PBXGroup;
 			children = (
+				F7F416AF2EA7331600E82046 /* SttMessage */,
 				DDFD50242C205BDF0050B344 /* TransparentRender */,
 				E7883AE32B074746003CCF44 /* FaceCapture */,
 				E726BFFD2A96FD3A006870E2 /* AudioWaveform */,
@@ -1544,6 +1551,16 @@
 			path = Report;
 			sourceTree = "<group>";
 		};
+		F7F416AF2EA7331600E82046 /* SttMessage */ = {
+			isa = PBXGroup;
+			children = (
+				F7F416B02EA7336900E82046 /* SttMessage.swift */,
+				F7F416BF2EA8C42300E82046 /* SttMessageRenderer.swift */,
+				F7F416B92EA7358400E82046 /* SttMessage.storyboard */,
+			);
+			path = SttMessage;
+			sourceTree = "<group>";
+		};
 		FD17F473C6A05604A44BDDDE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -1613,7 +1630,6 @@
 				1B6F6CF9B678035E221EAFDE /* [CP] Embed Pods Frameworks */,
 				0339BEBA25205B80007D4FDD /* Embed App Extensions */,
 				E76F80122AF0A7A200CCB9D6 /* ShellScript */,
-				EA59815E58120166C6FD72B5 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1769,6 +1785,7 @@
 				E7A49CFD29029E0000F06DD4 /* FUBeautify.storyboard in Resources */,
 				8B5E5B5B274CEFE20040E97D /* RhythmPlayer.storyboard in Resources */,
 				033A9F84252D8B6400BC26E1 /* StreamEncryption.storyboard in Resources */,
+				F7F416BA2EA7358400E82046 /* SttMessage.storyboard in Resources */,
 				67B8C7B628057D1500195106 /* RawVideoData.storyboard in Resources */,
 				E726C0042A96FD3A006870E2 /* AudioWaveform.storyboard in Resources */,
 				DD6ED7F22CB69FFB007B3B5D /* LocalCompositeGraph.strings in Resources */,
@@ -1896,24 +1913,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\" \n";
-		};
-		EA59815E58120166C6FD72B5 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-APIExample/Pods-APIExample-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-APIExample/Pods-APIExample-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-APIExample/Pods-APIExample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "
+";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1957,6 +1958,7 @@
 				E77D54C928F55E9100D51C1E /* JoinChannelVideoToken.swift in Sources */,
 				0371D8AE250B4A2C00C0DD61 /* JoinChannelAudio.swift in Sources */,
 				E726C0052A96FD3A006870E2 /* AudioWaveform.swift in Sources */,
+				F7F416B12EA7336900E82046 /* SttMessage.swift in Sources */,
 				E7A49D5429090FF500F06DD4 /* BELicenseHelper.mm in Sources */,
 				E7A49D172907DD2600F06DD4 /* EffectsLicense.m in Sources */,
 				E728B84F28B601A300674A4A /* AgoraSampleBufferRender.m in Sources */,
@@ -2022,6 +2024,7 @@
 				E7883AEB2B074746003CCF44 /* FaceCapture.swift in Sources */,
 				03BEED08251C35E7005E78F4 /* AudioMixing.swift in Sources */,
 				E74877B728A23B8B00CA2F58 /* NetworkManager.swift in Sources */,
+				F7F416C02EA8C42300E82046 /* SttMessageRenderer.swift in Sources */,
 				03DF1D9424CFC29700DF7151 /* AudioController.m in Sources */,
 				E7A49D5A2909103600F06DD4 /* BEGLTexture.m in Sources */,
 				03DF1D9024CFC29700DF7151 /* AudioWriteToFile.m in Sources */,
@@ -2628,6 +2631,14 @@
 			name = BytedEffect.storyboard;
 			sourceTree = "<group>";
 		};
+		F7F416B92EA7358400E82046 /* SttMessage.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F7F416B82EA7358400E82046 /* Base */,
+			);
+			name = SttMessage.storyboard;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -2639,7 +2650,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension/Info.plist";
@@ -2673,7 +2684,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension/Info.plist";
@@ -2829,7 +2840,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = APIExample/Info.plist;
@@ -2900,7 +2911,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = APIExample/Info.plist;
@@ -2969,7 +2980,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3006,7 +3017,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = YS397FG5PA;
+				DEVELOPMENT_TEAM = 48TB6ZZL5S;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

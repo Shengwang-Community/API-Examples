@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Stt Message Entry-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="EntryViewController" id="Y6W-OH-hqX" customClass="SttMessageEntry" customModule="APIExample" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Input channel name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TsA-fE-exy">
+                                <rect key="frame" x="43" y="130" width="307" height="34"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="34" id="k8o-5w-hch"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3XI-VV-8Pf">
+                                <rect key="frame" x="165.66666666666666" y="267" width="62" height="41"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="tinted" title="Start"/>
+                                <connections>
+                                    <action selector="start:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="GQi-Ld-ksM"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="转写模式：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lsq-bQ-VNg">
+                                <rect key="frame" x="48" y="208" width="76" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NvT-EG-7Fv">
+                                <rect key="frame" x="131" y="198" width="75" height="41"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                <connections>
+                                    <action selector="transcriptTypeButtonAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="ruC-cC-VGh"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="NvT-EG-7Fv" firstAttribute="leading" secondItem="lsq-bQ-VNg" secondAttribute="trailing" constant="7" id="5xQ-0Y-hUT"/>
+                            <constraint firstItem="TsA-fE-exy" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="71" id="AuU-VW-Vrt"/>
+                            <constraint firstItem="lsq-bQ-VNg" firstAttribute="top" secondItem="TsA-fE-exy" secondAttribute="bottom" constant="44" id="T9l-D0-7kX"/>
+                            <constraint firstItem="3XI-VV-8Pf" firstAttribute="centerX" secondItem="vDu-zF-Fre" secondAttribute="centerX" id="XaI-DN-BrN"/>
+                            <constraint firstItem="3XI-VV-8Pf" firstAttribute="top" secondItem="TsA-fE-exy" secondAttribute="bottom" constant="103" id="Zdw-KE-99Y"/>
+                            <constraint firstItem="NvT-EG-7Fv" firstAttribute="centerY" secondItem="lsq-bQ-VNg" secondAttribute="centerY" id="gsf-Na-dw4"/>
+                            <constraint firstItem="TsA-fE-exy" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="43" id="lGA-iI-cWh"/>
+                            <constraint firstItem="lsq-bQ-VNg" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="48" id="qdI-PC-V4Z"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="TsA-fE-exy" secondAttribute="trailing" constant="43" id="vjH-vp-WI1"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="channelTextField" destination="TsA-fE-exy" id="Z7g-0s-q4z"/>
+                        <outlet property="transcriptTypeButton" destination="NvT-EG-7Fv" id="TqW-xB-AEi"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="64.885496183206101" y="3.5211267605633805"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

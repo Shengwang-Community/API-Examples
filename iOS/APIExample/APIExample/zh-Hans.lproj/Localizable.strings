@@ -211,6 +211,7 @@
 "Transparent Render"="透明渲染";
 
 "URL Streaming(RTE Player)"="URL拉流(RTE Player)";
+"SttMessage" = "STT字幕渲染";
 
 "Makeup Enable" = "美妆开关";
 "Eyebrow Style" = "眉毛类型";
