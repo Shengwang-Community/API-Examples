@@ -127,6 +127,7 @@
     <string name="item_media_recorder">本地/远端录制</string>
     <string name="item_localvideotranscoding">本地合图</string>
     <string name="item_face_capture">获取面捕数据</string>
+    <string name="item_stt_transcript">STT 字幕转译</string>
 
     <string name="joinchannelaudio">此示例演示了如何使用SDK加入频道进行纯语音通话的功能。</string>
     <string name="joinchannelvideo">此示例演示了如何使用SDK加入频道进行音视频通话的功能。</string>
@@ -198,6 +199,18 @@
     <string name="face_capture_tip">此示例演示如何使用面捕功能获取面捕数据</string>
     <string name="transparent_rendering">此示例演示如何使用透明渲染功能播放Mp4视频</string>
     <string name="tip_ultra_live_streaming_with_url">此示例演示如何使用URL拉流来极速直播</string>
+    <string name="stt_transcript">此示例演示了在音视频通话过程中如何使用 STT 服务。</string>
+    <string name="stt_transcript_mode">转录模式</string>
+    <string name="stt_translation_direction">翻译方向</string>
+    <string name="stt_zh_to_en">中文 → 英文</string>
+    <string name="stt_en_to_zh">英文 → 中文</string>
+    <string name="stt_translation_language">翻译语言</string>
+    <string name="stt_translation_language_hint">输入目标语言（如：en, jp）</string>
+    <string name="stt_channel">频道: %s</string>
+    <string name="stt_online_count">在线人数: %d</string>
+    <string name="mute">静音</string>
+    <string name="unmute">取消静音</string>
+    <string name="stt_no_data">暂无转写数据…</string>
 
     <string name="audio_source_play_out">本地</string>
     <string name="audio_source_pre_process">SDK处理前</string>

@@ -149,6 +149,9 @@
         <action
             android:id="@+id/action_mainFragment_to_url_live_stream"
             app:destination="@id/urlLiveStream" />
+        <action
+            android:id="@+id/action_mainFragment_to_stt_transcript_config"
+            app:destination="@id/sttTranscriptConfig" />
     </fragment>
 
     <fragment
@@ -451,4 +454,19 @@
         android:label="@string/ultra_live_streaming_with_url"
         tools:layout="@layout/fragment_url_live_stream" />
 
+    <fragment
+        android:id="@+id/sttTranscriptConfig"
+        android:name="io.agora.api.example.examples.advanced.stt.SttTranscriptConfig"
+        android:label="@string/item_stt_transcript"
+        tools:layout="@layout/fragment_stt_transcript_config">
+        <action
+            android:id="@+id/action_stt_config_to_stt_transcript"
+            app:destination="@id/sttTranscriptDetail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sttTranscriptDetail"
+        android:name="io.agora.api.example.examples.advanced.stt.SttTranscriptDetail"
+        android:label="@string/item_stt_transcript"
+        tools:layout="@layout/fragment_stt_transcript_detail" />
 </navigation>

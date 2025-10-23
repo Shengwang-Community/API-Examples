@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="16dp"
+    tools:context=".examples.advanced.stt.SttTranscriptConfig">
+
+    <!-- Channel Name Input -->
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_channel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:hint="@string/agora_channel_hint" />
+
+    <!-- Translation Direction Selection -->
+    <LinearLayout
+        android:id="@+id/ll_translation_direction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_channel"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stt_translation_direction"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rg_translation_direction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <RadioButton
+                android:id="@+id/rb_zh_to_en"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/stt_zh_to_en"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/rb_en_to_zh"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/stt_en_to_zh" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <!-- Transcript Mode Selection -->
+    <LinearLayout
+        android:id="@+id/ll_transcript_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_translation_direction"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stt_transcript_mode"
+            android:paddingEnd="20dp"
+            android:textSize="14sp" />
+
+        <Spinner
+            android:id="@+id/spinner_transcript_mode"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="2"
+            android:entries="@array/stt_transcript_mode"
+            android:spinnerMode="dialog" />
+    </LinearLayout>
+
+    <!-- Join Channel Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_join"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_transcript_mode"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/join"
+        android:textAlignment="center" />
+
+</RelativeLayout>
