@@ -127,6 +127,7 @@ class SttMessageViewController: BaseViewController {
     private var sentences: [SttSentence] = []
     private var showTranslation = true
     private var sttResponseModel: STTResponseModel? = nil
+    private var isMuted = false
     
     // UI组件
     private lazy var headerView: UIView = {
@@ -176,6 +177,22 @@ class SttMessageViewController: BaseViewController {
         label.textAlignment = .center
         label.isHidden = true
         return label
+    }()
+    
+    private lazy var muteButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("静音", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.setTitleColor(.white, for: .normal)
+        // Material Design primary 颜色
+        button.backgroundColor = UIColor(red: 0.25, green: 0.32, blue: 0.71, alpha: 1.0)
+        button.layer.cornerRadius = 25
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowOpacity = 0.2
+        button.layer.shadowRadius = 4
+        button.addTarget(self, action: #selector(muteButtonTapped), for: .touchUpInside)
+        return button
     }()
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -242,6 +259,7 @@ class SttMessageViewController: BaseViewController {
         view.addSubview(headerView)
         view.addSubview(tableView)
         view.addSubview(emptyLabel)
+        view.addSubview(muteButton)
         
         headerView.addSubview(titleLabel)
         headerView.addSubview(countLabel)
@@ -263,10 +281,17 @@ class SttMessageViewController: BaseViewController {
             make.centerY.equalToSuperview()
         }
         
+        muteButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+            make.width.equalTo(200)
+            make.height.equalTo(50)
+        }
+        
         tableView.snp.makeConstraints { make in
             make.top.equalTo(headerView.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+            make.bottom.equalTo(muteButton.snp.top).offset(-16)
         }
         
         emptyLabel.snp.makeConstraints { make in
@@ -280,6 +305,26 @@ class SttMessageViewController: BaseViewController {
         let isEmpty = sentences.isEmpty
         emptyLabel.isHidden = !isEmpty
         tableView.isHidden = isEmpty
+    }
+    
+    @objc private func muteButtonTapped() {
+        isMuted.toggle()
+        
+        // 更新按钮标题和样式
+        if isMuted {
+            muteButton.setTitle("取消静音", for: .normal)
+            // Material Design error 颜色 (红色)
+            muteButton.backgroundColor = UIColor(red: 0.73, green: 0.11, blue: 0.11, alpha: 1.0)
+        } else {
+            muteButton.setTitle("静音", for: .normal)
+            // Material Design primary 颜色 (蓝色)
+            muteButton.backgroundColor = UIColor(red: 0.25, green: 0.32, blue: 0.71, alpha: 1.0)
+        }
+        
+        // 执行静音/取消静音操作
+        agoraKit.muteLocalAudioStream(isMuted)
+        
+        print("🔊 静音状态已切换: \(isMuted ? "已静音" : "已取消静音")")
     }
     
     private func updateSentences(_ newSentences: [SttSentence]) {
@@ -395,19 +440,13 @@ class SttMessageViewController: BaseViewController {
 }
 
 extension SttMessageViewController: SttMessageRendererDelegate {
-//    func onDebugLog(_ log: String) {
-//        self.agoraKit.writeLog(.info, content: log)
-//    }
+    func onDebugLog(_ log: String) {
+        self.agoraKit.writeLog(.info, content: log)
+    }
 }
 
 extension SttMessageViewController: AgoraDataStreamMsgHandlerDelegate {
     func onSttMessage(channel: String, content sttmessage: AgoraSttMessage) {
-//        self.agoraKit.writeLog(.info, content: "~~~~~~~~~\(sttmessage)")
-        if #available(iOS 15.0, *) {
-            print("\(Date().formatted(.dateTime.hour().minute().second().secondFraction(.fractional(3))))~~~~~\(sttmessage)")
-        } else {
-            // Fallback on earlier versions
-        }
         let updatedSentences = sttRenderer.processMessage(sttmessage)
         updateSentences(updatedSentences)
     }
