@@ -343,4 +343,10 @@
         <item>VIDEO_MODULE_POSITION_POST_CAPTURER_ORIGIN</item>
     </string-array>
 
+    <string-array name="stt_transcript_mode">
+        <item>Transcript</item>
+        <item>Transcript Async Translation</item>
+        <item>Transcript Sync Translation</item>
+    </string-array>
+
 </resources>

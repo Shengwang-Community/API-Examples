@@ -133,6 +133,7 @@
     <string name="item_media_recorder">Local/Remote MediaRecorder</string>
     <string name="item_localvideotranscoding">LocalVideoTranscoding</string>
     <string name="item_face_capture">Face Capture</string>
+    <string name="item_stt_transcript">STT Transcript</string>
 
     <string name="joinchannelaudio">This example demonstrates how to use the SDK to join channels for voice only calls.</string>
     <string name="joinchannelvideo">This example demonstrates how to use the SDK to join channels for audio and video calls.</string>
@@ -205,6 +206,7 @@
     <string name="face_capture_tip">This example demonstrates how to use face capture function.</string>
     <string name="transparent_rendering">This example demonstrates how to use transparent rendering.</string>
     <string name="tip_ultra_live_streaming_with_url">This example demonstrates how to use ultra live stream with url.</string>
+    <string name="stt_transcript">This example demonstrates how to STT transcript.</string>
 
     <string name="audio_source_play_out">PlayOut</string>
     <string name="audio_source_pre_process">PreProcess</string>
@@ -374,6 +376,20 @@
     <string name="channel_profile_communication" translatable="false">COMMUNICATION</string>
     <string name="channel_profile_live_broadcasting" translatable="false">LIVE_BROADCASTING</string>
     <string name="channel_profile_game" translatable="false">GAME</string>
+    <string name="stt_transcript_mode">Transcript Mode</string>
+    <string name="stt_translation_direction">Translation Direction</string>
+    <string name="stt_zh_to_en">Chinese → English</string>
+    <string name="stt_en_to_zh">English → Chinese</string>
+    <string name="stt_translation_language">Translation Language</string>
+    <string name="stt_translation_language_hint">Enter target language (e.g., en, jp)</string>
+    <string name="stt_channel">Channel: %s</string>
+    <string name="stt_online_count">Online: %d</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Unmute</string>
+    <string name="stt_no_data">No transcript data yet…</string>
+    <string name="key_stt_mode" translatable="false">sttMode</string>
+    <string name="key_source_language" translatable="false">sourceLanguage</string>
+    <string name="key_translation_language" translatable="false">translationLanguage</string>
     <string name="channel_profile_cloud_gaming" translatable="false">CLOUD_GAMING</string>
     <string name="channel_profile_communication_1v1" translatable="false">COMMUNICATION_1v1</string>
     <string name="audio_route_default">default</string>
