@@ -18,6 +18,19 @@ enum SttProcessingMode {
 }
 
 /**
+ * Translation data with timestamp
+ */
+struct TranslationData {
+    let text: String
+    let ts: Int
+    
+    init(text: String, ts: Int) {
+        self.text = text
+        self.ts = ts
+    }
+}
+
+/**
  * STT Sentence
  * Represents a transcribed sentence with optional translations
  */
@@ -28,10 +41,10 @@ struct SttSentence {
     let text: String
     let lang: String
     let isFinal: Bool
-    let translations: [String: String] // lang -> text
+    let translations: [String: TranslationData] // lang -> TranslationData
     let uid: UInt
     
-    init(id: Int = 0, startTs: Int, endTs: Int, text: String, lang: String, isFinal: Bool, translations: [String: String] = [:], uid: UInt) {
+    init(id: Int = 0, startTs: Int, endTs: Int, text: String, lang: String, isFinal: Bool, translations: [String: TranslationData] = [:], uid: UInt) {
         self.id = id
         self.startTs = startTs
         self.endTs = endTs
@@ -43,6 +56,9 @@ struct SttSentence {
     }
 }
 
+protocol SttMessageRendererDelegate: AnyObject {
+    func onDebugLog(_ log: String)
+}
 
 /**
  * STT Message Renderer
@@ -50,13 +66,35 @@ struct SttSentence {
  */
 class SttMessageRenderer {
     private var sentences: [SttSentence] = []
+    weak var delegate: SttMessageRendererDelegate?
     var processingMode: SttProcessingMode = .async
+    /**
+     * Merge translations with timestamp-based protection
+     * Only update if new timestamp is newer
+     */
+    private func mergeTranslations(
+        existing: [String: TranslationData],
+        new: [String: TranslationData]
+    ) -> [String: TranslationData] {
+        var merged = existing
+        for (lang, newData) in new {
+            let existingData = merged[lang]
+            if existingData == nil || newData.ts > existingData!.ts {
+                // No existing translation or new timestamp is newer: update
+                merged[lang] = newData
+            }
+            // else: existing timestamp is newer or equal, don't overwrite
+        }
+        return merged
+    }
     
     /**
      * Process incoming STT message
      * Returns updated list of sentences
      */
     func processMessage(_ message: AgoraSttMessage) -> [SttSentence] {
+        self.delegate?.onDebugLog(">>>>>> [processMessage]: message: \(message), processingMode: \(processingMode)")
+        
         switch processingMode {
         case .async:
             // 异步模式: 分别处理转写和翻译消息
@@ -88,36 +126,44 @@ class SttMessageRenderer {
             let lastSentence = sentences.last
             
             if let lastSentence = lastSentence, !lastSentence.isFinal {
-                // Update last Non-final to Final
-                let newSentence = SttSentence(
-                    id: lastSentence.startTs,
-                    startTs: lastSentence.startTs,
-                    endTs: endTs,
-                    text: transcription.text,
-                    lang: transcription.lang,
-                    isFinal: true,
-                    uid: message.sttUid
-                )
-                sentences[sentences.count - 1] = newSentence
+                let lastStartTs = lastSentence.startTs
+                if endTs > lastStartTs {
+                    // Update last Non-final to Final (keep existing translations)
+                    let newSentence = SttSentence(
+                        id: lastSentence.id,
+                        startTs: lastSentence.startTs,
+                        endTs: endTs,
+                        text: transcription.text,
+                        lang: transcription.lang,
+                        isFinal: true,
+                        translations: lastSentence.translations, // 保留现有翻译
+                        uid: message.sttUid
+                    )
+                    sentences[sentences.count - 1] = newSentence
+                } else {
+                    self.delegate?.onDebugLog(">>>>>[processTranscription] 收到Final乱序消息，丢弃! transcription\(transcription), lastSentence: \(lastSentence)")
+                }
+                // else: ignore older out-of-order message
             } else {
                 // Create new Final sentence (no pending Non-final, or last is already Final)
-                let startTs = lastSentence?.endTs ?? 0
+                let lastEndTs = lastSentence?.endTs ?? 0
                 
-                // Validate timestamp: endTs must be > startTs
-                if endTs <= startTs {
-                    return  // Discard out-of-order Final message
+                // Validate timestamp: endTs must be > lastEndTs
+                if endTs > lastEndTs {
+                    let newSentence = SttSentence(
+                        id: lastEndTs,
+                        startTs: lastEndTs,
+                        endTs: endTs,
+                        text: transcription.text,
+                        lang: transcription.lang,
+                        isFinal: true,
+                        uid: message.sttUid
+                    )
+                    sentences.append(newSentence)
+                } else {
+                    self.delegate?.onDebugLog(">>>>>[processTranscription] 收到Final乱序消息，丢弃! transcription\(transcription), lastSentence: \(lastSentence)")
+                    // ignore older out-of-order message
                 }
-                
-                let newSentence = SttSentence(
-                    id: startTs,
-                    startTs: startTs,
-                    endTs: endTs,
-                    text: transcription.text,
-                    lang: transcription.lang,
-                    isFinal: true,
-                    uid: message.sttUid
-                )
-                sentences.append(newSentence)
             }
         } else {
             // Non-final message: update or create temporary sentence
@@ -138,27 +184,30 @@ class SttMessageRenderer {
                         uid: message.sttUid
                     )
                     sentences[sentences.count - 1] = newSentence
+                } else {
+                    self.delegate?.onDebugLog(">>>>>[processTranscription] 收到非Final乱序消息，丢弃! transcription\(transcription), lastSentence: \(lastSentence)")
                 }
                 // else: ignore older out-of-order message
             } else {
                 // Create new Non-final sentence
-                let startTs = lastSentence?.endTs ?? 0
+                let lastEndTs = lastSentence?.endTs ?? 0
                 
-                // Validate timestamp: textTs must be > startTs
-                if textTs <= startTs {
-                    return  // Discard out-of-order message
+                // Validate timestamp: textTs must be > lastEndTs
+                if textTs > lastEndTs {
+                    let newSentence = SttSentence(
+                        id: lastEndTs,
+                        startTs: lastEndTs,
+                        endTs: textTs,
+                        text: transcription.text,
+                        lang: transcription.lang,
+                        isFinal: false,
+                        uid: message.sttUid
+                    )
+                    sentences.append(newSentence)
+                } else {
+                    self.delegate?.onDebugLog(">>>>>[processTranscription] 收到非Final乱序消息，丢弃! transcription\(transcription), lastSentence: \(lastSentence)")
+                    // ignore older out-of-order message
                 }
-                
-                let newSentence = SttSentence(
-                    id: startTs,
-                    startTs: startTs,
-                    endTs: textTs,
-                    text: transcription.text,
-                    lang: transcription.lang,
-                    isFinal: false,
-                    uid: message.sttUid
-                )
-                sentences.append(newSentence)
             }
         }
     }
@@ -173,15 +222,19 @@ class SttMessageRenderer {
         }
         
         if let targetSentence = targetSentence {
-            // Update translations for this sentence
-//            AgoraSttTranslation
-            
-            var updatedTranslations = targetSentence.translations
+            // Build new translations map
+            var newTranslations: [String: TranslationData] = [:]
             for translation in translations {
                 if let translation = translation as? AgoraSttTranslation {
-                    updatedTranslations[translation.sttTranslationLang] = translation.sttTranslationText
+                    newTranslations[translation.sttTranslationLang] = TranslationData(
+                        text: translation.sttTranslationText,
+                        ts: targetTs
+                    )
                 }
             }
+            
+            // Merge with existing translations (with timestamp protection)
+            let mergedTranslations = mergeTranslations(existing: targetSentence.translations, new: newTranslations)
             
             let updatedSentence = SttSentence(
                 id: targetSentence.id,
@@ -190,7 +243,7 @@ class SttMessageRenderer {
                 text: targetSentence.text,
                 lang: targetSentence.lang,
                 isFinal: targetSentence.isFinal,
-                translations: updatedTranslations,
+                translations: mergedTranslations,
                 uid: targetSentence.uid
             )
             
@@ -198,6 +251,8 @@ class SttMessageRenderer {
             if let index = sentences.firstIndex(where: { $0.id == targetSentence.id && $0.startTs == targetSentence.startTs }) {
                 sentences[index] = updatedSentence
             }
+        } else {
+            self.delegate?.onDebugLog(">>>>>[processTranslation] 翻译未找到对应转写，丢弃! transcription\(translations)")
         }
     }
     
@@ -211,10 +266,13 @@ class SttMessageRenderer {
         let textTs = message.sttTextTs
         
         // Build translations map
-        var translationsMap: [String: String] = [:]
+        var translationsMap: [String: TranslationData] = [:]
         for translation in translations {
             if let translation = translation as? AgoraSttTranslation {
-                translationsMap[translation.sttTranslationLang] = translation.sttTranslationText
+                translationsMap[translation.sttTranslationLang] = TranslationData(
+                    text: translation.sttTranslationText,
+                    ts: textTs
+                )
             }
         }
         
@@ -227,11 +285,8 @@ class SttMessageRenderer {
             // Hit an existing Final sentence
             // Check if this translation message is also Final
             if transcription.isFinal {
-                // Both are Final: append translations (keep original text)
-                var mergedTranslations = existingSentence.translations
-                for (key, value) in translationsMap {
-                    mergedTranslations[key] = value
-                }
+                // Both are Final: merge translations with timestamp protection
+                let mergedTranslations = mergeTranslations(existing: existingSentence.translations, new: translationsMap)
                 
                 let updatedSentence = SttSentence(
                     id: existingSentence.id,
@@ -250,24 +305,23 @@ class SttMessageRenderer {
             } else {
                 // Translation is Non-final but sentence is Final
                 // This is a new sentence, create it after the Final one
-                let startTs = existingSentence.endTs
+                let existingEndTs = existingSentence.endTs
                 
                 // Validate timestamp
-                if textTs <= startTs {
-                    return  // Invalid timestamp
+                if textTs > existingEndTs {
+                    let newSentence = SttSentence(
+                        id: existingEndTs,
+                        startTs: existingEndTs,
+                        endTs: textTs,
+                        text: transcription.text,
+                        lang: transcription.lang,
+                        isFinal: false,
+                        translations: translationsMap,
+                        uid: message.sttUid
+                    )
+                    sentences.append(newSentence)
                 }
-                
-                let newSentence = SttSentence(
-                    id: startTs,
-                    startTs: startTs,
-                    endTs: textTs,
-                    text: transcription.text,
-                    lang: transcription.lang,
-                    isFinal: false,
-                    translations: translationsMap,
-                    uid: message.sttUid
-                )
-                sentences.append(newSentence)
+                // else: ignore older out-of-order message
             }
             return
         }
@@ -279,43 +333,43 @@ class SttMessageRenderer {
             let lastSentence = sentences.last
             
             if let lastSentence = lastSentence, !lastSentence.isFinal {
-                // Update last Non-final to Final (append translations)
-                var mergedTranslations = lastSentence.translations
-                for (key, value) in translationsMap {
-                    mergedTranslations[key] = value
+                let lastStartTs = lastSentence.startTs
+                if endTs > lastStartTs {
+                    // Update last Non-final to Final (merge translations with timestamp protection)
+                    let mergedTranslations = mergeTranslations(existing: lastSentence.translations, new: translationsMap)
+                    
+                    let newSentence = SttSentence(
+                        id: lastSentence.startTs,
+                        startTs: lastSentence.startTs,
+                        endTs: endTs,
+                        text: transcription.text,
+                        lang: transcription.lang,
+                        isFinal: true,
+                        translations: mergedTranslations,
+                        uid: message.sttUid
+                    )
+                    sentences[sentences.count - 1] = newSentence
                 }
-                
-                let newSentence = SttSentence(
-                    id: lastSentence.startTs,
-                    startTs: lastSentence.startTs,
-                    endTs: endTs,
-                    text: transcription.text,
-                    lang: transcription.lang,
-                    isFinal: true,
-                    translations: mergedTranslations,
-                    uid: message.sttUid
-                )
-                sentences[sentences.count - 1] = newSentence
+                // else: ignore older out-of-order message
             } else {
                 // Create new Final sentence (no pending Non-final, or last is already Final)
-                let startTs = lastSentence?.endTs ?? 0
+                let lastEndTs = lastSentence?.endTs ?? 0
                 
-                // Validate timestamp: endTs must be > startTs
-                if endTs <= startTs {
-                    return  // Discard out-of-order Final message
+                // Validate timestamp: endTs must be > lastEndTs
+                if endTs > lastEndTs {
+                    let newSentence = SttSentence(
+                        id: lastEndTs,
+                        startTs: lastEndTs,
+                        endTs: endTs,
+                        text: transcription.text,
+                        lang: transcription.lang,
+                        isFinal: true,
+                        translations: translationsMap,
+                        uid: message.sttUid
+                    )
+                    sentences.append(newSentence)
                 }
-                
-                let newSentence = SttSentence(
-                    id: startTs,
-                    startTs: startTs,
-                    endTs: endTs,
-                    text: transcription.text,
-                    lang: transcription.lang,
-                    isFinal: true,
-                    translations: translationsMap,
-                    uid: message.sttUid
-                )
-                sentences.append(newSentence)
+                // else: ignore older out-of-order message
             }
         } else {
             // Non-final message: update or create temporary sentence (with translations)
@@ -325,11 +379,8 @@ class SttMessageRenderer {
                 // Update existing Non-final sentence
                 // Only update if new timestamp >= old timestamp
                 if textTs >= lastSentence.endTs {
-                    // Append translations
-                    var mergedTranslations = lastSentence.translations
-                    for (key, value) in translationsMap {
-                        mergedTranslations[key] = value
-                    }
+                    // Merge translations with timestamp protection
+                    let mergedTranslations = mergeTranslations(existing: lastSentence.translations, new: translationsMap)
                     
                     let newSentence = SttSentence(
                         id: lastSentence.id,
@@ -346,24 +397,23 @@ class SttMessageRenderer {
                 // else: ignore older out-of-order message
             } else {
                 // Create new Non-final sentence
-                let startTs = lastSentence?.endTs ?? 0
+                let lastEndTs = lastSentence?.endTs ?? 0
                 
-                // Validate timestamp: textTs must be > startTs
-                if textTs <= startTs {
-                    return  // Discard out-of-order message
+                // Validate timestamp: textTs must be > lastEndTs
+                if textTs > lastEndTs {
+                    let newSentence = SttSentence(
+                        id: lastEndTs,
+                        startTs: lastEndTs,
+                        endTs: textTs,
+                        text: transcription.text,
+                        lang: transcription.lang,
+                        isFinal: false,
+                        translations: translationsMap,
+                        uid: message.sttUid
+                    )
+                    sentences.append(newSentence)
                 }
-                
-                let newSentence = SttSentence(
-                    id: startTs,
-                    startTs: startTs,
-                    endTs: textTs,
-                    text: transcription.text,
-                    lang: transcription.lang,
-                    isFinal: false,
-                    translations: translationsMap,
-                    uid: message.sttUid
-                )
-                sentences.append(newSentence)
+                // else: ignore older out-of-order message
             }
         }
     }
@@ -376,3 +426,30 @@ class SttMessageRenderer {
         return sentences
     }
 }
+
+extension SttMessageRendererDelegate {
+    func onDebugLog(_ log: String) {}
+}
+
+
+// MARK: - AgoraSttMessage Extensions for Debug Printing
+extension AgoraSttMessage {
+    public override var description: String {
+        return "AgoraSttMessage { uid: \(sttUid), sttStartTime:\(sttStartTime), sttMessageType: \(sttMessageType), sttTranscription: \(sttTranscription), sttDurationMs: \(sttDurationMs), sttTranslations: \(sttTranslations), sttTextTs: \(sttTextTs) }"
+    }
+}
+
+// MARK: - AgoraSttTranscription Extension
+extension AgoraSttTranscription {
+    public override var description: String {
+        return "AgoraSttTranscription { text: \"\(text)\", lang: \(lang), isFinal: \(isFinal) }"
+    }
+}
+
+// MARK: - AgoraSttTranslation Extension
+extension AgoraSttTranslation {
+    public override var description: String {
+        return "AgoraSttTranslation { text: \"\(sttTranslationText)\", lang: \(sttTranslationLang), isFinal: \(isFinal) }"
+    }
+}
+

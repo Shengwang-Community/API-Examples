@@ -25,39 +25,57 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3XI-VV-8Pf">
-                                <rect key="frame" x="165.66666666666666" y="267" width="62" height="41"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="tinted" title="Start"/>
-                                <connections>
-                                    <action selector="start:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="GQi-Ld-ksM"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="转写模式：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lsq-bQ-VNg">
-                                <rect key="frame" x="48" y="208" width="76" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="模式" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lsq-bQ-VNg">
+                                <rect key="frame" x="48" y="208" width="34" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="翻译类型" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jbi-52-q3u">
+                                <rect key="frame" x="48" y="263" width="68" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NvT-EG-7Fv">
-                                <rect key="frame" x="131" y="198" width="75" height="41"/>
+                                <rect key="frame" x="89" y="198" width="75" height="41"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Button"/>
                                 <connections>
                                     <action selector="transcriptTypeButtonAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="ruC-cC-VGh"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lJb-M0-dfl">
+                                <rect key="frame" x="125" y="253" width="75" height="41"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                <connections>
+                                    <action selector="translationTypeButtonAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="4ah-cU-HZj"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3XI-VV-8Pf">
+                                <rect key="frame" x="165.66666666666666" y="390" width="62" height="41"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="tinted" title="Start"/>
+                                <connections>
+                                    <action selector="start:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="GQi-Ld-ksM"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="lJb-M0-dfl" firstAttribute="centerY" secondItem="jbi-52-q3u" secondAttribute="centerY" id="1mI-Ea-HGF"/>
                             <constraint firstItem="NvT-EG-7Fv" firstAttribute="leading" secondItem="lsq-bQ-VNg" secondAttribute="trailing" constant="7" id="5xQ-0Y-hUT"/>
+                            <constraint firstItem="lJb-M0-dfl" firstAttribute="leading" secondItem="jbi-52-q3u" secondAttribute="trailing" constant="9" id="8mc-Gu-ZrD"/>
                             <constraint firstItem="TsA-fE-exy" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="71" id="AuU-VW-Vrt"/>
+                            <constraint firstItem="jbi-52-q3u" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="48" id="QLv-wI-ejX"/>
                             <constraint firstItem="lsq-bQ-VNg" firstAttribute="top" secondItem="TsA-fE-exy" secondAttribute="bottom" constant="44" id="T9l-D0-7kX"/>
+                            <constraint firstItem="jbi-52-q3u" firstAttribute="top" secondItem="lsq-bQ-VNg" secondAttribute="bottom" constant="34" id="UAv-PS-IUb"/>
                             <constraint firstItem="3XI-VV-8Pf" firstAttribute="centerX" secondItem="vDu-zF-Fre" secondAttribute="centerX" id="XaI-DN-BrN"/>
-                            <constraint firstItem="3XI-VV-8Pf" firstAttribute="top" secondItem="TsA-fE-exy" secondAttribute="bottom" constant="103" id="Zdw-KE-99Y"/>
                             <constraint firstItem="NvT-EG-7Fv" firstAttribute="centerY" secondItem="lsq-bQ-VNg" secondAttribute="centerY" id="gsf-Na-dw4"/>
                             <constraint firstItem="TsA-fE-exy" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="43" id="lGA-iI-cWh"/>
+                            <constraint firstItem="3XI-VV-8Pf" firstAttribute="top" secondItem="TsA-fE-exy" secondAttribute="bottom" constant="226" id="lLv-br-fGj"/>
                             <constraint firstItem="lsq-bQ-VNg" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="48" id="qdI-PC-V4Z"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="TsA-fE-exy" secondAttribute="trailing" constant="43" id="vjH-vp-WI1"/>
                         </constraints>
@@ -65,6 +83,7 @@
                     <connections>
                         <outlet property="channelTextField" destination="TsA-fE-exy" id="Z7g-0s-q4z"/>
                         <outlet property="transcriptTypeButton" destination="NvT-EG-7Fv" id="TqW-xB-AEi"/>
+                        <outlet property="translationTypeButton" destination="lJb-M0-dfl" id="nlh-UK-ecC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

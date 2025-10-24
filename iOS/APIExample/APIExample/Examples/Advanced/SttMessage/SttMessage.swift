@@ -11,50 +11,90 @@ import AgoraRtcKit
 import UIKit
 import SnapKit
 
+enum TranscriptMode: String, CaseIterable {
+    case syncTranslate = "转写翻译异步模式（同步翻译）"
+    case asyncTranslate = "转写翻译异步模式（异步翻译）"
+}
+
+enum TranslationMode: String, CaseIterable {
+    case zhToEn = "中译英"
+    case enToZh = "英译中"
+}
+
 class SttMessageEntry: UIViewController {
-    
-    enum TranscriptMode: String, CaseIterable {
-        case transcript = "转写"
-        case syncTranslate = "转写加翻译（同步翻译）"
-        case asyncTranslate = "转写加翻译（异步翻译）"
-    }
-    
     @IBOutlet weak var channelTextField: UITextField!
     @IBOutlet weak var transcriptTypeButton: UIButton!
-    private var transcriptMode: TranscriptMode = .transcript
+    @IBOutlet weak var translationTypeButton: UIButton!
+    private var transcriptMode: TranscriptMode = .asyncTranslate
+    private var translationMode: TranslationMode = .zhToEn
     
     override func viewDidLoad() {
         super.viewDidLoad()
         transcriptTypeButton.setTitle(transcriptMode.rawValue, for: .normal)
-    }
-    
-    @IBAction func transcriptTypeButtonAction(_ sender: Any) {
-        showAlert()
+        translationTypeButton.setTitle(translationMode.rawValue, for: .normal)
     }
     
     @IBAction func start(_ sender: Any) {
         guard let channelName = channelTextField.text else { return }
         let vc = SttMessageViewController()
-        vc.configs = ["channelName": channelName]
+        vc.configs = ["channelName": channelName,
+                      "transcriptMode": transcriptMode,
+                      "translationMode": translationMode]
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func showAlert() {
-        let allCalses = TranscriptMode.allCases
+    @IBAction func transcriptTypeButtonAction(_ sender: Any) {
+        showModeSelectionAlert(for: .transcript)
+    }
+    
+    @IBAction func translationTypeButtonAction(_ sender: Any) {
+        showModeSelectionAlert(for: .translation)
+    }
+    
+    private enum AlertType {
+        case transcript
+        case translation
+    }
+    
+    private func showModeSelectionAlert(for type: AlertType) {
         let alertVC = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        for mode in allCalses {
-            let action = UIAlertAction(title: mode.rawValue, style: .default) { [weak self] _ in
-                self?.transcriptMode = mode
-                self?.transcriptTypeButton.setTitle(mode.rawValue, for: .normal)
-            }
-            alertVC.addAction(action)
+        switch type {
+        case .transcript:
+            addTranscriptModeActions(to: alertVC)
+            
+        case .translation:
+            addTranslationModeActions(to: alertVC)
         }
         
         let cancelAction = UIAlertAction(title: "取消", style: .cancel)
         alertVC.addAction(cancelAction)
         
         present(alertVC, animated: true)
+    }
+    
+    // 添加转写模式选项
+    private func addTranscriptModeActions(to alertVC: UIAlertController) {
+        let allCases = TranscriptMode.allCases
+        for mode in allCases {
+            let action = UIAlertAction(title: mode.rawValue, style: .default) { [weak self] _ in
+                self?.transcriptMode = mode
+                self?.transcriptTypeButton.setTitle(mode.rawValue, for: .normal)
+            }
+            alertVC.addAction(action)
+        }
+    }
+    
+    // 添加翻译模式选项
+    private func addTranslationModeActions(to alertVC: UIAlertController) {
+        let allCases = TranslationMode.allCases
+        for mode in allCases {
+            let action = UIAlertAction(title: mode.rawValue, style: .default) { [weak self] _ in
+                self?.translationMode = mode
+                self?.translationTypeButton.setTitle(mode.rawValue, for: .normal)
+            }
+            alertVC.addAction(action)
+        }
     }
 }
 
@@ -64,11 +104,29 @@ class SttMessageViewController: BaseViewController {
     private lazy var localUid: UInt = UInt.random(in: 1...99999)
     private lazy var remoteUid: UInt = UInt.random(in: 1...99999)
     private var channelName = ""
+    private var transcriptMode: TranscriptMode = .asyncTranslate
+    private var translationMode: TranslationMode = .zhToEn
+    
+    var agoraKit: AgoraRtcEngineKit {
+        if let engine = _agoraKit {
+            return engine
+        }
+        
+        let config = AgoraRtcEngineConfig()
+        config.appId = KeyCenter.AppId
+        config.areaCode = GlobalSettings.shared.area
+        config.channelProfile = .liveBroadcasting
+        let engine = AgoraRtcEngineKit.sharedEngine(with: config, delegate: self)
+        _agoraKit = engine
+        
+        return engine
+    }
     
     // STT相关
     private let sttRenderer = SttMessageRenderer()
     private var sentences: [SttSentence] = []
     private var showTranslation = true
+    private var sttResponseModel: STTResponseModel? = nil
     
     // UI组件
     private lazy var headerView: UIView = {
@@ -119,35 +177,31 @@ class SttMessageViewController: BaseViewController {
         label.isHidden = true
         return label
     }()
-    var agoraKit: AgoraRtcEngineKit {
-        if let engine = _agoraKit {
-            return engine
-        }
-        
-        let config = AgoraRtcEngineConfig()
-        config.appId = KeyCenter.AppId
-        config.areaCode = GlobalSettings.shared.area
-        config.channelProfile = .liveBroadcasting
-        let engine = AgoraRtcEngineKit.sharedEngine(with: config, delegate: self)
-        _agoraKit = engine
-        
-        return engine
-    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        stopAgent()
+        agoraKit.leaveChannel()
         AgoraRtcEngineKit.destroy()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        
-        guard let channelName = configs["channelName"] as? String else { return }
-        self.channelName = channelName
-        
         setupUI()
         
+        guard let channelName = configs["channelName"] as? String,
+              let transcriptMode = configs["transcriptMode"] as? TranscriptMode,
+              let translationMode = configs["translationMode"] as? TranslationMode else { return }
+        
+        self.channelName = channelName
+        self.transcriptMode = transcriptMode
+        self.translationMode = translationMode
+        
+        //STTRenderer
+        sttRenderer.processingMode = transcriptMode == .asyncTranslate ? .async : .sync
+        sttRenderer.delegate = self
+        
+        //RTC
         let config = AgoraDataStreamMsgHandlerConfig()
         config.enableSttParser = true
         config.sttUid = remoteUid
@@ -169,8 +223,9 @@ class SttMessageViewController: BaseViewController {
         option.clientRoleType = GlobalSettings.shared.getUserRole()
         NetworkManager.shared.generateToken(channelName: channelName, success: { [weak self] token in
             guard let self = self else { return }
-            self.start()
-            let result = self.agoraKit.joinChannel(byToken: token, channelId: channelName, uid: 0, mediaOptions: option)
+            self.startAgent()
+            self.agoraKit.setParameters("{\"rtc.log_external_input\": true}")
+            let result = self.agoraKit.joinChannel(byToken: token, channelId: channelName, uid: localUid, mediaOptions: option)
             if result != 0 {
                 // Usually happens with invalid parameters
                 // Error code description can be found at:
@@ -182,6 +237,8 @@ class SttMessageViewController: BaseViewController {
     }
     
     private func setupUI() {
+        view.backgroundColor = .white
+
         view.addSubview(headerView)
         view.addSubview(tableView)
         view.addSubview(emptyLabel)
@@ -241,50 +298,116 @@ class SttMessageViewController: BaseViewController {
         }
     }
     
-    func start() {
+    func startAgent() {
         let path = "/stt/v1/start"
         let url = "\(baseUrl)\(path)"
-        let params: [String: Any] = [
-            "app_id": KeyCenter.AppId,
-            "stt_body": [
-                "languages": [
-                  "en-US"
-                ],
-                "name": "\(channelName)",
-                "maxIdleTime": 50,
-                "rtcConfig": [
-                    "channelName": "\(channelName)",
-                    "pubBotUid": "\(remoteUid)"
-                ],
-                "translateConfig": [
+        var params: [String: Any] = [:]
+        if self.translationMode == .enToZh {
+            params = [
+                "app_id": KeyCenter.AppId,
+                "stt_body": [
                     "languages": [
-                      [
-                        "source": "en-US",
-                        "target": [
-                          "zh-CN",
-                          "id-ID",
-                          "fr-FR"
+                        "en-US",
+                    ],
+                    "name": "\(channelName)",
+                    "maxIdleTime": 50,
+                    "rtcConfig": [
+                        "channelName": "\(channelName)",
+                        "pubBotUid": "\(remoteUid)"
+                    ],
+                    "translateConfig": [
+                        "languages": [
+                          [
+                            "source": "en-US",
+                            "target": [
+                                "zh-CN"
+                            ]
+                          ]
                         ]
-                      ]
                     ]
-                  ]
+                ]
             ]
-          ]
+        } else {
+            params = [
+                "app_id": KeyCenter.AppId,
+                "stt_body": [
+                    "languages": [
+                        "zh-CN",
+                    ],
+                    "name": "\(channelName)",
+                    "maxIdleTime": 50,
+                    "rtcConfig": [
+                        "channelName": "\(channelName)",
+                        "pubBotUid": "\(remoteUid)"
+                    ],
+                    "translateConfig": [
+                        "languages": [
+                          [
+                            "source": "zh-CN",
+                            "target": [
+                                "en-US"
+                            ]
+                          ]
+                        ]
+                    ]
+                ]
+            ]
+        }
+        
         NetworkManager.shared.postRequest(urlString: url, params: params) { response in
             print(response)
+            if let code = response["code"] as? Int, code != 0 {
+                let msg = response["msg"] as? String ?? "Unknown error"
+                print("request error, code: \(code), msg: \(msg)")
+                return
+            }
+            
+            guard let data = response["data"] else {
+                print("request error, Missing data")
+                return
+            }
+            
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: data)
+                let decoded = try JSONDecoder().decode(STTResponseModel.self, from: jsonData)
+                self.sttResponseModel = decoded
+            } catch {
+                print("Json serialization failed")
+            }
         } failure: { msg in
             print(msg)
         }
     }
     
-    func stop() {
-        NetworkManager.shared.postRequest(urlString: "", params: nil, success: nil, failure: nil)
+    func stopAgent() {
+        guard let agentId = sttResponseModel?.agentId else {
+            print("Agent is not started")
+            return
+        }
+        let path = "/stt/v1/stop"
+        let url = "\(baseUrl)\(path)"
+        let params: [String: Any] = [
+            "app_id": KeyCenter.AppId,
+            "agent_id": agentId
+        ]
+        NetworkManager.shared.postRequest(urlString: url, params: params, success: nil, failure: nil)
     }
+}
+
+extension SttMessageViewController: SttMessageRendererDelegate {
+//    func onDebugLog(_ log: String) {
+//        self.agoraKit.writeLog(.info, content: log)
+//    }
 }
 
 extension SttMessageViewController: AgoraDataStreamMsgHandlerDelegate {
     func onSttMessage(channel: String, content sttmessage: AgoraSttMessage) {
-        print(sttmessage)
+//        self.agoraKit.writeLog(.info, content: "~~~~~~~~~\(sttmessage)")
+        if #available(iOS 15.0, *) {
+            print("\(Date().formatted(.dateTime.hour().minute().second().secondFraction(.fractional(3))))~~~~~\(sttmessage)")
+        } else {
+            // Fallback on earlier versions
+        }
         let updatedSentences = sttRenderer.processMessage(sttmessage)
         updateSentences(updatedSentences)
     }
@@ -296,7 +419,6 @@ extension SttMessageViewController: AgoraRtcEngineDelegate {
     }
 }
 
-// MARK: - TableView DataSource & Delegate
 extension SttMessageViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sentences.count
@@ -314,7 +436,6 @@ extension SttMessageViewController: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - SentenceTableViewCell
 class SentenceTableViewCell: UITableViewCell {
-    
     private lazy var containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
@@ -492,8 +613,8 @@ class SentenceTableViewCell: UITableViewCell {
         translationsStackView.isHidden = !hasTranslations
         
         if hasTranslations {
-            for (lang, text) in sentence.translations {
-                let translationView = createTranslationView(lang: lang, text: text)
+            for (lang, translationData) in sentence.translations {
+                let translationView = createTranslationView(lang: lang, text: translationData.text)
                 translationsStackView.addArrangedSubview(translationView)
             }
         }
@@ -542,5 +663,15 @@ class SentenceTableViewCell: UITableViewCell {
         }
         
         return containerView
+    }
+}
+
+struct STTResponseModel: Codable {
+    let agentId: String?
+    let agentUrl: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case agentId = "agent_id"
+        case agentUrl = "agent_url"
     }
 }
