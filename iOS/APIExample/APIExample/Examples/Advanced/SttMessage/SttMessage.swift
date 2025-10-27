@@ -32,6 +32,14 @@ class SttMessageEntry: UIViewController {
         super.viewDidLoad()
         transcriptTypeButton.setTitle(transcriptMode.rawValue, for: .normal)
         translationTypeButton.setTitle(translationMode.rawValue, for: .normal)
+        authNetworkRequestAlert()
+    }
+    
+    func authNetworkRequestAlert() {
+        guard let url = URL(string: "https://service.agora.io/toolbox-global/v1/") else { return }
+        let requset = URLRequest(url: url)
+        let task = URLSession.shared.dataTask(with: requset)
+        task.resume()
     }
     
     @IBAction func start(_ sender: Any) {
