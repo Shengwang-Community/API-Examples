@@ -84,7 +84,11 @@ public class SttTranscriptDetail extends BaseFragment implements View.OnClickLis
                 if (BuildConfig.DEBUG) {
                     Log.d(tag, message);
                 }
-                engine.writeLog(Constants.LogLevel.LOG_LEVEL_INFO.ordinal(), tag + " " + message);
+                try {
+                    engine.writeLog(Constants.LogLevel.LOG_LEVEL_INFO.ordinal(), tag + " " + message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
