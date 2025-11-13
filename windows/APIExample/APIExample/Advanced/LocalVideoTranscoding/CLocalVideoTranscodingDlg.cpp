@@ -31,6 +31,9 @@ void CLocalVideoTranscodingDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_Cameras, m_staCamra);
 	DDX_Control(pDX, IDC_COMBO_CAMERAS, m_cmbCamera);
 	DDX_Control(pDX, IDC_CHECK_VIRTUAL_BG, m_chkVirtualBg);
+	DDX_Control(pDX, IDC_STATIC_LVT_SCREEN_CAPTURE, m_staScreenCapture);
+	DDX_Control(pDX, IDC_COMBO_LVT_SCREEN_CAPTURE, m_cmbScreenCapture);
+	DDX_Control(pDX, IDC_BUTTON_LVT_START_SHARE, m_btnStartShare);
 }
 
 
@@ -41,6 +44,7 @@ BEGIN_MESSAGE_MAP(CLocalVideoTranscodingDlg, CDialogEx)
 	ON_WM_SHOWWINDOW()
 	ON_CBN_SELCHANGE(IDC_COMBO_CAMERAS, &CLocalVideoTranscodingDlg::OnSelchangeComboCameras)
 	ON_BN_CLICKED(IDC_CHECK_VIRTUAL_BG, &CLocalVideoTranscodingDlg::OnBnClickedCheckVirtualBg)
+	ON_BN_CLICKED(IDC_BUTTON_LVT_START_SHARE, &CLocalVideoTranscodingDlg::OnBnClickedButtonStartShare)
 END_MESSAGE_MAP()
 
 
@@ -57,6 +61,9 @@ BOOL CLocalVideoTranscodingDlg::OnInitDialog()
 		m_videoWnds[i].SetFaceColor(RGB(0x58, 0x58, 0x58));
 	}
 	ResumeStatus();
+	
+	// Initialize screen/window capture sources
+	InitScreenCapture();
 
 	CString strPath = GetExePath() + _T("\\agora.png");
 	m_imgPng = cs2utf8(strPath);
@@ -78,20 +85,14 @@ void CLocalVideoTranscodingDlg::OnBnClickedButtonJoinchannel()
 			return;
 		}
 		CString strInfo;
-		agora::rtc::Rectangle rect;
-		auto params = agora::rtc::ScreenCaptureParameters(640, 360, 15, 800);
 
-		RECT rc;		
-		::GetWindowRect(GetDesktopWindow()->GetSafeHwnd(), &rc);
-		rect = { rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top };
-
-		
-		//primary camera configuration
+		// Primary camera configuration
 		CameraCapturerConfiguration config;
 		config.format.width = 640;
 		config.format.height = 360;
 		config.format.fps = 15;
-		//get selected camera device id
+		
+		// Get selected camera device id
 		char* buffer = new char[512] {0};
 		for (UINT i = 0; i < m_vecCameraInfos.size(); i++)
 		{
@@ -105,79 +106,17 @@ void CLocalVideoTranscodingDlg::OnBnClickedButtonJoinchannel()
 			}
 		}
 
-		//start primary camera capture
+		// Start primary camera capture
 		int ret = m_rtcEngine->startCameraCapture(VIDEO_SOURCE_CAMERA_PRIMARY, config);
 		delete[] buffer;
 		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("start primary camera capture"));
 
-		//start Screen capture
-		ret = m_rtcEngine->startScreenCaptureByScreenRect(rect, rect, params);
-		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("start Screen capture"));
-		int i = 0;
-		//screen
-		stream_infos[i].sourceType = VIDEO_SOURCE_SCREEN_PRIMARY;
-	
-		stream_infos[i].x = 0;
-		stream_infos[i].y = 0;
-		stream_infos[i].width = 1280;
-		stream_infos[i].height = 720;
-		stream_infos[i].mirror = false;
-		stream_infos[i].zOrder = 1;
-		++i;
-		//camera
-		
-		stream_infos[i].sourceType = VIDEO_SOURCE_CAMERA_PRIMARY;
-		
-		stream_infos[i].x = 0;
-		stream_infos[i].y = 360;
-		stream_infos[i].width = 640;
-		stream_infos[i].height = 360;
-		stream_infos[i].mirror = true;
-		stream_infos[i].zOrder = 2;
-		++i;
-		
-		//png imge
-		
-		stream_infos[i].sourceType = VIDEO_SOURCE_RTC_IMAGE_PNG;
-		
-		stream_infos[i].x = 0;
-		stream_infos[i].y = 0;
-		stream_infos[i].width = 60;
-		stream_infos[i].height = 60;
-		stream_infos[i].imageUrl = m_imgPng.c_str();
-		stream_infos[i].mirror = false;
-		stream_infos[i].zOrder = 3;
-		++i;
-
-		//jpg image
-		
-		stream_infos[i].sourceType = VIDEO_SOURCE_RTC_IMAGE_JPEG;
-		
-		stream_infos[i].x = 640 - 64;
-		stream_infos[i].y = 180 - 64;
-		stream_infos[i].width = 64;
-		stream_infos[i].height = 64;
-		stream_infos[i].imageUrl = m_imgJpg.c_str();
-		stream_infos[i].mirror = false;
-		stream_infos[i].zOrder = 4;
-		++i;
-
-		//video encoder configuration
-		agora::rtc::VideoEncoderConfiguration encoder_config;
-		encoder_config.codecType = agora::rtc::VIDEO_CODEC_H264;
-		encoder_config.dimensions = { 1280, 720 };
-		encoder_config.bitrate = 2000;
-		encoder_config.frameRate = 15;
-		
-		// local transcoder configuration
-		agora::rtc::LocalTranscoderConfiguration transcoder_config;
-		transcoder_config.streamCount = i;
-		transcoder_config.videoInputStreams = stream_infos;
-		transcoder_config.videoOutputConfiguration = encoder_config;
+		// Get composite configuration based on current state (screen sharing on/off)
+		agora::rtc::LocalTranscoderConfiguration transcoder_config = GetCompositeConfiguration();
 		ret = m_rtcEngine->startLocalVideoTranscoder(transcoder_config);
-		m_lstInfo.InsertString(m_lstInfo.GetCount() , _T("start local video Transcoder"));
+		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("start local video transcoder"));
 
-		//setup local video in the engine to canvas.
+		// Setup local video in the engine to canvas
 		agora::rtc::VideoCanvas canvas;
 		canvas.renderMode = media::base::RENDER_MODE_FIT;
 		canvas.uid = 0;
@@ -187,48 +126,46 @@ void CLocalVideoTranscodingDlg::OnBnClickedButtonJoinchannel()
 		m_rtcEngine->setupLocalVideo(canvas);
 		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("setupLocalVideo"));
 
-		//start preview
+		// Start preview
 		m_rtcEngine->startPreview();
 		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("start preview"));
-		
 
-		//join channel
+		// Join channel
 		agora::rtc::ChannelMediaOptions op;
 		op.publishTranscodedVideoTrack = true;
 		op.channelProfile = CHANNEL_PROFILE_LIVE_BROADCASTING;
 		op.clientRoleType = agora::rtc::CLIENT_ROLE_BROADCASTER;
 		if (0 == m_rtcEngine->joinChannel(APP_TOKEN, szChannelId.data(), 0, op)) {
 			strInfo.Format(_T("join channel %s, use ChannelMediaOptions"), strChannelName);
-			m_lstInfo.InsertString(m_lstInfo.GetCount() , strInfo);
+			m_lstInfo.InsertString(m_lstInfo.GetCount(), strInfo);
 			m_conn_camera = DEFAULT_CONNECTION_ID;
 		}
 
 		m_btnJoinChannel.SetWindowText(commonCtrlLeaveChannel);
 	}
 	else {
-
-		//leave channel
+		// Leave channel
 		m_rtcEngine->leaveChannel();
 		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("leave channel"));
 
-		// stop local video transcoder
+		// Stop local video transcoder
 		m_rtcEngine->stopLocalVideoTranscoder();
 		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("stop local video transcoder"));
 
-		//stop screen capture
-		m_rtcEngine->stopScreenCapture();
-		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("stop screen capture"));
-		//stop screen capture
+		// Stop screen capture if active
+		if (m_isScreenSharing) {
+			m_rtcEngine->stopScreenCapture();
+			m_isScreenSharing = false;
+			m_btnStartShare.SetWindowText(localVideoTranscodingStartShare);
+			m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("stop screen capture"));
+		}
+
+		// Stop camera capture
 		m_rtcEngine->stopCameraCapture(VIDEO_SOURCE_CAMERA_PRIMARY);
 		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("stop camera capture"));
-		//stop preview
-		//m_rtcEngine->stopPreview();
-		//m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("stop preview"));
-		
 
 		m_btnJoinChannel.SetWindowText(commonCtrlJoinChannel);
 		m_videoWnds[0].Invalidate();
-
 	}
 	m_joinChannel = !m_joinChannel;
 }
@@ -340,10 +277,12 @@ void CLocalVideoTranscodingDlg::UnInitAgora()
 //Initialize the Ctrl Text.
 void CLocalVideoTranscodingDlg::InitCtrlText()
 {
-	m_staCamra.SetWindowText(PerCallTestCtrlCamera);//MultiVideoSourceCtrlUnPublish
+	m_staCamra.SetWindowText(PerCallTestCtrlCamera);
 	m_staChannel.SetWindowText(commonCtrlChannel);
 	m_btnJoinChannel.SetWindowText(commonCtrlJoinChannel);
 	m_chkVirtualBg.SetWindowText(localVideoTranscodingVirtualBg);
+	m_staScreenCapture.SetWindowText(localVideoTranscodingScreenCapture);
+	m_btnStartShare.SetWindowText(localVideoTranscodingStartShare);
 }
 
 // resume window status.
@@ -524,5 +463,225 @@ void CLocalVideoTranscodingDlg::OnBnClickedCheckVirtualBg()
 		CString strInfo;
 		strInfo.Format(_T("disableVirtualBackground"));
 		m_lstInfo.InsertString(m_lstInfo.GetCount(), strInfo);
+	}
+}
+
+// Initialize screen/window capture sources
+void CLocalVideoTranscodingDlg::InitScreenCapture()
+{
+	if (m_rtcEngine == nullptr) {
+		return;
+	}
+
+	// Get screen and window sources
+	SIZE thumbSize = { 0, 0 };
+	SIZE iconSize = { 0, 0 };
+	auto sources = m_rtcEngine->getScreenCaptureSources(thumbSize, iconSize, true);
+	
+	m_cmbScreenCapture.ResetContent();
+	m_listScreenWindows.RemoveAll();
+	
+	if (sources) {
+		for (unsigned int i = 0; i < sources->getCount(); ++i) {
+			agora::rtc::ScreenCaptureSourceInfo info = sources->getSourceInfo(i);
+			m_listScreenWindows.AddTail(info);
+			
+			CString displayName;
+			if (info.type == agora::rtc::ScreenCaptureSourceType_Screen) {
+				displayName.Format(_T("Screen %lld"), info.sourceId);
+			}
+			else {
+				displayName = utf82cs(info.sourceName);
+				if (displayName.IsEmpty()) {
+					displayName.Format(_T("Window %lld"), info.sourceId);
+				}
+			}
+			m_cmbScreenCapture.AddString(displayName);
+		}
+		sources->release();
+	}
+	
+	if (m_cmbScreenCapture.GetCount() > 0) {
+		m_cmbScreenCapture.SetCurSel(0);
+	}
+	
+	m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("Screen/Window sources initialized"));
+}
+
+// Start screen sharing
+void CLocalVideoTranscodingDlg::StartScreenShare()
+{
+	if (m_rtcEngine == nullptr || m_isScreenSharing) {
+		return;
+	}
+	
+	int sel = m_cmbScreenCapture.GetCurSel();
+	if (sel < 0 || sel >= m_listScreenWindows.GetCount()) {
+		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("Please select a screen or window"));
+		return;
+	}
+	
+	agora::rtc::ScreenCaptureSourceInfo sourceInfo = m_listScreenWindows.GetAt(m_listScreenWindows.FindIndex(sel));
+	agora::rtc::Rectangle rect = { 0, 0, 0, 0 };
+	agora::rtc::ScreenCaptureParameters params;
+	params.dimensions.width = 1280;
+	params.dimensions.height = 720;
+	params.frameRate = 15;
+	params.bitrate = 2000;
+	
+	int ret = 0;
+	if (sourceInfo.type == agora::rtc::ScreenCaptureSourceType_Screen) {
+		// Start screen capture by display ID
+		ret = m_rtcEngine->startScreenCaptureByDisplayId((unsigned int)sourceInfo.sourceId, rect, params);
+	}
+	else {
+		// Start screen capture by window ID
+		ret = m_rtcEngine->startScreenCaptureByWindowId(sourceInfo.sourceId, rect, params);
+	}
+	
+	if (ret == 0) {
+		m_isScreenSharing = true;
+		m_btnStartShare.SetWindowText(localVideoTranscodingStopShare);
+		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("Screen sharing started"));
+		
+		// Update local composite if already in channel
+		if (m_joinChannel) {
+			UpdateLocalComposite();
+		}
+	}
+	else {
+		CString strInfo;
+		strInfo.Format(_T("Start screen sharing failed: %d"), ret);
+		m_lstInfo.InsertString(m_lstInfo.GetCount(), strInfo);
+	}
+}
+
+// Stop screen sharing
+void CLocalVideoTranscodingDlg::StopScreenShare()
+{
+	if (m_rtcEngine == nullptr || !m_isScreenSharing) {
+		return;
+	}
+	
+	m_rtcEngine->stopScreenCapture();
+	m_isScreenSharing = false;
+	m_btnStartShare.SetWindowText(localVideoTranscodingStartShare);
+	m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("Screen sharing stopped"));
+	
+	// Update local composite if already in channel
+	if (m_joinChannel) {
+		UpdateLocalComposite();
+	}
+}
+
+// Get composite configuration based on current state
+agora::rtc::LocalTranscoderConfiguration CLocalVideoTranscodingDlg::GetCompositeConfiguration()
+{
+	agora::rtc::LocalTranscoderConfiguration config;
+	agora::rtc::TranscodingVideoStream streams[MAX_TRANSCODING_STREAM_COUNT];
+	int streamCount = 0;
+	
+	// If screen sharing is active, add screen as background
+	if (m_isScreenSharing) {
+		streams[streamCount].sourceType = VIDEO_SOURCE_SCREEN_PRIMARY;
+		streams[streamCount].x = 0;
+		streams[streamCount].y = 0;
+		streams[streamCount].width = 1280;
+		streams[streamCount].height = 720;
+		streams[streamCount].zOrder = 1;
+		streams[streamCount].mirror = false;
+		streamCount++;
+	}
+	
+	// Add camera stream (in the bottom-right corner if screen sharing, or full screen if not)
+	streams[streamCount].sourceType = VIDEO_SOURCE_CAMERA_PRIMARY;
+	if (m_isScreenSharing) {
+		// Camera in bottom-right corner
+		streams[streamCount].x = 1280 - 400 - 20;  // 20px margin from right
+		streams[streamCount].y = 720 - 300 - 20;   // 20px margin from bottom
+		streams[streamCount].width = 400;
+		streams[streamCount].height = 300;
+	}
+	else {
+		// Camera full screen
+		streams[streamCount].x = 0;
+		streams[streamCount].y = 0;
+		streams[streamCount].width = 1280;
+		streams[streamCount].height = 720;
+	}
+	streams[streamCount].zOrder = 2;
+	streams[streamCount].mirror = true;
+	streamCount++;
+	
+	// Add PNG image overlay
+	streams[streamCount].sourceType = VIDEO_SOURCE_RTC_IMAGE_PNG;
+	streams[streamCount].x = 0;
+	streams[streamCount].y = 0;
+	streams[streamCount].width = 60;
+	streams[streamCount].height = 60;
+	streams[streamCount].imageUrl = m_imgPng.c_str();
+	streams[streamCount].zOrder = 3;
+	streams[streamCount].mirror = false;
+	streamCount++;
+	
+	// Add JPEG image overlay
+	streams[streamCount].sourceType = VIDEO_SOURCE_RTC_IMAGE_JPEG;
+	if (m_isScreenSharing) {
+		streams[streamCount].x = 640 - 64;
+		streams[streamCount].y = 180 - 64;
+	}
+	else {
+		streams[streamCount].x = 1280 - 64 - 20;
+		streams[streamCount].y = 20;
+	}
+	streams[streamCount].width = 64;
+	streams[streamCount].height = 64;
+	streams[streamCount].imageUrl = m_imgJpg.c_str();
+	streams[streamCount].zOrder = 4;
+	streams[streamCount].mirror = false;
+	streamCount++;
+	
+	// Video encoder configuration
+	agora::rtc::VideoEncoderConfiguration encoderConfig;
+	encoderConfig.codecType = agora::rtc::VIDEO_CODEC_H264;
+	encoderConfig.dimensions = { 1280, 720 };
+	encoderConfig.bitrate = 2000;
+	encoderConfig.frameRate = 15;
+	
+	config.streamCount = streamCount;
+	config.videoInputStreams = streams;
+	config.videoOutputConfiguration = encoderConfig;
+	
+	return config;
+}
+
+// Update local composite configuration
+void CLocalVideoTranscodingDlg::UpdateLocalComposite()
+{
+	if (m_rtcEngine == nullptr || !m_joinChannel) {
+		return;
+	}
+	
+	agora::rtc::LocalTranscoderConfiguration config = GetCompositeConfiguration();
+	int ret = m_rtcEngine->updateLocalTranscoderConfiguration(config);
+	
+	if (ret == 0) {
+		m_lstInfo.InsertString(m_lstInfo.GetCount(), _T("Local composite updated"));
+	}
+	else {
+		CString strInfo;
+		strInfo.Format(_T("Update local composite failed: %d"), ret);
+		m_lstInfo.InsertString(m_lstInfo.GetCount(), strInfo);
+	}
+}
+
+// Button click handler for Start/Stop Share
+void CLocalVideoTranscodingDlg::OnBnClickedButtonStartShare()
+{
+	if (!m_isScreenSharing) {
+		StartScreenShare();
+	}
+	else {
+		StopScreenShare();
 	}
 }
