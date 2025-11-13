@@ -52,7 +52,7 @@ class LocalCompositeGraphMain: BaseViewController {
         params.audioParams = audioParams
         let videoParams = AgoraScreenVideoParameters()
         videoParams.dimensions = screenShareVideoDimension()
-        videoParams.frameRate = .fps15
+        videoParams.frameRate = AgoraVideoFrameRate.fps15.rawValue
         videoParams.bitrate = AgoraVideoBitrateStandard
         params.videoParams = videoParams
         return params
@@ -70,6 +70,8 @@ class LocalCompositeGraphMain: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        virtualBackgroundSwitch.isOn = false
+        
         // layout render view
         localVideo.setPlaceholder(text: "Local Host".localized)
         container.layoutStream(views: [localVideo])
