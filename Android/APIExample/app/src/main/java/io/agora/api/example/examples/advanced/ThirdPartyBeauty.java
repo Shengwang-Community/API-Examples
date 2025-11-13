@@ -22,7 +22,6 @@ import java.util.List;
 import io.agora.api.example.R;
 import io.agora.api.example.annotation.Example;
 import io.agora.api.example.common.BaseFragment;
-import io.agora.api.example.examples.advanced.beauty.ByteDanceBeautySDK;
 import io.agora.api.example.examples.advanced.beauty.FaceUnityBeautySDK;
 import io.agora.api.example.examples.advanced.beauty.SenseTimeBeautySDK;
 
@@ -56,7 +55,6 @@ public class ThirdPartyBeauty extends BaseFragment {
 
         SenseTimeBeautySDK.INSTANCE.initBeautySDK(requireContext());
         FaceUnityBeautySDK.INSTANCE.initBeauty(requireContext());
-        ByteDanceBeautySDK.INSTANCE.initBeautySDK(requireContext());
 
         // SceneTime Beauty
         beautyActionIds.add(R.id.action_third_party_beauty_to_scene_time);
@@ -65,10 +63,6 @@ public class ThirdPartyBeauty extends BaseFragment {
         // FaceUnity Beauty
         beautyActionIds.add(R.id.action_third_party_beauty_to_faceunity);
         beautyLabels.add(getString(R.string.faceunity_beauty));
-
-        // ByteDance Beauty
-        beautyActionIds.add(R.id.action_third_party_beauty_to_bytedance);
-        beautyLabels.add(getString(R.string.bytedance_beauty));
 
         etChannel = view.findViewById(R.id.et_channel);
         snBeautyType = view.findViewById(R.id.sn_beauty_type);
