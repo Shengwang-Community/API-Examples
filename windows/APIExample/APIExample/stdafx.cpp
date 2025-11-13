@@ -314,6 +314,9 @@ wchar_t mediaRecorderStartRecording[INFO_LEN] = { 0 };
 wchar_t mediaRecorderStopRecording[INFO_LEN] = { 0 };
 
 wchar_t localVideoTranscodingVirtualBg[INFO_LEN] = { 0 };
+wchar_t localVideoTranscodingScreenCapture[INFO_LEN] = { 0 };
+wchar_t localVideoTranscodingStartShare[INFO_LEN] = { 0 };
+wchar_t localVideoTranscodingStopShare[INFO_LEN] = { 0 };
 
 // metadata
 wchar_t advancedMetadataVideo[INFO_LEN] = { 0 };
@@ -792,6 +795,9 @@ void InitKeyInfomation()
 	_tcscpy_s(mediaRecorderStopRecording, INFO_LEN, Str(_T("MediaRecoder.StopRecording")));
 
 	_tcscpy_s(localVideoTranscodingVirtualBg, INFO_LEN, Str(_T("LocalVideoTranscoding.VirtualBg")));
+	_tcscpy_s(localVideoTranscodingScreenCapture, INFO_LEN, Str(_T("LocalVideoTranscoding.ScreenCapture")));
+	_tcscpy_s(localVideoTranscodingStartShare, INFO_LEN, Str(_T("LocalVideoTranscoding.StartShare")));
+	_tcscpy_s(localVideoTranscodingStopShare, INFO_LEN, Str(_T("LocalVideoTranscoding.StopShare")));
 
 
 	// metadata

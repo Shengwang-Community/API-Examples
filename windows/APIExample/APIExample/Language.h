@@ -345,6 +345,9 @@ extern wchar_t mediaRecorderStartRecording[INFO_LEN];
 extern wchar_t mediaRecorderStopRecording[INFO_LEN];
 
 extern wchar_t localVideoTranscodingVirtualBg[INFO_LEN];
+extern wchar_t localVideoTranscodingScreenCapture[INFO_LEN];
+extern wchar_t localVideoTranscodingStartShare[INFO_LEN];
+extern wchar_t localVideoTranscodingStopShare[INFO_LEN];
 
 // metadata
 extern wchar_t advancedMetadataVideo[INFO_LEN];
