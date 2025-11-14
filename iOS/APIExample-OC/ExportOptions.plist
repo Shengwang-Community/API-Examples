@@ -16,7 +16,7 @@
 		<string>apiexample_wildcard_adhoc</string>
 	</dict>
 	<key>signingCertificate</key>
-	<string>iPhone Distribution</string>
+	<string>5D502FE03005C34FF1CCFC0F6F9D1712C95662B4</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>stripSwiftSymbols</key>
