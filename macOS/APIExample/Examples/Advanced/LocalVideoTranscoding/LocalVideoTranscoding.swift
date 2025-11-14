@@ -121,11 +121,11 @@ class LocalVideoTranscoding: BaseViewController {
     @IBAction func onScreenShare(_ sender: NSButton) {
         if !isScreenSharing {
             startScreenSharing()
-            updateLocalComposite()
+            updateLocalTranscoding()
         } else {
             agoraKit.stopScreenCapture()
             isScreenSharing = false
-            updateLocalComposite()
+            updateLocalTranscoding()
         }
     }
     
@@ -161,7 +161,7 @@ class LocalVideoTranscoding: BaseViewController {
         }
     }
     
-    private func getCompositeConfiguration() -> AgoraLocalTranscoderConfiguration {
+    private func getTranscodingConfiguration() -> AgoraLocalTranscoderConfiguration {
         let size = NSScreen.main?.visibleFrame.size ?? .zero
         let cameraSize = NSSize(width: 400, height: 300)
         let margin: CGFloat = 20
@@ -189,8 +189,8 @@ class LocalVideoTranscoding: BaseViewController {
         return config
     }
     
-    private func startLocalComposite() {
-        let config = getCompositeConfiguration()
+    private func startLocalTranscoding() {
+        let config = getTranscodingConfiguration()
         let result = agoraKit.startLocalVideoTranscoder(config)
         
         if result == 0 {
@@ -203,8 +203,8 @@ class LocalVideoTranscoding: BaseViewController {
         }
     }
     
-    private func updateLocalComposite() {
-        let config = getCompositeConfiguration()
+    private func updateLocalTranscoding() {
+        let config = getTranscodingConfiguration()
         let result = agoraKit.updateLocalTranscoderConfiguration(config)
         
         if result != 0 {
@@ -288,7 +288,7 @@ class LocalVideoTranscoding: BaseViewController {
             
             startScreenSharing()
             setupLocalPreview(transCoded: false)
-            startLocalComposite()
+            startLocalTranscoding()
             setupLocalPreview(transCoded: true)
             
             isProcessing = true
@@ -327,7 +327,7 @@ class LocalVideoTranscoding: BaseViewController {
         let videoCanvas = AgoraRtcVideoCanvas()
         videoCanvas.uid = 0
         videoCanvas.view = localVideo.videocanvas
-        videoCanvas.renderMode = .hidden
+        videoCanvas.renderMode = .fit
         videoCanvas.sourceType = transCoded ? .transCoded : .screen
         videoCanvas.mirrorMode = .disabled
         agoraKit.setupLocalVideo(videoCanvas)
