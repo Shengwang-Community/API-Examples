@@ -15,8 +15,6 @@
 		<key>io.agora.api.examples-oc.Agora-ScreenShare-Extension</key>
 		<string>apiexample_wildcard_adhoc</string>
 	</dict>
-	<key>signingCertificate</key>
-	<string>iPhone Distribution: Ning Xia (YS397FG5PA)</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>stripSwiftSymbols</key>
