@@ -279,4 +279,4 @@
 "Voice Formant" = "语音共振峰";
 "Set Layers Config(Maximum 3)" = "配置多流(最多3个)";
 "Maxmum 3 layers can be selected" = "最多配置三个";
-"LocalCompositeGraph" = "LocalCompositeGraph";
+"LocalCompositeGraph" = "本地合图屏幕共享";
