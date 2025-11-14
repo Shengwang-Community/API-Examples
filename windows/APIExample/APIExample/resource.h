@@ -172,6 +172,7 @@
 #define IDC_CHECK_AUDIO_SOURCE_MUTE     1054
 #define IDC_CHECK_VIRTUAL_BG            1054
 #define IDC_CHECK_HDR                   1054
+#define IDC_STATIC_ADUIO_PROFILE        1055
 #define IDC_CHK_REPLACE_MICROPHONE      1055
 #define IDC_STATIC_ADUIO_SCENARIO       1056
 #define IDC_STATIC_CAMERA               1057
@@ -476,10 +477,6 @@
 #define IDC_BASEWND_VIDEO_SIMULCAST     1195
 #define IDC_CHECK_ENABLE_MULTIPATH		1196
 #define IDC_STATIC_ENABLE_MULTIPATH		1197
-#define IDC_STATIC_LVT_SCREEN_CAPTURE   1198
-#define IDC_COMBO_LVT_SCREEN_CAPTURE    1199
-#define IDC_BUTTON_LVT_START_SHARE      1200
-#define IDC_STATIC_Cameras              1201
 
 // Next default values for new objects
 // 
