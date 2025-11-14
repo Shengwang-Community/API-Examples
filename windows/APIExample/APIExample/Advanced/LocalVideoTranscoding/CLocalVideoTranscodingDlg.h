@@ -146,9 +146,6 @@ public:
 	CStatic m_staChannel;
 	CStatic m_staCamra;
 	CButton m_chkVirtualBg;
-	CStatic m_staScreenCapture;
-	CComboBox m_cmbScreenCapture;
-	CButton m_btnStartShare;
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	LRESULT OnEIDJoinChannelSuccess(WPARAM wParam, LPARAM lParam);
 	LRESULT OnEIDLeaveChannel(WPARAM wParam, LPARAM lParam);
@@ -157,15 +154,4 @@ public:
 	afx_msg void OnSelchangeComboCameras();
 
 	afx_msg void OnBnClickedCheckVirtualBg();
-	afx_msg void OnBnClickedButtonStartShare();
-
-private:
-	bool m_isScreenSharing = false;
-	CList<agora::rtc::ScreenCaptureSourceInfo> m_listScreenWindows;
-
-	void InitScreenCapture();
-	void StartScreenShare();
-	void StopScreenShare();
-	void UpdateLocalComposite();
-	agora::rtc::LocalTranscoderConfiguration GetCompositeConfiguration();
 };
