@@ -94,7 +94,7 @@ class LiveStreamingMain: BaseViewController {
             self.agoraKit.setVideoEncoderConfiguration(
                 AgoraVideoEncoderConfiguration(
                     size: resolution.size(),
-                    frameRate: AgoraVideoFrameRate(rawValue: fps) ?? .fps15,
+                    frameRate: fps,
                     bitrate: AgoraVideoBitrateStandard,
                     orientationMode: .adaptative,
                     mirrorMode: AgoraVideoMirrorMode.auto
@@ -132,7 +132,7 @@ class LiveStreamingMain: BaseViewController {
             self.agoraKit.setVideoEncoderConfiguration(
                 AgoraVideoEncoderConfiguration(
                     size: resolution.size(),
-                    frameRate: AgoraVideoFrameRate(rawValue: fps) ?? .fps15,
+                    frameRate: fps,
                     bitrate: AgoraVideoBitrateStandard,
                     orientationMode: .adaptative,
                     mirrorMode: .auto
@@ -387,7 +387,7 @@ class LiveStreamingMain: BaseViewController {
             agoraKit.setVideoEncoderConfiguration(
                 AgoraVideoEncoderConfiguration(
                     size: resolution.size(),
-                    frameRate: AgoraVideoFrameRate(rawValue: fps) ?? .fps15,
+                    frameRate: fps,
                     bitrate: AgoraVideoBitrateStandard,
                     orientationMode: .adaptative,
                     mirrorMode: .auto
