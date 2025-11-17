@@ -4,7 +4,7 @@ def modfiy(path, sdk_flag):
     with open(path, 'r', encoding='utf-8') as file:
         contents = []
         for num, line in enumerate(file):
-            if "pod 'Agora" in line:
+            if "pod 'Shengwang" in line:
                 if sdk_flag:
                     line = '\t'+"pod 'sdk', :path => '../../sdk.podspec'" + "\n"
             elif "pod 'sdk" in line:
