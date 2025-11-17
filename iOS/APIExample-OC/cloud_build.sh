@@ -137,6 +137,8 @@ EXPORT_PATH="${WORKSPACE}/export"
 rm -rf "${EXPORT_PATH}"
 mkdir -p "${EXPORT_PATH}"
 
+security unlock-keychain -p "123456" ~/Library/Keychains/login.keychain
+
 echo "开始导出 IPA..."
 xcodebuild -exportArchive \
   -archivePath "${ARCHIVE_PATH}" \
