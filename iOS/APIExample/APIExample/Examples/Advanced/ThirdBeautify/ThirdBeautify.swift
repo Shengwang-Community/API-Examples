@@ -11,7 +11,6 @@ import UIKit
 enum ThirdBeautifyType: String {
     case sense = "SenseBeautify"
     case fu = "FUBeautify"
-    case bytedEffect = "BytedEffect"
 }
 
 class ThirdBeautifyEntry: BaseViewController {
@@ -39,13 +38,9 @@ class ThirdBeautifyEntry: BaseViewController {
         let fu = UIAlertAction(title: "FU Beautify".localized, style: .default) { _ in
             self.jumpHandler(type: .fu)
         }
-        let bytedEffect = UIAlertAction(title: "Byted Effect".localized, style: .default) { _ in
-            self.jumpHandler(type: .bytedEffect)
-        }
         let cancel = UIAlertAction(title: "Cancel".localized, style: .cancel, handler: nil)
         actionSheetVC.addAction(sense)
         actionSheetVC.addAction(fu)
-        actionSheetVC.addAction(bytedEffect)
         actionSheetVC.addAction(cancel)
 //        present(actionSheetVC, animated: true, completion: nil)
         presentAlertViewController(actionSheetVC)
