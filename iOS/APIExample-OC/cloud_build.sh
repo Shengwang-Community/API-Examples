@@ -92,6 +92,22 @@ xcodebuild CODE_SIGN_STYLE="Manual" archive -workspace "${APP_PATH}" -scheme "${
 
 cd ${WORKSPACE}
 
+# 打印当前设备安装的证书（用于调试）
+echo "=========================================="
+echo "当前设备安装的代码签名证书列表："
+echo "=========================================="
+security find-identity -v -p codesigning | grep -E "(iPhone Distribution|Apple Distribution|iOS Distribution)" || security find-identity -v -p codesigning
+echo "=========================================="
+echo ""
+
+# 打印 ExportOptions.plist 内容（用于调试）
+echo "=========================================="
+echo "ExportOptions.plist 配置内容："
+echo "=========================================="
+cat "${PLIST_PATH}"
+echo "=========================================="
+echo ""
+
 # 压缩archive
 7za a -tzip "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" "${ARCHIVE_PATH}"
 
