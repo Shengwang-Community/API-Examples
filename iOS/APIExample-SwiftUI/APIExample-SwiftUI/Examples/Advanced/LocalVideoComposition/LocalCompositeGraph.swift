@@ -35,6 +35,7 @@ struct LocalCompositeGraphEntry: View {
 struct LocalCompositeGraph: View {
     @State var configs: [String: Any] = [:]
     @ObservedObject private var agoraKit = LocalCompositeGraphRTC()
+    @State private var toggleState: Bool = false
 
     var localView = VideoView()
 
@@ -44,6 +45,14 @@ struct LocalCompositeGraph: View {
                 localView
             }
             Spacer()
+            HStack {
+                Toggle("", isOn: $toggleState)
+                    .onChange(of: toggleState) { newValue in
+                        agoraKit.updateToggleState(isOn: newValue)
+                    }
+                Spacer()
+            }
+            .padding()
         }.onAppear(perform: {
             agoraKit.setupRTC(configs: configs,
                               localView: localView.videoView)

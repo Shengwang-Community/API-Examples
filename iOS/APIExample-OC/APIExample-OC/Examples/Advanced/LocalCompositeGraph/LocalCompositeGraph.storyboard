@@ -59,18 +59,27 @@
                                 <rect key="frame" x="0.0" y="59" width="393" height="759"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jcD-ad-LG7">
+                                <rect key="frame" x="172" y="423" width="51" height="31"/>
+                                <connections>
+                                    <action selector="virtualBackgroundAction:" destination="33B-rf-jso" eventType="valueChanged" id="CGE-JJ-ccb"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="3wQ-o6-eNJ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="jcD-ad-LG7" firstAttribute="centerX" secondItem="3wQ-o6-eNJ" secondAttribute="centerX" id="9JY-5c-lFG"/>
                             <constraint firstItem="V7v-fP-Wu3" firstAttribute="top" secondItem="3wQ-o6-eNJ" secondAttribute="top" id="Ffo-li-75j"/>
                             <constraint firstItem="3wQ-o6-eNJ" firstAttribute="trailing" secondItem="V7v-fP-Wu3" secondAttribute="trailing" id="IGi-o6-DhD"/>
                             <constraint firstItem="V7v-fP-Wu3" firstAttribute="leading" secondItem="3wQ-o6-eNJ" secondAttribute="leading" id="Ne4-hM-RXb"/>
                             <constraint firstItem="3wQ-o6-eNJ" firstAttribute="bottom" secondItem="V7v-fP-Wu3" secondAttribute="bottom" id="oFs-Rq-l0y"/>
+                            <constraint firstItem="jcD-ad-LG7" firstAttribute="centerY" secondItem="3wQ-o6-eNJ" secondAttribute="centerY" id="t0Z-fg-x0M"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="container" destination="V7v-fP-Wu3" id="jZh-u3-jyT"/>
+                        <outlet property="virtualBackgroundSwitch" destination="jcD-ad-LG7" id="AcJ-1I-P3r"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Lws-GF-lGx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
