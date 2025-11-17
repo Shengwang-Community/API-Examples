@@ -92,13 +92,16 @@ PLIST_PATH="${PROJECT_PATH}/ExportOptions.plist"
 echo PLIST_PATH: $PLIST_PATH
 
 # archive 这边使用的工作区间 也可以使用project
-# 允许代码签名，确保 Framework 和 Extension 也能正确签名
+# 在 archive 阶段禁用签名，避免 Pods Framework 签名问题
+# 代码签名将在导出（export）阶段根据 ExportOptions.plist 进行
 xcodebuild CODE_SIGN_STYLE="Manual" \
-  CODE_SIGN_IDENTITY="iPhone Distribution" \
-  DEVELOPMENT_TEAM="YS397FG5PA" \
-  archive -workspace "${APP_PATH}" \
+  -workspace "${APP_PATH}" \
   -scheme "${TARGET_NAME}" \
+  clean \
+  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGNING_ALLOWED=NO \
   -configuration "${CONFIGURATION}" \
+  archive \
   -archivePath "${ARCHIVE_PATH}" \
   -destination 'generic/platform=iOS' \
   -quiet || exit 1
