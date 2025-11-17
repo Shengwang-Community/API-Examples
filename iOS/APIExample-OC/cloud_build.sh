@@ -92,10 +92,26 @@ PLIST_PATH="${PROJECT_PATH}/ExportOptions.plist"
 echo PLIST_PATH: $PLIST_PATH
 
 # archive 这边使用的工作区间 也可以使用project
-# 允许代码签名，确保 Framework 也能正确签名
-xcodebuild CODE_SIGN_STYLE="Manual" archive -workspace "${APP_PATH}" -scheme "${TARGET_NAME}" -configuration "${CONFIGURATION}" -archivePath "${ARCHIVE_PATH}" -destination 'generic/platform=iOS' -quiet || exit 1
+# 允许代码签名，确保 Framework 和 Extension 也能正确签名
+xcodebuild CODE_SIGN_STYLE="Manual" \
+  CODE_SIGN_IDENTITY="iPhone Distribution" \
+  DEVELOPMENT_TEAM="YS397FG5PA" \
+  archive -workspace "${APP_PATH}" \
+  -scheme "${TARGET_NAME}" \
+  -configuration "${CONFIGURATION}" \
+  -archivePath "${ARCHIVE_PATH}" \
+  -destination 'generic/platform=iOS' \
+  -quiet || exit 1
 
 cd ${WORKSPACE}
+
+# 验证 Extension 配置是否正确应用（用于调试）
+echo "验证 Extension 签名配置..."
+/usr/libexec/PlistBuddy -c "Print :objects:E72F623E2A7B8AFB00C963D2:buildSettings:CODE_SIGN_IDENTITY" $PBXPROJ_PATH || echo "Debug Extension CODE_SIGN_IDENTITY 未找到"
+/usr/libexec/PlistBuddy -c "Print :objects:E72F623E2A7B8AFB00C963D2:buildSettings:PROVISIONING_PROFILE_SPECIFIER" $PBXPROJ_PATH || echo "Debug Extension PROVISIONING_PROFILE_SPECIFIER 未找到"
+/usr/libexec/PlistBuddy -c "Print :objects:E72F623F2A7B8AFB00C963D2:buildSettings:CODE_SIGN_IDENTITY" $PBXPROJ_PATH || echo "Release Extension CODE_SIGN_IDENTITY 未找到"
+/usr/libexec/PlistBuddy -c "Print :objects:E72F623F2A7B8AFB00C963D2:buildSettings:PROVISIONING_PROFILE_SPECIFIER" $PBXPROJ_PATH || echo "Release Extension PROVISIONING_PROFILE_SPECIFIER 未找到"
+echo ""
 
 # 打印当前设备安装的证书（用于调试）
 echo "=========================================="
