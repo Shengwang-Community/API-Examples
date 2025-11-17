@@ -108,19 +108,26 @@ cat "${PLIST_PATH}"
 echo "=========================================="
 echo ""
 
-# 压缩archive
-7za a -tzip "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" "${ARCHIVE_PATH}"
+# 导出 IPA（直接使用 xcodebuild，与 Xcode 手动导出一致）
+EXPORT_PATH="${WORKSPACE}/export"
+rm -rf "${EXPORT_PATH}"
+mkdir -p "${EXPORT_PATH}"
 
-# 签名
-# sh sign "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" --type xcarchive --plist "${PLIST_PATH}"
-sh export "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" --plist "${PLIST_PATH}"
+echo "开始导出 IPA..."
+xcodebuild -exportArchive \
+  -archivePath "${ARCHIVE_PATH}" \
+  -exportPath "${EXPORT_PATH}" \
+  -exportOptionsPlist "${PLIST_PATH}" \
+  -allowProvisioningUpdates || exit 1
 
+# 重命名并移动 IPA 文件
 SDK_VERSION=$(echo $sdk_url | cut -d "/" -f 5)
 OUTPUT_FILE=${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}_${SDK_VERSION}_$(date "+%Y%m%d%H%M%S").ipa
-mv ${TARGET_NAME}_${BUILD_NUMBER}.ipa $OUTPUT_FILE
+mv ${EXPORT_PATH}/${TARGET_NAME}.ipa $OUTPUT_FILE
 
-rm -rf *.xcarchive
-rm -rf *.xcarchive.zip
+# 清理临时文件
+rm -rf "${EXPORT_PATH}"
+rm -rf "${ARCHIVE_PATH}"
 echo OUTPUT_FILE: $OUTPUT_FILE
 
 
