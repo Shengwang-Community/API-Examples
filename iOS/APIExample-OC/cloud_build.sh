@@ -39,15 +39,15 @@ PBXPROJ_PATH=${TARGET_NAME}.xcodeproj/project.pbxproj
 /usr/libexec/PlistBuddy -c "Set :objects:E70ADE072A5D0050009947CF:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'apiexample_wildcard_adhoc'" $PBXPROJ_PATH
 # 屏幕共享Extension
 # Debug
-/usr/libexec/PlistBuddy -c "Set :objects:E72F61D42A7256D500C963D2:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:E72F61D42A7256D500C963D2:buildSettings:CODE_SIGN_IDENTITY 'iPhone Distribution'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:E72F61D42A7256D500C963D2:buildSettings:DEVELOPMENT_TEAM 'YS397FG5PA'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:E72F61D42A7256D500C963D2:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'apiexample_wildcard_adhoc'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:E72F623E2A7B8AFB00C963D2:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:E72F623E2A7B8AFB00C963D2:buildSettings:CODE_SIGN_IDENTITY 'iPhone Distribution'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:E72F623E2A7B8AFB00C963D2:buildSettings:DEVELOPMENT_TEAM 'YS397FG5PA'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:E72F623E2A7B8AFB00C963D2:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'apiexample_wildcard_adhoc'" $PBXPROJ_PATH
 # Release
-/usr/libexec/PlistBuddy -c "Set :objects:E72F61D52A7256D500C963D2:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:E72F61D52A7256D500C963D2:buildSettings:CODE_SIGN_IDENTITY 'iPhone Distribution'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:E72F61D52A7256D500C963D2:buildSettings:DEVELOPMENT_TEAM 'YS397FG5PA'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:E72F61D52A7256D500C963D2:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'apiexample_wildcard_adhoc'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:E72F623F2A7B8AFB00C963D2:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:E72F623F2A7B8AFB00C963D2:buildSettings:CODE_SIGN_IDENTITY 'iPhone Distribution'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:E72F623F2A7B8AFB00C963D2:buildSettings:DEVELOPMENT_TEAM 'YS397FG5PA'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:E72F623F2A7B8AFB00C963D2:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'apiexample_wildcard_adhoc'" $PBXPROJ_PATH
 # SimpleFilter
 # Debug
 /usr/libexec/PlistBuddy -c "Set :objects:E7361F932A6E6E7100925BD6:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
