@@ -30,12 +30,14 @@ PBXPROJ_PATH=${TARGET_NAME}.xcodeproj/project.pbxproj
 
 # Debug
 /usr/libexec/PlistBuddy -c "Set :objects:03D13BF72448758C00B599B3:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03D13BF72448758C00B599B3:buildSettings:DEVELOPMENT_TEAM 'GM72UGLGZW'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03D13BF72448758C00B599B3:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'App'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:03D13BF72448758C00B599B3:buildSettings:CODE_SIGN_IDENTITY 'iPhone Distribution'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:03D13BF72448758C00B599B3:buildSettings:DEVELOPMENT_TEAM 'YS397FG5PA'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:03D13BF72448758C00B599B3:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'apiexample_wildcard_adhoc'" $PBXPROJ_PATH
 # Release
 /usr/libexec/PlistBuddy -c "Set :objects:03D13BF82448758C00B599B3:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03D13BF82448758C00B599B3:buildSettings:DEVELOPMENT_TEAM 'GM72UGLGZW'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03D13BF82448758C00B599B3:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'App'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:03D13BF82448758C00B599B3:buildSettings:CODE_SIGN_IDENTITY 'iPhone Distribution'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:03D13BF82448758C00B599B3:buildSettings:DEVELOPMENT_TEAM 'YS397FG5PA'" $PBXPROJ_PATH
+/usr/libexec/PlistBuddy -c "Set :objects:03D13BF82448758C00B599B3:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'apiexample_wildcard_adhoc'" $PBXPROJ_PATH
 
 #修改build number
 # Debug
@@ -50,48 +52,75 @@ echo PROJECT_PATH: $PROJECT_PATH
 echo TARGET_NAME: $TARGET_NAME
 echo KEYCENTER_PATH: $KEYCENTER_PATH
 echo APP_PATH: $APP_PATH
-å
+
 #修改Keycenter文件
 sed -i -e "s#<\#YOUR AppId\#>#\"$APP_ID\"#g" $KEYCENTER_PATH
 sed -i -e "s#<\#YOUR Certificate\#>#nil#g" $KEYCENTER_PATH
 rm -f ${KEYCENTER_PATH}-e
-
-# Xcode clean
-xcodebuild clean -workspace "${APP_PATH}" -configuration "${CONFIGURATION}" -scheme "${TARGET_NAME}"
-
-# 时间戳
-CURRENT_TIME=$(date "+%Y-%m-%d %H-%M-%S")
-
-# 归档路径
-ARCHIVE_PATH="${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}.xcarchive"
-
-# 编译环境
 
 # plist路径
 PLIST_PATH="${PROJECT_PATH}/ExportOptions.plist"
 
 echo PLIST_PATH: $PLIST_PATH
 
-# archive 这边使用的工作区间 也可以使用project
-xcodebuild CODE_SIGN_STYLE="Manual" archive -workspace "${APP_PATH}" -scheme "${TARGET_NAME}" clean CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -configuration "${CONFIGURATION}" -archivePath "${ARCHIVE_PATH}" -destination 'generic/platform=iOS' -quiet || exit 1
+# 归档路径
+ARCHIVE_PATH="${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}.xcarchive"
 
+# archive 这边使用的工作区间 也可以使用project
+# 在 archive 阶段禁用签名，避免 Pods Framework 签名问题
+# 代码签名将在导出（export）阶段根据 ExportOptions.plist 进行
+xcodebuild CODE_SIGN_STYLE="Manual" \
+  -workspace "${APP_PATH}" \
+  -scheme "${TARGET_NAME}" \
+  clean \
+  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGNING_ALLOWED=NO \
+  -configuration "${CONFIGURATION}" \
+  archive \
+  -archivePath "${ARCHIVE_PATH}" \
+  -destination 'generic/platform=iOS' \
+  -quiet || exit 1
 
 cd ${WORKSPACE}
 
-# 压缩archive
-7za a -tzip "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" "${ARCHIVE_PATH}"
+# 打印当前设备安装的证书（用于调试）
+echo "=========================================="
+echo "当前设备安装的代码签名证书列表："
+echo "=========================================="
+security find-identity -v -p codesigning | grep -E "(iPhone Distribution|Apple Distribution|iOS Distribution)" || security find-identity -v -p codesigning
+echo "=========================================="
+echo ""
 
+# 打印 ExportOptions.plist 内容（用于调试）
+echo "=========================================="
+echo "ExportOptions.plist 配置内容："
+echo "=========================================="
+cat "${PLIST_PATH}"
+echo "=========================================="
+echo ""
 
-# 签名
-# sh sign "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" --type xcarchive --plist "${PLIST_PATH}"
-sh export "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" --plist "${PLIST_PATH}"
+# 导出 IPA（直接使用 xcodebuild，与 Xcode 手动导出一致）
+EXPORT_PATH="${WORKSPACE}/export"
+rm -rf "${EXPORT_PATH}"
+mkdir -p "${EXPORT_PATH}"
 
+security unlock-keychain -p "123456" ~/Library/Keychains/login.keychain
+
+echo "开始导出 IPA..."
+xcodebuild -exportArchive \
+  -archivePath "${ARCHIVE_PATH}" \
+  -exportPath "${EXPORT_PATH}" \
+  -exportOptionsPlist "${PLIST_PATH}" \
+  -allowProvisioningUpdates || exit 1
+
+# 重命名并移动 IPA 文件
 SDK_VERSION=$(echo $sdk_url | cut -d "/" -f 5)
 OUTPUT_FILE=${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}_${SDK_VERSION}_$(date "+%Y%m%d%H%M%S").ipa
-mv ${TARGET_NAME}_${BUILD_NUMBER}.ipa $OUTPUT_FILE
+mv ${EXPORT_PATH}/${TARGET_NAME}.ipa $OUTPUT_FILE
 
-rm -rf *.xcarchive
-rm -rf *.xcarchive.zip
+# 清理临时文件
+rm -rf "${EXPORT_PATH}"
+rm -rf "${ARCHIVE_PATH}"
 echo OUTPUT_FILE: $OUTPUT_FILE
 
 
