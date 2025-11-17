@@ -14,7 +14,7 @@
 		<string>apiexample_wildcard_adhoc</string>
 	</dict>
 	<key>signingCertificate</key>
-	<string>iPhone Distribution</string>
+	<string>iPhone Distribution: Ning Xia (YS397FG5PA)</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>stripSwiftSymbols</key>
