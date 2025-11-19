@@ -561,6 +561,11 @@ enum ERROR_CODE_TYPE {
    */
   ERR_RESOURCE_LIMITED = 22,
   /**
+   * 23: The function is prohibited. Please allow it in the console, or contact the Agora technical support.
+   * @technical preview
+   */
+  ERR_FUNC_IS_PROHIBITED = 23,
+  /**
    * 101: The App ID is invalid, usually because the data format of the App ID is incorrect.
    *
    * Solution: Check the data format of your App ID. Ensure that you use the correct App ID to
@@ -2266,16 +2271,8 @@ struct SimulcastConfig {
    * 
    */
   bool publish_fallback_enable;
-  /**
-   * Whether to enable on-demand publishing. When set to true, a simulcast layer will only be published
-   * when there are subscribers requesting that layer.
-   * - true: (Default) Enable on-demand publishing.
-   * - false: Disable on-demand publishing. All enabled simulcast layers will be published regardless
-   * of subscription status.
-   */
-  bool publish_on_demand;
   
-  SimulcastConfig(): publish_fallback_enable(false), publish_on_demand(true) {}
+  SimulcastConfig(): publish_fallback_enable(false) {}
 };
 /**
  * The location of the target area relative to the screen or window. If you do not set this parameter,
@@ -2565,6 +2562,7 @@ struct WatermarkConfig {
 enum MultipathMode {
   /**
     * Duplicate mode, the same piece of data is redundantly transmitted over all available paths.
+    * @technical preview
     */
   Duplicate= 0,
   /**
@@ -3490,8 +3488,6 @@ enum LOCAL_VIDEO_STREAM_REASON {
   LOCAL_VIDEO_STREAM_REASON_SCREEN_CAPTURE_INTERRUPTED_BY_OTHER = 32,
   /* 32: (HMOS only) ScreenCapture stopped by SIM call */
   LOCAL_VIDEO_STREAM_REASON_SCREEN_CAPTURE_STOPPED_BY_CALL = 33,
-  /* 34: HDR Video Source fallback to SDR */
-  LOCAL_AUDIO_STREAM_REASON_VIDEO_SOURCE_HDR_TO_SDR = 34,
 };
 
 /**
@@ -6915,7 +6911,9 @@ enum RENEW_TOKEN_ERROR_CODE {
    */
   RENEW_TOKEN_SUCCESS = 0,
   /**
-   * 1: It is recommended that the user generate a new token and retry renewToken.
+   * 1: The token renewal failed because of some unknown server error.
+   * It is recommended that the user check the parameters passed in when generating the token and
+   * generate a new token and retry renewToken.
    */
   RENEW_TOKEN_FAILURE = 1,
   /**
@@ -6924,12 +6922,18 @@ enum RENEW_TOKEN_ERROR_CODE {
    */
   RENEW_TOKEN_TOKEN_EXPIRED = 2,
   /**
-   * 3: The token renewal failed because the provided token is invalid.
-   * It is recommended that the user check the token generation process, generate a new token, and retry renewToken.
+   * 3: The token renewal failed because the token is not valid. Typical reasons include:
+   * - The App Certificate for the project is enabled in Agora Console, but you do not use a token
+   * when joining the channel. If you enable the App Certificate, you must use a token to join the
+   * channel.
+   * - The `uid` specified when calling `joinChannel` to join the channel is inconsistent with the
+   * `uid` passed in when generating the token.
+   * - The `channelName` specified when calling `joinChannel` to join the channel is inconsistent 
+   * with the `channelName` passed in when generating the token.
    */
   RENEW_TOKEN_INVALID_TOKEN = 3,
   /**
-   * 4: The token renewal failed because the channel name in the token does not match the current channel.
+   * 4: The token renewal failed because the channel name is invalid.
    * It is recommended that the user check the channel name, generate a new token, and retry renewToken.
    */
   RENEW_TOKEN_INVALID_CHANNEL_NAME = 4,
