@@ -23,7 +23,8 @@ import okhttp3.Response;
  */
 public class SttNetworkManager {
     private static final String TAG = "SttNetworkManager";
-    private static final String BASE_URL = "https://staging-toolbox-convoai-cn.bj2.agoralab.co";
+//    private static final String BASE_URL = "https://staging-toolbox-convoai-cn.bj2.agoralab.co";
+    private static final String BASE_URL = "https://dev-toolbox-convoai-cn.bj2.agoralab.co";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     
     private final OkHttpClient client;

@@ -14,19 +14,20 @@ enum class SttProcessingMode {
 /**
  * Translation data with final state
  * @property text The translated text content
- * @property isFinal Whether this translation is finalized
+ * @property ts Timestamp of the translation (from sttTextTs)
+ * @property isFinal Whether this translation is finalized (from SttTranslation.isFinal)
  */
 data class TranslationData(
     val text: String,
-    val ts: Long
+    val ts: Long,
+    val isFinal: Boolean
 )
 
 /**
  * STT Sentence
  * Represents a transcribed sentence with optional translations
- * @property id Reserved for future use (sentence unique ID from SDK)
- * @property startTs Start timestamp in milliseconds
- * @property endTs End timestamp (Final: fixed, Non-final: current textTs)
+ * @property id Sentence unique ID from SDK (sttSentenceId)
+ * @property textTs Timestamp of the text (from sttTextTs)
  * @property text The transcribed text content
  * @property lang Source language code (e.g., "zh-CN", "en-US")
  * @property isFinal Whether this sentence is finalized
@@ -35,8 +36,7 @@ data class TranslationData(
  */
 data class SttSentence(
     val id: Long = 0,
-    val startTs: Long,
-    val endTs: Long,
+    val textTs: Long,
     val text: String,
     val lang: String,
     val isFinal: Boolean,
@@ -63,7 +63,9 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
 
     /**
      * Merge translations with out-of-order protection
-     * If existing translation is Final, don't overwrite
+     * If existing translation is Final, don't overwrite with non-final
+     * If new translation is Final, always use it
+     * If both have same final state, use the one with newer timestamp (ts)
      */
     private fun mergeTranslations(
         existing: Map<String, TranslationData>,
@@ -72,11 +74,45 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
         val merged = existing.toMutableMap()
         new.forEach { (lang, newData) ->
             val existingData = merged[lang]
-            if (existingData == null || newData.ts > existingData.ts) {
+            if (existingData == null) {
+                // No existing translation, add new one
+                merged[lang] = newData
+            } else if (existingData.isFinal && !newData.isFinal) {
+                // Rule 1: Existing is Final and new is not, keep existing (don't overwrite)
+            } else if (!existingData.isFinal && !newData.isFinal) {
+                // Rule 2: Both are Non-Final, update only if new ts >= existing ts
+                if (newData.ts >= existingData.ts) {
+                    merged[lang] = newData
+                }
+            } else {
+                // Remaining cases:
+                // 1. Existing Non-Final, New Final -> Update
+                // 2. Existing Final, New Final -> Update (allow correction)
                 merged[lang] = newData
             }
         }
         return merged
+    }
+
+    /**
+     * Insert sentence in order by sentenceId (timestamp, always increasing)
+     * @param sentence The sentence to insert
+     */
+    private fun insertSentenceInOrder(sentence: SttSentence) {
+        // Find insertion index using binary search
+        var left = 0
+        var right = sentences.size
+        
+        while (left < right) {
+            val mid = (left + right) / 2
+            if (sentences[mid].id < sentence.id) {
+                left = mid + 1
+            } else {
+                right = mid
+            }
+        }
+        
+        sentences.add(left, sentence)
     }
 
     /**
@@ -114,109 +150,78 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
 
     private fun processTranscription(message: SttMessage) {
         val transcription = message.sttTranscription ?: return
+        val sentenceId = message.sttSentenceId
         val textTs = message.sttTextTs
 
-        if (transcription.isFinal) {
-            // Final message: finalize the last Non-final sentence or create new
-            val endTs = textTs
-            val lastSentence = sentences.lastOrNull()
+        // Find existing sentence by sentenceId
+        val existingIndex = sentences.indexOfFirst { it.id == sentenceId }
 
-            if (lastSentence != null && !lastSentence.isFinal) {
-                // Update last Non-final to Final (keep existing translations)
-                val newSentence = lastSentence.copy(
-                    endTs = endTs,
-                    text = transcription.text ?: "",
-                    lang = transcription.lang ?: "",
-                    isFinal = true
-                    // Keep existing translations, don't overwrite
-                )
-                sentences[sentences.lastIndex] = newSentence
-                onDebug?.invoke("Transcript Final: Update [${newSentence.startTs}-${newSentence.endTs}] \"${transcription.text}\"")
-            } else {
-                // Create new Final sentence (no pending Non-final, or last is already Final)
-                val lastEndTs = lastSentence?.endTs ?: 0
-
-                // Validate timestamp: endTs must be > lastEndTs
-                if (endTs > lastEndTs) {
-                    val newSentence = SttSentence(
-                        id = lastEndTs,
-                        startTs = lastEndTs,
-                        endTs = endTs,
-                        text = transcription.text ?: "",
-                        lang = transcription.lang ?: "",
-                        isFinal = true,
-                        uid = message.sttUid
-                    )
-                    sentences.add(newSentence)
-                    onDebug?.invoke("Transcript Final: Create [${newSentence.startTs}-${newSentence.endTs}] \"${transcription.text}\"")
-                } else {
-                    onDebug?.invoke("Discard: out-of-order Final (endTs=$endTs <= lastEndTs=$lastEndTs)")
+        if (existingIndex >= 0) {
+            // Update existing sentence
+            val existingSentence = sentences[existingIndex]
+            
+            // Rule 1: If existing is Final and new is not Final, ignore (don't overwrite Final with Non-Final)
+            if (existingSentence.isFinal && !transcription.isFinal) {
+                onDebug?.invoke("Ignore: Existing Final sentence cannot be overwritten by Non-Final [sentenceId=$sentenceId]")
+                return
+            }
+            
+            // Rule 2: If both are Non-Final, only update if new textTs >= existing textTs
+            if (!existingSentence.isFinal && !transcription.isFinal) {
+                if (textTs < existingSentence.textTs) {
+                    onDebug?.invoke("Ignore: Non-Final with smaller textTs cannot overwrite larger " +
+                            "[sentenceId=$sentenceId, existing=${existingSentence.textTs}, new=$textTs]")
+                    return
                 }
             }
+            
+            // Update sentence (passed all checks)
+            val updatedSentence = existingSentence.copy(
+                textTs = textTs,
+                text = transcription.text ?: "",
+                lang = transcription.lang ?: "",
+                isFinal = transcription.isFinal
+                // Keep existing translations, don't overwrite
+            )
+            sentences[existingIndex] = updatedSentence
+            onDebug?.invoke("Transcript ${if (transcription.isFinal) "Final" else "Non-Final"}: Update [sentenceId=$sentenceId, textTs=$textTs] \"${transcription.text}\"")
         } else {
-            // Non-final message: update or create temporary sentence
-            val lastSentence = sentences.lastOrNull()
-
-            if (lastSentence != null && !lastSentence.isFinal) {
-                // Update existing Non-final sentence
-                // Only update if new timestamp >= old timestamp
-                val lastEndTs = lastSentence.endTs
-                if (textTs >= lastEndTs) {
-                    val newSentence = lastSentence.copy(
-                        endTs = textTs,
-                        text = transcription.text ?: "",
-                        lang = transcription.lang ?: ""
-                    )
-                    sentences[sentences.lastIndex] = newSentence
-                    onDebug?.invoke("Transcript Non-Final: Update [${newSentence.startTs}-${newSentence.endTs}] \"${transcription.text}\"")
-                } else {
-                    onDebug?.invoke("Ignore: out-of-order Non-final (textTs=$textTs < lastEndTs=$lastEndTs)")
-                }
-                // else: ignore older out-of-order message
-            } else {
-                // Create new Non-final sentence
-                val lastEndTs = lastSentence?.endTs ?: 0
-
-                // Validate timestamp: textTs must be > lastEndTs
-                if (textTs > lastEndTs) {
-                    val newSentence = SttSentence(
-                        id = lastEndTs,
-                        startTs = lastEndTs,
-                        endTs = textTs,
-                        text = transcription.text ?: "",
-                        lang = transcription.lang ?: "",
-                        isFinal = false,
-                        uid = message.sttUid
-                    )
-                    sentences.add(newSentence)
-                    onDebug?.invoke("Transcript Non-Final: Create [${newSentence.startTs}-${newSentence.endTs}] \"${transcription.text}\"")
-                } else {
-                    onDebug?.invoke("Discard: out-of-order Non-final (textTs=$textTs <= lastEndTs=$lastEndTs)")
-                }
-            }
+            // Create new sentence
+            val newSentence = SttSentence(
+                id = sentenceId,
+                textTs = textTs,
+                text = transcription.text ?: "",
+                lang = transcription.lang ?: "",
+                isFinal = transcription.isFinal,
+                uid = message.sttUid
+            )
+            insertSentenceInOrder(newSentence)
+            onDebug?.invoke("Transcript ${if (transcription.isFinal) "Final" else "Non-Final"}: Create [sentenceId=$sentenceId, textTs=$textTs] \"${transcription.text}\"")
         }
     }
 
     private fun processTranslation(message: SttMessage) {
         val translations = message.sttTranslations ?: return
+        val sentenceId = message.sttSentenceId
+        val textTs = message.sttTextTs
 
-        // Find the sentence by time range
-        val targetTs = message.sttTextTs
-        val targetSentence = sentences.findLast {
-            it.startTs < targetTs && targetTs <= it.endTs
-        }
+        // Find the sentence by sentenceId
+        val targetIndex = sentences.indexOfFirst { it.id == sentenceId }
 
-        if (targetSentence == null) {
-            onDebug?.invoke("Ignore: Translation no matching sentence (textTs=$targetTs)")
+        if (targetIndex < 0) {
+            onDebug?.invoke("Ignore: Translation no matching sentence (sentenceId=$sentenceId)")
             return
         }
+
+        val targetSentence = sentences[targetIndex]
 
         // Build new translations map
         val newTranslations = mutableMapOf<String, TranslationData>()
         translations.forEach { translation ->
             newTranslations[translation.sttTranslationLang ?: ""] = TranslationData(
                 text = translation.sttTranslationText ?: "",
-                ts = targetTs
+                ts = textTs,
+                isFinal = translation.isFinal
             )
         }
 
@@ -228,13 +233,8 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
         )
 
         // Replace the sentence
-        val index = sentences.indexOf(targetSentence)
-        if (index >= 0) {
-            sentences[index] = updatedSentence
-            onDebug?.invoke("Translation: [${updatedSentence.startTs}-${updatedSentence.endTs}] \"${updatedSentence.translations}\"")
-        } else {
-            onDebug?.invoke("Ignore: Translation sentence not found in list")
-        }
+        sentences[targetIndex] = updatedSentence
+        onDebug?.invoke("Translation: [sentenceId=$sentenceId, textTs=${updatedSentence.textTs}] \"${updatedSentence.translations}\"")
     }
 
     /**
@@ -244,6 +244,7 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
     private fun processTranslationSync(message: SttMessage) {
         val transcription = message.sttTranscription ?: return
         val translations = message.sttTranslations ?: return
+        val sentenceId = message.sttSentenceId
         val textTs = message.sttTextTs
 
         // Build translations map
@@ -251,153 +252,59 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
         translations.forEach { translation ->
             translationsMap[translation.sttTranslationLang ?: ""] = TranslationData(
                 text = translation.sttTranslationText ?: "",
-                ts = textTs
+                ts = textTs,
+                isFinal = translation.isFinal
             )
         }
 
-        // Check if textTs hits an existing sentence's time range
-        val existingSentence = sentences.findLast {
-            it.startTs < textTs && textTs <= it.endTs
-        }
+        // Find existing sentence by sentenceId
+        val existingIndex = sentences.indexOfFirst { it.id == sentenceId }
 
-        if (existingSentence != null && existingSentence.isFinal) {
-            // Hit an existing Final sentence
-            // Check if this translation message is also Final
-            if (transcription.isFinal) {
-                // Both are Final: merge translations with Final protection
-                val mergedTranslations = mergeTranslations(existingSentence.translations, translationsMap)
-
-                val updatedSentence = existingSentence.copy(
-                    translations = mergedTranslations
-                )
-                val index = sentences.indexOf(existingSentence)
-                if (index >= 0) {
-                    sentences[index] = updatedSentence
-                    onDebug?.invoke("SYNC Final: Merge translation [${updatedSentence.startTs}-${updatedSentence.endTs}] \"${updatedSentence.translations}\"")
-                } else {
-                    onDebug?.invoke("Ignore: Translation sentence not found in list")
-                }
-            } else {
-                // Translation is Non-final but sentence is Final
-                // This is a new sentence, create it after the Final one
-                val existingEndTs = existingSentence.endTs
-
-                // Validate timestamp
-                if (textTs > existingEndTs) {
-                    val newSentence = SttSentence(
-                        id = existingEndTs,
-                        startTs = existingEndTs,
-                        endTs = textTs,
-                        text = transcription.text ?: "",
-                        lang = transcription.lang ?: "",
-                        isFinal = false,
-                        translations = translationsMap,
-                        uid = message.sttUid
-                    )
-                    sentences.add(newSentence)
-                    onDebug?.invoke("SYNC Non-Final: Create [${newSentence.startTs}-${newSentence.endTs}] \"${transcription.text}\"")
-                } else {
-                    // Validate timestamp
-                    onDebug?.invoke("Discard: SYNC invalid timestamp (textTs=$textTs <= existingEndTs=$existingEndTs)")
+        if (existingIndex >= 0) {
+            // Update existing sentence
+            val existingSentence = sentences[existingIndex]
+            
+            // Rule 1: If existing is Final and new is not Final, ignore (don't overwrite Final with Non-Final)
+            if (existingSentence.isFinal && !transcription.isFinal) {
+                onDebug?.invoke("Ignore: Existing Final sentence cannot be overwritten by Non-Final [sentenceId=$sentenceId]")
+                return
+            }
+            
+            // Rule 2: If both are Non-Final, only update if new textTs >= existing textTs
+            if (!existingSentence.isFinal && !transcription.isFinal) {
+                if (textTs < existingSentence.textTs) {
+                    onDebug?.invoke("Ignore: Non-Final with smaller textTs cannot overwrite larger " +
+                            "[sentenceId=$sentenceId, existing=${existingSentence.textTs}, new=$textTs]")
+                    return
                 }
             }
-            return
-        }
+            
+            // Merge translations (with Final protection)
+            val mergedTranslations = mergeTranslations(existingSentence.translations, translationsMap)
 
-        // No existing Final sentence hit, process normally
-        if (transcription.isFinal) {
-            // Final message: finalize the last Non-final sentence or create new
-            val endTs = textTs
-            val lastSentence = sentences.lastOrNull()
-
-            if (lastSentence != null && !lastSentence.isFinal) {
-                val lastStartTs = lastSentence.startTs
-                if (endTs > lastStartTs) {
-                    // Update last Non-final to Final (merge translations with Final protection)
-                    val mergedTranslations = mergeTranslations(lastSentence.translations, translationsMap)
-
-                    val newSentence = SttSentence(
-                        id = lastStartTs,
-                        startTs = lastStartTs,
-                        endTs = endTs,
-                        text = transcription.text ?: "",
-                        lang = transcription.lang ?: "",
-                        isFinal = true,
-                        translations = mergedTranslations,
-                        uid = message.sttUid
-                    )
-                    sentences[sentences.lastIndex] = newSentence
-                    onDebug?.invoke("SYNC Final: Update [${newSentence.startTs}-${newSentence.endTs}] \"${transcription.text}\"")
-                } else {
-                    onDebug?.invoke("Ignore SYNC out-of-order Final: Update [${lastSentence.startTs}-$endTs]")
-                }
-            } else {
-                // Create new Final sentence (no pending Non-final, or last is already Final)
-                val lastEndTs = lastSentence?.endTs ?: 0
-
-                // Validate timestamp: endTs must be > lastEndTs
-                if (endTs > lastEndTs) {
-                    val newSentence = SttSentence(
-                        id = lastEndTs,
-                        startTs = lastEndTs,
-                        endTs = endTs,
-                        text = transcription.text ?: "",
-                        lang = transcription.lang ?: "",
-                        isFinal = true,
-                        translations = translationsMap,
-                        uid = message.sttUid
-                    )
-                    sentences.add(newSentence)
-                    onDebug?.invoke("SYNC Final: Create [${newSentence.startTs}-${newSentence.endTs}] \"${transcription.text}\"")
-                } else {
-                    onDebug?.invoke("Discard: SYNC out-of-order Final (endTs=$endTs <= lastEndTs=$lastEndTs)")
-                }
-            }
+            // Update sentence (passed all checks)
+            val updatedSentence = existingSentence.copy(
+                textTs = textTs,
+                text = transcription.text ?: "",
+                lang = transcription.lang ?: "",
+                isFinal = transcription.isFinal,
+                translations = mergedTranslations
+            )
+            sentences[existingIndex] = updatedSentence
+            onDebug?.invoke("SYNC ${if (transcription.isFinal) "Final" else "Non-Final"}: Update [sentenceId=$sentenceId, textTs=$textTs] \"${transcription.text}\"")
         } else {
-            // Non-final message: update or create temporary sentence (with translations)
-            val lastSentence = sentences.lastOrNull()
-
-            if (lastSentence != null && !lastSentence.isFinal) {
-                // Update existing Non-final sentence
-                // Only update if new timestamp >= old timestamp
-                if (textTs >= lastSentence.endTs) {
-                    // Merge translations with Final protection
-                    val mergedTranslations = mergeTranslations(lastSentence.translations, translationsMap)
-
-                    val newSentence = lastSentence.copy(
-                        endTs = textTs,
-                        text = transcription.text ?: "",
-                        lang = transcription.lang ?: "",
-                        translations = mergedTranslations
-                    )
-                    sentences[sentences.lastIndex] = newSentence
-                    onDebug?.invoke("SYNC Non-Final: Update [${newSentence.startTs}-${newSentence.endTs}] \"${transcription.text}\"")
-                } else {
-                    onDebug?.invoke("Ignore: SYNC out-of-order Non-final (textTs=$textTs < lastEndTs=${lastSentence.endTs})")
-                }
-                // else: ignore older out-of-order message
-            } else {
-                // Create new Non-final sentence
-                val lastEndTs = lastSentence?.endTs ?: 0
-
-                // Validate timestamp: textTs must be > lastEndTs
-                if (textTs > lastEndTs) {
-                    val newSentence = SttSentence(
-                        id = lastEndTs,
-                        startTs = lastEndTs,
-                        endTs = textTs,
-                        text = transcription.text ?: "",
-                        lang = transcription.lang ?: "",
-                        isFinal = false,
-                        translations = translationsMap,
-                        uid = message.sttUid
-                    )
-                    sentences.add(newSentence)
-                    onDebug?.invoke("SYNC Non-Final: Create [${newSentence.startTs}-${newSentence.endTs}] \"${transcription.text}\"")
-                }else{
-                    onDebug?.invoke("Discard: SYNC out-of-order Non-final (textTs=$textTs <= lastEndTs=$lastEndTs)")
-                }
-            }
+            // Create new sentence
+            val newSentence = SttSentence(
+                id = sentenceId,
+                textTs = textTs,
+                text = transcription.text ?: "",
+                lang = transcription.lang ?: "",
+                isFinal = transcription.isFinal,
+                translations = translationsMap,
+                uid = message.sttUid
+            )
+            insertSentenceInOrder(newSentence)
+            onDebug?.invoke("SYNC ${if (transcription.isFinal) "Final" else "Non-Final"}: Create [sentenceId=$sentenceId, textTs=$textTs] \"${transcription.text}\"")
         }
     }
 
@@ -414,4 +321,3 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
      */
     fun getSentences(): List<SttSentence> = sentences.toList()
 }
-

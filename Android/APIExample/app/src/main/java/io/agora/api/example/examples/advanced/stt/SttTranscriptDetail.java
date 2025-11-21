@@ -66,6 +66,9 @@ public class SttTranscriptDetail extends BaseFragment implements View.OnClickLis
     private TranscriptAdapter adapter;
     private Handler handler;
     private SttNetworkManager networkManager;
+
+    String restKey = "27bf8c2dd53a4d0da01d16c819e9a9c7";
+    String restSecret = "b367cb24b911442a89b59a7f7f4b359c";
     private SttMessageRenderer messageRenderer;
 
     private String channelName;
@@ -370,8 +373,10 @@ public class SttTranscriptDetail extends BaseFragment implements View.OnClickLis
         // Log incoming message - original data for debugging (combined)
         StringBuilder logMsg = new StringBuilder();
         logMsg.append("Original Message - Type: ").append(msg.sttMessageType)
-                .append(", TextTs: ").append(msg.sttTextTs)
-                .append(", UID: ").append(msg.sttUid);
+                .append(", sttSentenceId:").append(msg.sttSentenceId)
+                .append(", sttTextTs: ").append(msg.sttTextTs)
+                .append(", sttDurationMs: ").append(msg.sttDurationMs)
+                .append(", sttUid: ").append(msg.sttUid);
 
         if (msg.sttTranscription != null) {
             logMsg.append("\n  Transcript: ").append(msg.sttTranscription.text)

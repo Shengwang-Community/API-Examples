@@ -20,16 +20,21 @@ import io.agora.api.example.R;
  * Adapter for displaying STT transcription sentences
  */
 public class TranscriptAdapter extends RecyclerView.Adapter<TranscriptAdapter.ViewHolder> {
-    /** Alpha value for non-final transcription text */
+    /**
+     * Alpha value for non-final transcription text
+     */
     private static final float ALPHA_NON_FINAL = 0.7f;
-    
-    /** Alpha value for final transcription text */
+
+    /**
+     * Alpha value for final transcription text
+     */
     private static final float ALPHA_FINAL = 1.0f;
-    
+
     private List<SttSentence> sentences = new ArrayList<>();
-    
+
     /**
      * Update the list of sentences to display
+     *
      * @param newSentences The new list of STT sentences
      */
     public void updateSentences(List<SttSentence> newSentences) {
@@ -47,6 +52,7 @@ public class TranscriptAdapter extends RecyclerView.Adapter<TranscriptAdapter.Vi
 
     /**
      * Get the number of items in the adapter
+     *
      * @return The number of items
      */
     public int getItemCount() {
@@ -55,7 +61,8 @@ public class TranscriptAdapter extends RecyclerView.Adapter<TranscriptAdapter.Vi
 
     /**
      * Create a new ViewHolder for the item at the given position
-     * @param parent The parent view group
+     *
+     * @param parent   The parent view group
      * @param viewType The view type of the item
      * @return A new ViewHolder
      */
@@ -69,17 +76,18 @@ public class TranscriptAdapter extends RecyclerView.Adapter<TranscriptAdapter.Vi
 
     /**
      * Bind the data to the ViewHolder at the given position
-     * @param holder The ViewHolder to bind the data to
+     *
+     * @param holder   The ViewHolder to bind the data to
      * @param position The position of the item to bind
      */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SttSentence sentence = sentences.get(position);
-        
-        // Set timestamp range - show (startTs, endTs)
-        String timeRange = "(" + sentence.getStartTs() + ", " + sentence.getEndTs() + "]";
-        holder.tvTimestamp.setText(timeRange);
-        
+
+        // Set timestamp - show timestamp
+        String timeInfo = sentence.getId() + " Ts: " + sentence.getTextTs();
+        holder.tvTimestamp.setText(timeInfo);
+
         // Set language tag (source language)
         String langTag = sentence.getLang().toUpperCase();
         if (!sentence.isFinal()) {
@@ -90,7 +98,6 @@ public class TranscriptAdapter extends RecyclerView.Adapter<TranscriptAdapter.Vi
         }
         holder.tvLanguage.setText(langTag);
         holder.tvLanguage.setVisibility(View.VISIBLE);
-        
         // Set transcription text
         holder.tvTranscription.setText(sentence.getText());
         
