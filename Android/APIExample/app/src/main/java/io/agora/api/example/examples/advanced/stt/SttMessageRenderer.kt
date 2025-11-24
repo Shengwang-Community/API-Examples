@@ -74,20 +74,24 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
         val merged = existing.toMutableMap()
         new.forEach { (lang, newData) ->
             val existingData = merged[lang]
+            var addOrReplace = false
             if (existingData == null) {
                 // No existing translation, add new one
-                merged[lang] = newData
-            } else if (existingData.isFinal && !newData.isFinal) {
-                // Rule 1: Existing is Final and new is not, keep existing (don't overwrite)
-            } else if (!existingData.isFinal && !newData.isFinal) {
-                // Rule 2: Both are Non-Final, update only if new ts >= existing ts
-                if (newData.ts >= existingData.ts) {
-                    merged[lang] = newData
+                addOrReplace = true
+            } else if (newData.isFinal) {
+                addOrReplace = true
+            } else { // new data non-final
+                if (existingData.isFinal) {
+                    // ignore
+                } else {
+                    if (newData.ts >= existingData.ts) {
+                        addOrReplace = true
+                    } else {
+                        // ignore
+                    }
                 }
-            } else {
-                // Remaining cases:
-                // 1. Existing Non-Final, New Final -> Update
-                // 2. Existing Final, New Final -> Update (allow correction)
+            }
+            if (addOrReplace) {
                 merged[lang] = newData
             }
         }
@@ -102,7 +106,7 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
         // Find insertion index using binary search
         var left = 0
         var right = sentences.size
-        
+
         while (left < right) {
             val mid = (left + right) / 2
             if (sentences[mid].id < sentence.id) {
@@ -111,7 +115,7 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
                 right = mid
             }
         }
-        
+
         sentences.add(left, sentence)
     }
 
@@ -159,32 +163,44 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
         if (existingIndex >= 0) {
             // Update existing sentence
             val existingSentence = sentences[existingIndex]
-            
-            // Rule 1: If existing is Final and new is not Final, ignore (don't overwrite Final with Non-Final)
-            if (existingSentence.isFinal && !transcription.isFinal) {
-                onDebug?.invoke("Ignore: Existing Final sentence cannot be overwritten by Non-Final [sentenceId=$sentenceId]")
-                return
-            }
-            
-            // Rule 2: If both are Non-Final, only update if new textTs >= existing textTs
-            if (!existingSentence.isFinal && !transcription.isFinal) {
-                if (textTs < existingSentence.textTs) {
-                    onDebug?.invoke("Ignore: Non-Final with smaller textTs cannot overwrite larger " +
-                            "[sentenceId=$sentenceId, existing=${existingSentence.textTs}, new=$textTs]")
-                    return
+
+            if (transcription.isFinal) {
+                val updatedSentence = existingSentence.copy(
+                    textTs = textTs,
+                    text = transcription.text ?: "",
+                    lang = transcription.lang ?: "",
+                    isFinal = true
+                    // Keep existing translations, don't overwrite
+                )
+                sentences[existingIndex] = updatedSentence
+                onDebug?.invoke("Transcript Final: Update [sentenceId=$sentenceId, textTs=$textTs] \"${transcription.text}\"")
+            } else {
+                if (existingSentence.isFinal) {
+                    // ignore
+                    onDebug?.invoke("Ignore: Existing Final sentence cannot be overwritten by Non-Final [sentenceId=$sentenceId]")
+                } else {
+                    if (textTs < existingSentence.textTs) {
+                        // ignore
+                        onDebug?.invoke(
+                            "Ignore: Non-Final with smaller textTs cannot overwrite larger " +
+                                    "[sentenceId=$sentenceId, existing=${existingSentence.textTs}, new=$textTs]"
+                        )
+                    } else {
+                        val updatedSentence = existingSentence.copy(
+                            textTs = textTs,
+                            text = transcription.text ?: "",
+                            lang = transcription.lang ?: "",
+                            isFinal = false
+                            // Keep existing translations, don't overwrite
+                        )
+                        sentences[existingIndex] = updatedSentence
+                        onDebug?.invoke(
+                            "Transcript Non-Final: Update [sentenceId=$sentenceId, textTs=$textTs] " +
+                                    "\"${transcription.text}\""
+                        )
+                    }
                 }
             }
-            
-            // Update sentence (passed all checks)
-            val updatedSentence = existingSentence.copy(
-                textTs = textTs,
-                text = transcription.text ?: "",
-                lang = transcription.lang ?: "",
-                isFinal = transcription.isFinal
-                // Keep existing translations, don't overwrite
-            )
-            sentences[existingIndex] = updatedSentence
-            onDebug?.invoke("Transcript ${if (transcription.isFinal) "Final" else "Non-Final"}: Update [sentenceId=$sentenceId, textTs=$textTs] \"${transcription.text}\"")
         } else {
             // Create new sentence
             val newSentence = SttSentence(
@@ -263,35 +279,46 @@ class SttMessageRenderer(val onDebug: ((message: String) -> Unit)?) {
         if (existingIndex >= 0) {
             // Update existing sentence
             val existingSentence = sentences[existingIndex]
-            
-            // Rule 1: If existing is Final and new is not Final, ignore (don't overwrite Final with Non-Final)
-            if (existingSentence.isFinal && !transcription.isFinal) {
-                onDebug?.invoke("Ignore: Existing Final sentence cannot be overwritten by Non-Final [sentenceId=$sentenceId]")
-                return
-            }
-            
-            // Rule 2: If both are Non-Final, only update if new textTs >= existing textTs
-            if (!existingSentence.isFinal && !transcription.isFinal) {
-                if (textTs < existingSentence.textTs) {
-                    onDebug?.invoke("Ignore: Non-Final with smaller textTs cannot overwrite larger " +
-                            "[sentenceId=$sentenceId, existing=${existingSentence.textTs}, new=$textTs]")
-                    return
+            if (transcription.isFinal) {
+                // Merge translations (with Final protection)
+                val mergedTranslations = mergeTranslations(existingSentence.translations, translationsMap)
+                val updatedSentence = existingSentence.copy(
+                    textTs = textTs,
+                    text = transcription.text ?: "",
+                    lang = transcription.lang ?: "",
+                    isFinal = transcription.isFinal,
+                    translations = mergedTranslations
+                )
+                sentences[existingIndex] = updatedSentence
+                onDebug?.invoke("SYNC Final: Update [sentenceId=$sentenceId, textTs=$textTs] \"${transcription.text}\"")
+            } else {
+                if (existingSentence.isFinal) {
+                    // ignore
+                    onDebug?.invoke("Ignore: Existing Final sentence cannot be overwritten by Non-Final [sentenceId=$sentenceId]")
+                } else {
+                    if (textTs < existingSentence.textTs) {
+                        // ignore
+                        onDebug?.invoke(
+                            "Ignore: Non-Final with smaller textTs cannot overwrite larger " +
+                                    "[sentenceId=$sentenceId, existing=${existingSentence.textTs}, new=$textTs]"
+                        )
+                    } else {
+                        // Merge translations (with Final protection)
+                        val mergedTranslations = mergeTranslations(existingSentence.translations, translationsMap)
+
+                        // Update sentence (passed all checks)
+                        val updatedSentence = existingSentence.copy(
+                            textTs = textTs,
+                            text = transcription.text ?: "",
+                            lang = transcription.lang ?: "",
+                            isFinal = transcription.isFinal,
+                            translations = mergedTranslations
+                        )
+                        sentences[existingIndex] = updatedSentence
+                        onDebug?.invoke("SYNC Non-Final: Update [sentenceId=$sentenceId, textTs=$textTs] \"${transcription.text}\"")
+                    }
                 }
             }
-            
-            // Merge translations (with Final protection)
-            val mergedTranslations = mergeTranslations(existingSentence.translations, translationsMap)
-
-            // Update sentence (passed all checks)
-            val updatedSentence = existingSentence.copy(
-                textTs = textTs,
-                text = transcription.text ?: "",
-                lang = transcription.lang ?: "",
-                isFinal = transcription.isFinal,
-                translations = mergedTranslations
-            )
-            sentences[existingIndex] = updatedSentence
-            onDebug?.invoke("SYNC ${if (transcription.isFinal) "Final" else "Non-Final"}: Update [sentenceId=$sentenceId, textTs=$textTs] \"${transcription.text}\"")
         } else {
             // Create new sentence
             val newSentence = SttSentence(
