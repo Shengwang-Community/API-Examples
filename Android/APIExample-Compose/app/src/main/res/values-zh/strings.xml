@@ -106,4 +106,9 @@
     <string name="permission_granted">权限已授予</string>
     <string name="permission_denied">权限被拒绝</string>
     <string name="enable_video">启用视频</string>
+    <string name="video_scenario">视频场景</string>
+    <string name="video_scenario_general">General</string>
+    <string name="video_scenario_meeting">Meeting</string>
+    <string name="video_scenario_1v1">1V1</string>
+    <string name="video_scenario_liveshow">Live Show</string>
 </resources>
