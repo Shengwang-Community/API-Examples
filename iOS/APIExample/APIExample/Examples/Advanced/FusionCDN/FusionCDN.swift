@@ -138,7 +138,7 @@ class FusionCDNHost: BaseViewController {
         WIDTH = Int(resolution.height > resolution.width ? resolution.width : resolution.height)
         HEIGHT = Int(resolution.height > resolution.width ? resolution.height : resolution.width)
         videoConfig = AgoraVideoEncoderConfiguration(size: resolution,
-                                                     frameRate: AgoraVideoFrameRate.fps15,
+                                                     frameRate: AgoraVideoFrameRate.fps15.rawValue,
                                                      bitrate: AgoraVideoBitrateStandard,
                                                      orientationMode: .fixedPortrait, mirrorMode: .auto)
         agoraKit.setVideoEncoderConfiguration(videoConfig)
@@ -375,7 +375,7 @@ class FusionCDNAudience: BaseViewController {
               let fps = GlobalSettings.shared.getSetting(key: "fps")?.selectedOption().value as? AgoraVideoFrameRate else {return}
         
         let videoConfig = AgoraVideoEncoderConfiguration(size: resolution,
-                                                        frameRate: fps,
+                                                        frameRate: fps.rawValue,
                                                         bitrate: AgoraVideoBitrateStandard,
                                                         orientationMode: .fixedPortrait, mirrorMode: .auto)
         agoraKit.setVideoEncoderConfiguration(videoConfig)

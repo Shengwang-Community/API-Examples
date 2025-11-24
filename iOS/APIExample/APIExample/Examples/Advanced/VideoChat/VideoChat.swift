@@ -136,7 +136,7 @@ class VideoChatMain: BaseViewController {
         agoraKit.setVideoEncoderConfiguration(
             AgoraVideoEncoderConfiguration(
                 size: resolution,
-                frameRate: AgoraVideoFrameRate(rawValue: fps) ?? .fps30,
+                frameRate: fps,
                 bitrate: AgoraVideoBitrateStandard,
                 orientationMode: orientation,
                 mirrorMode: .auto

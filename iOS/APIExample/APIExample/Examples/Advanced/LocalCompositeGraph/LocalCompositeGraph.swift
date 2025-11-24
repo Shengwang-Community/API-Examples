@@ -50,7 +50,7 @@ class LocalCompositeGraphMain: BaseViewController {
         params.audioParams = audioParams
         let videoParams = AgoraScreenVideoParameters()
         videoParams.dimensions = screenShareVideoDimension()
-        videoParams.frameRate = .fps15
+        videoParams.frameRate = AgoraVideoFrameRate.fps15.rawValue
         videoParams.bitrate = AgoraVideoBitrateStandard
         params.videoParams = videoParams
         return params

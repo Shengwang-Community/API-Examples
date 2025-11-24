@@ -449,6 +449,7 @@ class SttMessageViewController: BaseViewController {
 
 extension SttMessageViewController: SttMessageRendererDelegate {
     func onDebugLog(_ log: String) {
+        print("======\(log)")
         self.agoraKit.writeLog(.info, content: log)
     }
 }
@@ -620,11 +621,7 @@ class SentenceTableViewCell: UITableViewCell {
     
     func configure(with sentence: SttSentence, showTranslation: Bool) {
         // 设置时间标签
-        if sentence.isFinal {
-            timeLabel.text = "(\(sentence.startTs), \(sentence.endTs)]"
-        } else {
-            timeLabel.text = "(\(sentence.startTs), ...)"
-        }
+        timeLabel.text = "[id: \(sentence.id)]"
         
         // 设置语言标签
         languageLabel.text = sentence.lang.uppercased()

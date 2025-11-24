@@ -267,4 +267,6 @@
 "Face Shape Area Nose Width" = "鼻子宽度";
 "Face Shape Area Mouth Scale" = "嘴巴比例";
 
-"Live Channel Name" = "直播频道名";
+"Live Channel Name" = "频道名";
+"default makeup style" = "学妹妆";
+"SttMessage" = "STT 转写";

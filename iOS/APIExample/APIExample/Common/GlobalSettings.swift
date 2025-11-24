@@ -56,7 +56,7 @@ class GlobalSettings {
         ]),
         "fps": SettingItem(selected: 1, options: [
             SettingItemOption(idx: 0, label: "10fps", value: AgoraVideoFrameRate.fps10),
-            SettingItemOption(idx: 1, label: "15fps", value: AgoraVideoFrameRate.fps15),
+            SettingItemOption(idx: 1, label: "15fps", value: AgoraVideoFrameRate.fps15.rawValue),
             SettingItemOption(idx: 2, label: "24fps", value: AgoraVideoFrameRate.fps24),
             SettingItemOption(idx: 3, label: "30fps", value: AgoraVideoFrameRate.fps30),
             SettingItemOption(idx: 4, label: "60fps", value: AgoraVideoFrameRate.fps60)

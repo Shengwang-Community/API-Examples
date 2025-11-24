@@ -139,7 +139,7 @@ class FaceCaptureMain: BaseViewController {
         agoraKit.enableVideo()
         agoraKit.enableAudio()
         agoraKit.setVideoEncoderConfiguration(AgoraVideoEncoderConfiguration(size: resolution,
-                frameRate: AgoraVideoFrameRate(rawValue: fps) ?? .fps15,
+                frameRate: fps,
                 bitrate: AgoraVideoBitrateStandard,
                 orientationMode: orientation, mirrorMode: .auto))
         
