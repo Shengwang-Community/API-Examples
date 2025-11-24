@@ -394,6 +394,9 @@ class LiveStreamingMain: BaseViewController {
                 )
             )
             
+            // set video scenario for live streaming
+            agoraKit.setVideoScenario(.applicationLiveShowScenario)
+            
             // set up local video to render your local camera preview
             let localVideo = videos[0]
             let videoCanvas = AgoraRtcVideoCanvas()
