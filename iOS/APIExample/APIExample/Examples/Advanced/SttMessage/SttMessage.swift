@@ -519,23 +519,6 @@ class SentenceTableViewCell: UITableViewCell {
         return label
     }()
     
-    private lazy var statusLabel: UILabel = {
-        let label = UILabel()
-        if #available(iOS 8.2, *) {
-            label.font = UIFont.systemFont(ofSize: 10, weight: .medium)
-        } else {
-            label.font = UIFont.boldSystemFont(ofSize: 10)
-        }
-        label.textColor = .white
-        // Material Design tertiaryContainer 颜色
-        label.backgroundColor = UIColor(red: 1.0, green: 0.6, blue: 0.0, alpha: 1.0)
-        label.textAlignment = .center
-        label.layer.cornerRadius = 4
-        label.layer.masksToBounds = true
-        label.text = "识别中"
-        return label
-    }()
-    
     private lazy var contentLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15)
@@ -575,7 +558,6 @@ class SentenceTableViewCell: UITableViewCell {
         contentView.addSubview(containerView)
         containerView.addSubview(timeLabel)
         containerView.addSubview(languageLabel)
-        containerView.addSubview(statusLabel)
         containerView.addSubview(contentLabel)
         containerView.addSubview(separatorView)
         containerView.addSubview(translationsStackView)
@@ -593,12 +575,6 @@ class SentenceTableViewCell: UITableViewCell {
             make.top.equalToSuperview().offset(12)
             make.trailing.equalToSuperview().offset(-12)
             make.size.equalTo(CGSize(width: 40, height: 20))
-        }
-        
-        statusLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(12)
-            make.trailing.equalTo(languageLabel.snp.leading).offset(-8)
-            make.size.equalTo(CGSize(width: 50, height: 20))
         }
         
         contentLabel.snp.makeConstraints { make in
@@ -625,9 +601,6 @@ class SentenceTableViewCell: UITableViewCell {
         
         // 设置语言标签
         languageLabel.text = sentence.lang.uppercased()
-        
-        // 设置状态标签
-        statusLabel.isHidden = sentence.isFinal
         
         // 设置文本
         contentLabel.text = sentence.text
