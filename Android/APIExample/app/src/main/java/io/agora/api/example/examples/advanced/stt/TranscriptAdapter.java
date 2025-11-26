@@ -85,7 +85,7 @@ public class TranscriptAdapter extends RecyclerView.Adapter<TranscriptAdapter.Vi
         SttSentence sentence = sentences.get(position);
 
         // Set timestamp - show timestamp
-        String timeInfo = sentence.getId() + " Ts: " + sentence.getTextTs();
+        String timeInfo = "SentenceId: " + sentence.getId();
         holder.tvTimestamp.setText(timeInfo);
 
         // Set language tag (source language)
