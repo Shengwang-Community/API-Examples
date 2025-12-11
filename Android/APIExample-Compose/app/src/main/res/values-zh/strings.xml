@@ -73,6 +73,7 @@
     <string name="transcoding_or_not">是否转码</string>
     <string name="screen_sharing_local_preview">屏幕共享本地预览</string>
     <string name="screen_sharing_audio">屏幕共享本地音频</string>
+    <string name="screen_sharing_share_screen_only">只共享屏幕</string>
     <string name="spatial_sound_experience_tip">请移动红色图标体验3d音频效果</string>
     <string name="mute_audio">静音</string>
     <string name="beauty_face">美颜</string>
