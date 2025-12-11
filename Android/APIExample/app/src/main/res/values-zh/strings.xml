@@ -180,6 +180,7 @@
     <string name="screen_share_preview">屏幕共享本地预览</string>
     <string name="screen_share_audio">屏幕共享本地音频</string>
     <string name="external_mediaprojection">外置 MediaProjection</string>
+    <string name="share_screen_only">只共享屏幕</string>
     <string name="screen_share_video">屏幕共享本地视频</string>
     <string name="spatial_sound">此示例演示了如何使用空间音效。</string>
     <string name="mix_control">混音控制</string>
