@@ -216,8 +216,8 @@ class VideoProcessMain: BaseViewController {
     
     @IBAction func onChangeLowLightEnhance(_ sender: UISwitch) {
         let options = AgoraLowlightEnhanceOptions()
-        options.level = .fast
-        options.mode = .auto
+        options.level = .quality
+        options.mode = .manual
         agoraKit.setLowlightEnhanceOptions(sender.isOn, options: options)
     }
     
