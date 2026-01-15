@@ -1,4 +1,4 @@
-$agora_sdk = 'http://10.80.1.174:8090/agora_sdk/arsenal/nightly_build/2025-11-14/windows/full/Shengwang_Native_SDK_for_Windows_rel.v3.0_arsenal_20251114.30666_30666_FULL_20251114_0044_975582.zip'
+$agora_sdk = 'https://download.shengwang.cn/sdk/release/Shengwang_Native_SDK_for_Windows_v4.6.2_FULL.zip'
 $ThirdPartysrc = 'https://fullapp.oss-cn-beijing.aliyuncs.com/API-Examples/ThirdParty.zip'
 $ThirdPartydes = 'ThirdParty.zip'
 $agora_des = 'AgoraSdk.zip'
