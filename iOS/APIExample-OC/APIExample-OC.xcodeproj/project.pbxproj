@@ -510,8 +510,6 @@
 				ABB90AA42DF6C673007FDDEB /* Simulcast */,
 				F73478812DE85D9A0030C0CE /* AgoraBeauty */,
 				F765A4FC2EC6CBFD00161371 /* LocalCompositeGraph */,
-				AB8474102DF9CD7900B4DB73 /* Multipath */,
-				AB8474162DF9CD7900B4DB73 /* Simulcast */,
 				E72F62072A78B31B00C963D2 /* MutliCamera */,
 				E72F62012A77A63D00C963D2 /* ContentInspect */,
 				E72F61F72A778ADC00C963D2 /* SpatialAudio */,
@@ -1000,7 +998,7 @@
 			);
 			path = AgoraBeauty;
 			sourceTree = "<group>";
-			};
+		};
 		F765A4FC2EC6CBFD00161371 /* LocalCompositeGraph */ = {
 			isa = PBXGroup;
 			children = (
@@ -1654,7 +1652,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.6.0;
+				MARKETING_VERSION = 4.6.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples-oc";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1696,7 +1694,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.6.0;
+				MARKETING_VERSION = 4.6.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples-oc";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
