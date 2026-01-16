@@ -169,3 +169,4 @@
 "cancel preload" = "取消预加载";
 "push" = "推流";
 "stop" = "停止";
+"LocalCompositeGraph" = "本地合图屏幕共享";
