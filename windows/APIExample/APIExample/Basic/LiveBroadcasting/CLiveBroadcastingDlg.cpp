@@ -532,6 +532,9 @@ void CLiveBroadcastingDlg::OnBnClickedButtonJoinchannel()
 		m_rtcEngine->setVideoEncoderConfiguration(config);
 		std::string szChannelId = cs2utf8(strChannelName);
 
+		// set video scenario for live streaming
+		m_rtcEngine->setVideoScenario(APPLICATION_SCENARIO_LIVESHOW);
+
 		m_rtcEngine->startMediaRenderingTracing();
 
 		ChannelMediaOptions options;

@@ -94,7 +94,7 @@ class LiveStreamingMain: BaseViewController {
             self.agoraKit.setVideoEncoderConfiguration(
                 AgoraVideoEncoderConfiguration(
                     size: resolution.size(),
-                    frameRate: AgoraVideoFrameRate(rawValue: fps) ?? .fps15,
+                    frameRate: fps,
                     bitrate: AgoraVideoBitrateStandard,
                     orientationMode: .adaptative,
                     mirrorMode: AgoraVideoMirrorMode.auto
@@ -132,7 +132,7 @@ class LiveStreamingMain: BaseViewController {
             self.agoraKit.setVideoEncoderConfiguration(
                 AgoraVideoEncoderConfiguration(
                     size: resolution.size(),
-                    frameRate: AgoraVideoFrameRate(rawValue: fps) ?? .fps15,
+                    frameRate: fps,
                     bitrate: AgoraVideoBitrateStandard,
                     orientationMode: .adaptative,
                     mirrorMode: .auto
@@ -387,12 +387,15 @@ class LiveStreamingMain: BaseViewController {
             agoraKit.setVideoEncoderConfiguration(
                 AgoraVideoEncoderConfiguration(
                     size: resolution.size(),
-                    frameRate: AgoraVideoFrameRate(rawValue: fps) ?? .fps15,
+                    frameRate: fps,
                     bitrate: AgoraVideoBitrateStandard,
                     orientationMode: .adaptative,
                     mirrorMode: .auto
                 )
             )
+            
+            // set video scenario for live streaming
+            agoraKit.setVideoScenario(.applicationLiveShowScenario)
             
             // set up local video to render your local camera preview
             let localVideo = videos[0]

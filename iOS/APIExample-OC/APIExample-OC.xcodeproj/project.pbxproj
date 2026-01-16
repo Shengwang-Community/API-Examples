@@ -136,6 +136,8 @@
 		F73478862DE85DEB0030C0CE /* AgoraBeauty.m in Sources */ = {isa = PBXBuildFile; fileRef = F73478832DE85DEB0030C0CE /* AgoraBeauty.m */; };
 		F73478892DE862270030C0CE /* AgoraBeautyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F73478882DE862270030C0CE /* AgoraBeautyManager.m */; };
 		F734788B2DE8663C0030C0CE /* beauty_material.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F734788A2DE8663C0030C0CE /* beauty_material.bundle */; };
+		F765A4FF2EC6CCC300161371 /* LocalCompositeGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F765A4FE2EC6CCC300161371 /* LocalCompositeGraph.m */; };
+		F765A5012EC6CD3C00161371 /* LocalCompositeGraph.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F765A5002EC6CD3C00161371 /* LocalCompositeGraph.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -383,6 +385,9 @@
 		F73478872DE862270030C0CE /* AgoraBeautyManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AgoraBeautyManager.h; sourceTree = "<group>"; };
 		F73478882DE862270030C0CE /* AgoraBeautyManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AgoraBeautyManager.m; sourceTree = "<group>"; };
 		F734788A2DE8663C0030C0CE /* beauty_material.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = beauty_material.bundle; sourceTree = "<group>"; };
+		F765A4FD2EC6CCC300161371 /* LocalCompositeGraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalCompositeGraph.h; sourceTree = "<group>"; };
+		F765A4FE2EC6CCC300161371 /* LocalCompositeGraph.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalCompositeGraph.m; sourceTree = "<group>"; };
+		F765A5002EC6CD3C00161371 /* LocalCompositeGraph.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LocalCompositeGraph.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -504,6 +509,7 @@
 				ABB90A9E2DF6C673007FDDEB /* Multipath */,
 				ABB90AA42DF6C673007FDDEB /* Simulcast */,
 				F73478812DE85D9A0030C0CE /* AgoraBeauty */,
+				F765A4FC2EC6CBFD00161371 /* LocalCompositeGraph */,
 				E72F62072A78B31B00C963D2 /* MutliCamera */,
 				E72F62012A77A63D00C963D2 /* ContentInspect */,
 				E72F61F72A778ADC00C963D2 /* SpatialAudio */,
@@ -993,6 +999,16 @@
 			path = AgoraBeauty;
 			sourceTree = "<group>";
 		};
+		F765A4FC2EC6CBFD00161371 /* LocalCompositeGraph */ = {
+			isa = PBXGroup;
+			children = (
+				F765A4FD2EC6CCC300161371 /* LocalCompositeGraph.h */,
+				F765A4FE2EC6CCC300161371 /* LocalCompositeGraph.m */,
+				F765A5002EC6CD3C00161371 /* LocalCompositeGraph.storyboard */,
+			);
+			path = LocalCompositeGraph;
+			sourceTree = "<group>";
+		};
 		FB95B04C515AA8E46D5A7E6A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1169,6 +1185,7 @@
 				E70ADEC62A66306F009947CF /* VideoMetadata.storyboard in Resources */,
 				F734788B2DE8663C0030C0CE /* beauty_material.bundle in Resources */,
 				E72F61AF2A72179700C963D2 /* ScreenShare.storyboard in Resources */,
+				F765A5012EC6CD3C00161371 /* LocalCompositeGraph.storyboard in Resources */,
 				E7361F512A6E5B3700925BD6 /* CustomVideoRender.storyboard in Resources */,
 				E70ADDFC2A5D0050009947CF /* Assets.xcassets in Resources */,
 				ABB90AC72DF728A0007FDDEB /* Multipath.storyboard in Resources */,
@@ -1309,6 +1326,7 @@
 				E70ADE1F2A5D0368009947CF /* MediaUtils.m in Sources */,
 				E70ADEDD2A6A2D7D009947CF /* AgoraPCMSourcePush.m in Sources */,
 				E70ADE202A5D0368009947CF /* BundleUtil.m in Sources */,
+				F765A4FF2EC6CCC300161371 /* LocalCompositeGraph.m in Sources */,
 				E72F620C2A78B31B00C963D2 /* MutliCamera.m in Sources */,
 				E70ADE742A60EC9A009947CF /* LiveStreaming.m in Sources */,
 				E70ADEE62A6A71FE009947CF /* ExternalAudio.mm in Sources */,
@@ -1634,7 +1652,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.6.0;
+				MARKETING_VERSION = 4.6.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples-oc";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1676,7 +1694,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.6.0;
+				MARKETING_VERSION = 4.6.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples-oc";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
