@@ -13,9 +13,6 @@ if (-not (Test-Path ThirdParty)){
 	Remove-Item $ThirdPartyDes -Recurse
 }
 
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-Set-Location $scriptDir
-
 if (-not (Test-Path sdk)){
     if (Test-Path $agora_local_sdk){
 	    mkdir sdk
