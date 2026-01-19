@@ -6,7 +6,7 @@ import groovy.transform.Field
 buildUtils = new agora.build.BuildUtils()
 
 compileConfig = [
-    "sourceDir": "api-examples",
+    "sourceDir": "api-examples-shengwang",
     "non-publish": [
         "command": "./.github/ci/build/build_windows.bat",
         "extraArgs": "",
