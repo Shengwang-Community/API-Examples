@@ -29,5 +29,6 @@ git commit -m '[iOS] gitee sync >> use china repos.'
 git branch
 git status
 git push gitee
+git push gitee --tags
 
 
