@@ -63,29 +63,16 @@ REM Check compile_project parameter
 if "%compile_project%"=="" set compile_project=false
 echo compile_project: %compile_project%
 
-REM Step 1: Package APIExample code with dependencies (only when compress_apiexample=true)
-REM Run first so package content is not affected by compile step
-set package_dir=APIExample_package
+REM Package APIExample code with dependencies (only when compress_apiexample=true)
+REM Run before compile so package content is not affected by compile
 set result_zip=APIExample_result.zip
 set des_path=%WORKSPACE%\Shengwang_APIExample_code_windows_%BUILD_NUMBER%.zip
 if "%compress_apiexample%"=="true" (
-    echo "Step 1: Packaging APIExample code with dependencies..."
+    echo "Packaging APIExample code with dependencies..."
     
-    REM Create temporary package directory
-    if exist %package_dir% rmdir /S /Q %package_dir%
-    mkdir %package_dir%
-    
-    REM Copy API example to package directory
-    echo "Copying APIExample files..."
-    xcopy /Y /E /I windows\APIExample %package_dir%\APIExample
-    if errorlevel 1 (
-        echo xcopy failed!
-        exit /b 1
-    )
-    
-    REM Install dependencies (ThirdParty, SDK) in package directory
-    echo "Installing dependencies in package directory..."
-    cd %package_dir%\APIExample
+    REM Install dependencies (ThirdParty, SDK) in windows\APIExample
+    echo "Installing dependencies in windows\APIExample..."
+    cd windows\APIExample
     powershell.exe -ExecutionPolicy Bypass -File "install.ps1"
     if errorlevel 1 (
         echo install.ps1 failed!
@@ -94,10 +81,10 @@ if "%compress_apiexample%"=="true" (
     )
     cd ..\..
     
-    REM Package example with dependencies installed
+    REM Compress windows\APIExample (code + dependencies) to zip
     echo "Compressing APIExample code package..."
     del /F /Q %result_zip% 2>nul
-    7z a -tzip %result_zip% -r %package_dir%
+    7z a -tzip %result_zip% -r windows\APIExample
     if errorlevel 1 (
         echo 7z compression failed!
         exit /b 1
@@ -111,9 +98,8 @@ if "%compress_apiexample%"=="true" (
         exit /b 1
     )
     
-    REM Clean up temporary files
+    REM Clean up temporary zip in repo root
     del /F %result_zip%
-    rmdir /S /Q %package_dir%
     
     echo "Complete: APIExample code package created"
     dir %WORKSPACE%\
@@ -121,9 +107,9 @@ if "%compress_apiexample%"=="true" (
     echo "Skipping APIExample code packaging (compress_apiexample=false)"
 )
 
-REM Step 2: Compile project to generate executable (only when compile_project=true)
+REM Compile project to generate executable (only when compile_project=true)
 if "%compile_project%"=="true" (
-    echo "Step 2: Compiling project to generate executable..."
+    echo "Compiling project to generate executable..."
     cd windows\APIExample
     call cloud_build.bat
     if %ERRORLEVEL% NEQ 0 (
