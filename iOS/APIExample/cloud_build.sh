@@ -31,14 +31,14 @@ elif [ -z "$BRANCH_NAME" ]; then
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
     if [ "$BRANCH_NAME" = "HEAD" ]; then
         # In detached HEAD state, try to get branch from remote
-        BRANCH_NAME=$(git branch -r --contains HEAD | grep -v HEAD | head -1 | sed 's/.*\///')
+        BRANCH_NAME=$(git branch -r --contains HEAD | grep -v HEAD | head -1 | sed 's/^[[:space:]]*origin\///')
         echo "Branch from git branch -r: $BRANCH_NAME"
     else
         echo "Branch from git rev-parse: $BRANCH_NAME"
     fi
 fi
 
-# Remove origin/ prefix if present
+# Remove origin/ prefix if present (but keep the rest of the path)
 BRANCH_NAME=$(echo "$BRANCH_NAME" | sed 's/^origin\///')
 
 if [ -z "$BRANCH_NAME" ] || [ "$BRANCH_NAME" = "HEAD" ]; then
@@ -79,7 +79,10 @@ else
 		
 		echo "✓ Version validation passed: $BRANCH_VERSION"
 	else
-		echo "Warning: Branch name does not match dev/x.x.x format, skipping version validation"
+		echo "Error: Branch name does not match dev/x.x.x format!"
+		echo "Current branch: $BRANCH_NAME"
+		echo "Required format: dev/x.x.x (e.g., dev/4.5.3)"
+		exit 1
 	fi
 fi
 
@@ -279,5 +282,58 @@ mv ${EXPORT_PATH}/${TARGET_NAME}.ipa $OUTPUT_FILE
 rm -rf "${EXPORT_PATH}"
 rm -rf "${ARCHIVE_PATH}"
 echo OUTPUT_FILE: $OUTPUT_FILE
+
+echo ""
+echo "=========================================="
+echo "=== Certificate Expiration Information ==="
+echo "=========================================="
+
+# 获取用于签名的证书信息
+SIGNING_CERT=$(security find-identity -v -p codesigning | grep "iPhone Distribution\|Apple Distribution\|iOS Distribution" | head -1 | awk -F'"' '{print $2}')
+
+if [ ! -z "$SIGNING_CERT" ]; then
+    echo "Signing Certificate: $SIGNING_CERT"
+    
+    # 获取证书的详细信息
+    CERT_INFO=$(security find-certificate -c "$SIGNING_CERT" -p | openssl x509 -noout -dates 2>/dev/null)
+    
+    if [ $? -eq 0 ]; then
+        echo "$CERT_INFO"
+        
+        # 提取过期日期
+        EXPIRY_DATE=$(echo "$CERT_INFO" | grep "notAfter" | cut -d= -f2)
+        echo ""
+        echo "⚠️  Certificate will expire on: $EXPIRY_DATE"
+        
+        # 计算剩余天数
+        if command -v gdate >/dev/null 2>&1; then
+            # macOS with GNU coreutils installed
+            EXPIRY_EPOCH=$(gdate -d "$EXPIRY_DATE" +%s 2>/dev/null)
+            CURRENT_EPOCH=$(gdate +%s)
+        else
+            # macOS default date command
+            EXPIRY_EPOCH=$(date -j -f "%b %d %T %Y %Z" "$EXPIRY_DATE" +%s 2>/dev/null)
+            CURRENT_EPOCH=$(date +%s)
+        fi
+        
+        if [ ! -z "$EXPIRY_EPOCH" ] && [ ! -z "$CURRENT_EPOCH" ]; then
+            DAYS_LEFT=$(( ($EXPIRY_EPOCH - $CURRENT_EPOCH) / 86400 ))
+            echo "📅 Days remaining: $DAYS_LEFT days"
+            
+            if [ $DAYS_LEFT -lt 30 ]; then
+                echo "🚨 WARNING: Certificate will expire in less than 30 days!"
+            elif [ $DAYS_LEFT -lt 90 ]; then
+                echo "⚠️  NOTICE: Certificate will expire in less than 90 days"
+            fi
+        fi
+    else
+        echo "Unable to retrieve certificate expiration information"
+    fi
+else
+    echo "No distribution certificate found"
+fi
+
+echo "=========================================="
+echo ""
 
 
