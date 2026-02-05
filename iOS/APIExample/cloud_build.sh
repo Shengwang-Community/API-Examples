@@ -58,8 +58,9 @@ else
 			exit 1
 		fi
 		
-		# Extract MARKETING_VERSION (get first match)
-		PLIST_VERSION=$(grep -m 1 "MARKETING_VERSION = " "$PBXPROJ_FILE" | sed 's/.*MARKETING_VERSION = \([^;]*\);/\1/' | tr -d ' ')
+		# Extract MARKETING_VERSION for main target (skip Extension targets)
+		# Look for the version that appears with @executable_path/Frameworks (main app)
+		PLIST_VERSION=$(grep -A 2 "@executable_path/Frameworks" "$PBXPROJ_FILE" | grep "MARKETING_VERSION" | head -1 | sed 's/.*MARKETING_VERSION = \([^;]*\);/\1/' | tr -d ' ')
 		
 		if [ -z "$PLIST_VERSION" ]; then
 			echo "Error: Unable to read MARKETING_VERSION from project.pbxproj"
