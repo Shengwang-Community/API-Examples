@@ -367,8 +367,7 @@ private fun LiveStreamingView(
             ModalBottomSheet(
                 onDismissRequest = {
                     openSettingSheet = false
-                },
-                windowInsets = WindowInsets(0)
+                }
             ) {
                 LiveStreamingSettingView(
                     rtcEngine = rtcEngine,
