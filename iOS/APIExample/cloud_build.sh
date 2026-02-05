@@ -14,9 +14,34 @@ fi
 # Version validation logic
 echo "Starting branch version validation..."
 
-# Get current branch name
-BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-if [ $? -ne 0 ]; then
+# Get current branch name (try multiple methods for CI environments)
+BRANCH_NAME=""
+
+# Method 1: Try environment variable (Jenkins/GitLab CI)
+if [ ! -z "$GIT_BRANCH" ]; then
+    BRANCH_NAME="$GIT_BRANCH"
+    echo "Branch from GIT_BRANCH: $BRANCH_NAME"
+elif [ ! -z "$BRANCH_NAME" ]; then
+    echo "Branch from BRANCH_NAME: $BRANCH_NAME"
+elif [ ! -z "$CI_COMMIT_REF_NAME" ]; then
+    BRANCH_NAME="$CI_COMMIT_REF_NAME"
+    echo "Branch from CI_COMMIT_REF_NAME: $BRANCH_NAME"
+# Method 2: Try git command
+elif [ -z "$BRANCH_NAME" ]; then
+    BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    if [ "$BRANCH_NAME" = "HEAD" ]; then
+        # In detached HEAD state, try to get branch from remote
+        BRANCH_NAME=$(git branch -r --contains HEAD | grep -v HEAD | head -1 | sed 's/.*\///')
+        echo "Branch from git branch -r: $BRANCH_NAME"
+    else
+        echo "Branch from git rev-parse: $BRANCH_NAME"
+    fi
+fi
+
+# Remove origin/ prefix if present
+BRANCH_NAME=$(echo "$BRANCH_NAME" | sed 's/^origin\///')
+
+if [ -z "$BRANCH_NAME" ] || [ "$BRANCH_NAME" = "HEAD" ]; then
 	echo "Warning: Unable to get Git branch name, skipping version validation"
 else
 	echo "Current branch: $BRANCH_NAME"

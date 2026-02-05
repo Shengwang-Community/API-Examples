@@ -40,6 +40,18 @@
 ##################################
 export PATH=$PATH:/opt/homebrew/bin
 
+echo "=========================================="
+echo "=== Git Branch Debug Information ==="
+echo "=========================================="
+echo "GIT_BRANCH: $GIT_BRANCH"
+echo "BRANCH_NAME: $BRANCH_NAME"
+echo "CI_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME"
+echo "Git branches:"
+git branch -a 2>/dev/null || echo "Unable to list git branches"
+echo "Current HEAD:"
+git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "Unable to get HEAD"
+echo "=========================================="
+
 xcode_version=$(xcodebuild -version | grep Xcode | awk '{print $2}')
 echo "Xcode Version: $xcode_version"
 echo ios_direction: $ios_direction
@@ -119,7 +131,7 @@ if [ $compress_apiexample = true ]; then
     echo "complete compress api example"
     echo "current path: `pwd`"
     ls -al
-    cn_des_path=$WORKSPACE/${BUILD_NUMBER}/${apiexample_cn_name}_v${sdk_version}_APIExample.zip
+    cn_des_path=$WORKSPACE/${apiexample_cn_name}_v${sdk_version}_APIExample_${BUILD_NUMBER}.zip
     echo "cn_des_path: $cn_des_path"
     echo "Moving cn_result.zip to $cn_des_path"
     mv cn_result.zip $cn_des_path
