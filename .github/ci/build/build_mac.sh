@@ -52,6 +52,15 @@ echo short_version: $short_version
 echo pwd: `pwd`
 echo sdk_url: $sdk_url
 
+# Version validation: branch name vs Podfile SDK version
+SDK_VER=$(grep "pod 'ShengwangRtcEngine_macOS'" ./macOS/Podfile | sed -n "s/.*'\([0-9]\+\.[0-9]\+\.[0-9]\+\)'.*/\1/p")
+BRANCH_VER=$(echo "$api_examples_shengwang_branch" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+if [ "$SDK_VER" != "$BRANCH_VER" ]; then
+    echo "ERROR: Version mismatch - Branch: $BRANCH_VER, Podfile: $SDK_VER"
+    exit 1
+fi
+echo "Version validated: $BRANCH_VER"
+
 export https_proxy=10.10.114.55:1080
 export http_proxy=10.10.114.55:1080
 export all_proxy=10.10.114.55:1080
@@ -121,7 +130,7 @@ if [ $compress_apiexample = true ]; then
     echo "complete compress api example"
     echo "current path: `pwd`"
     ls -al
-    cn_des_path=$WORKSPACE/${apiexample_cn_name}_v${sdk_version}_APIExample_${BUILD_NUMBER}.zip
+    cn_des_path=$WORKSPACE/${apiexample_cn_name}_v${sdk_version}_APIExample_${BUILD_NUMBER}.zip、
     echo "cn_des_path: $cn_des_path"
     echo "Moving cn_result.zip to $cn_des_path"
     mv cn_result.zip $cn_des_path
