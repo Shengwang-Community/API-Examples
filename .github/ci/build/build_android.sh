@@ -55,11 +55,13 @@ echo build_date: $build_date
 echo build_time: $build_time
 echo release_version: $release_version
 echo short_version: $short_version
+echo BUILD_NUMBER: $BUILD_NUMBER
 echo pwd: `pwd`
 echo sdk_url: $sdk_url
 echo android_direction: $android_direction
 echo compile_project: $compile_project
 echo compress_apiexample: $compress_apiexample
+echo api_examples_shengwang_branch: $api_examples_shengwang_branch
 
 # Validate required variables
 if [ -z "$android_direction" ]; then
@@ -74,14 +76,14 @@ echo "Checking version consistency..."
 echo "=========================================="
 
 # Extract version number from branch name (supports formats like dev/4.6.2, release/4.6.2, etc.)
-BRANCH_VERSION=$(echo ${GIT_BRANCH:-$short_version} | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+BRANCH_VERSION=$(echo $api_examples_shengwang_branch | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
 
 if [ -z "$BRANCH_VERSION" ]; then
     echo ""
     echo "=========================================="
     echo "❌ CI BUILD FAILED: CANNOT EXTRACT VERSION"
     echo "=========================================="
-    echo "Cannot extract version from branch name: ${GIT_BRANCH:-$short_version}"
+    echo "Cannot extract version from branch name: $api_examples_shengwang_branch"
     echo "Branch name must contain version number (e.g., dev/4.6.2, release/4.6.2)"
     echo "=========================================="
     exit 1
@@ -196,7 +198,7 @@ if [ "$compress_apiexample" = true ]; then
     echo "✅ Code-only package created"
     
     # Generate final output zip name with version
-    OUTPUT_ZIP_NAME="Shengwang_Native_SDK_for_Android_v${BRANCH_VERSION}_${android_direction}.zip"
+    OUTPUT_ZIP_NAME="Shengwang_Native_SDK_for_Android_v${BRANCH_VERSION}_${android_direction}_${BUILD_NUMBER}.zip"
     echo "Output zip name: $OUTPUT_ZIP_NAME"
     mv $TEMP_ZIP_NAME $WORKSPACE/$OUTPUT_ZIP_NAME
     
@@ -210,7 +212,7 @@ else
     echo "✅ Full package created"
     
     # Generate final output zip name with version (with SDK)
-    OUTPUT_ZIP_NAME="withSDK_Shengwang_Native_SDK_for_Android_v${BRANCH_VERSION}_${android_direction}.zip"
+    OUTPUT_ZIP_NAME="withSDK_Shengwang_Native_SDK_for_Android_v${BRANCH_VERSION}_${android_direction}_${BUILD_NUMBER}.zip"
     echo "Output zip name: $OUTPUT_ZIP_NAME"
     mv $TEMP_ZIP_NAME $WORKSPACE/$OUTPUT_ZIP_NAME
     
