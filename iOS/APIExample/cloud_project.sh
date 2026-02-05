@@ -29,14 +29,14 @@ elif [ -z "$BRANCH_NAME" ]; then
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
     if [ "$BRANCH_NAME" = "HEAD" ]; then
         # In detached HEAD state, try to get branch from remote
-        BRANCH_NAME=$(git branch -r --contains HEAD | grep -v HEAD | head -1 | sed 's/.*\///')
+        BRANCH_NAME=$(git branch -r --contains HEAD | grep -v HEAD | head -1 | sed 's/^[[:space:]]*origin\///')
         echo "Branch from git branch -r: $BRANCH_NAME"
     else
         echo "Branch from git rev-parse: $BRANCH_NAME"
     fi
 fi
 
-# Remove origin/ prefix if present
+# Remove origin/ prefix if present (but keep the rest of the path)
 BRANCH_NAME=$(echo "$BRANCH_NAME" | sed 's/^origin\///')
 
 if [ -z "$BRANCH_NAME" ] || [ "$BRANCH_NAME" = "HEAD" ]; then
@@ -77,7 +77,9 @@ else
 		
 		echo "✓ Version validation passed: $BRANCH_VERSION"
 	else
-		echo "Error: Branch name does not match dev/x.x.x format, skipping version validation"
+		echo "Error: Branch name does not match dev/x.x.x format!"
+		echo "Current branch: $BRANCH_NAME"
+		echo "Required format: dev/x.x.x (e.g., dev/4.5.3)"
 		exit 1
 	fi
 fi
