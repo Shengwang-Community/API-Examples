@@ -26,5 +26,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "APIExample-Compose"
+rootProject.name = "Shengwang-APIExample-Compose"
 include(":app")

@@ -29,7 +29,7 @@ dependencyResolutionManagement {
         maven { url 'https://maven.aliyun.com/repository/central' }
     }
 }
-rootProject.name = 'APIExample'
+rootProject.name = 'Shengwang-APIExample'
 include ':app'
 if (simpleFilter.toBoolean()) {
     include ':agora-simple-filter'
