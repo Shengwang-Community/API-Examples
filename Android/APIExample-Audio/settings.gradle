@@ -25,5 +25,5 @@ dependencyResolutionManagement {
         maven { url 'https://maven.aliyun.com/repository/central' }
     }
 }
-rootProject.name = 'APIExample-Audio'
+rootProject.name = 'Shengwang-APIExample-Audio'
 include ':app'

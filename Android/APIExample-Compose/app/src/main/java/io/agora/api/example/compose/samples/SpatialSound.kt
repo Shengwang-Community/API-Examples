@@ -489,7 +489,6 @@ private fun SpatialSoundView(
             onDismissRequest = {
                 showSetting = false
             },
-            windowInsets = WindowInsets(0),
         ) {
             Column(
                 modifier = Modifier
