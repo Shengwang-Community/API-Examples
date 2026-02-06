@@ -126,7 +126,10 @@ if [ $compress_apiexample = true ]; then
     # Source common functions for version validation
     source ./.github/ci/build/common_functions.sh
     
-    # Validate version before processing
+    # Validate SDK version against branch version
+    validate_sdk_version "$sdk_version" || exit 1
+    
+    # Validate project version against branch version
     validate_version "./iOS/${ios_direction}/${ios_direction}.xcodeproj/project.pbxproj" "" "ios" || exit 1
     
     mkdir -p $cn_dir
