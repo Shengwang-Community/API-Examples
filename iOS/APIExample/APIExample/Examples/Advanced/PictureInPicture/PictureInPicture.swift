@@ -295,7 +295,11 @@ extension PictureInPictureMain: AgoraVideoFrameDelegate {
     }
     
     func onRenderVideoFrame(_ videoFrame: AgoraOutputVideoFrame, uid: UInt, channelId: String) -> Bool {
-        remoteVideo.videoView.renderVideoPixelBuffer(videoFrame)
+        if videoFrame.pixelBuffer != nil {
+            remoteVideo.videoView.renderVideoPixelBuffer(videoFrame)
+        } else {
+            remoteVideo.videoView.renderVideoData(videoFrame)
+        }
         return true
     }
     
