@@ -75,6 +75,12 @@ echo "=========================================="
 echo "Checking version consistency..."
 echo "=========================================="
 
+# Skip version check for main branch (we trust main when building from it)
+api_examples_shengwang_branch_stripped=$(echo "$api_examples_shengwang_branch" | sed 's|^origin/||')
+if [ "$api_examples_shengwang_branch_stripped" = "main" ]; then
+    echo "Branch is main, skipping version consistency check (main branch is trusted)"
+else
+
 # Extract version number from branch name (supports formats like dev/4.6.2, release/4.6.2, etc.)
 BRANCH_VERSION=$(echo $api_examples_shengwang_branch | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
 
@@ -135,6 +141,7 @@ fi
 
 echo "✅ All version checks passed!"
 echo "=========================================="
+fi
 echo ""
 
 unzip_name=Shengwang_Native_SDK_for_Android_FULL_DEFAULT

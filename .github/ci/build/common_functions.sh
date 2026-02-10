@@ -40,7 +40,7 @@ get_branch_name() {
 # Function: Extract version from branch name
 # Args:
 #   $1 - Branch name
-# Returns: Version string (e.g., "4.5.3") or empty if not in dev/x.x.x format
+# Returns: Version string (e.g., "4.6.2") or empty if not in dev/x.x.x format
 extract_branch_version() {
     local branch_name="$1"
     
@@ -68,16 +68,22 @@ validate_version() {
         echo "Warning: Unable to get Git branch name, skipping version validation"
         return 0
     fi
-    
+
+    # Skip version check for main branch (we trust main when building from it)
+    if [ "$branch_name" = "main" ]; then
+        echo "Branch is main, skipping version validation (main branch is trusted)"
+        return 0
+    fi
+
     echo "Current branch: $branch_name"
-    
+
     # Extract version from branch name (format: dev/x.x.x)
     local branch_version=$(extract_branch_version "$branch_name")
     
     if [ -z "$branch_version" ]; then
         echo "Error: Branch name does not match dev/x.x.x format!"
         echo "Current branch: $branch_name"
-        echo "Required format: dev/x.x.x (e.g., dev/4.5.3)"
+        echo "Required format: dev/x.x.x (e.g., dev/4.6.2)"
         return 1
     fi
     
@@ -122,7 +128,7 @@ validate_version() {
 
 # Function: Validate SDK version against branch version
 # Args:
-#   $1 - SDK version (e.g., "4.5.3")
+#   $1 - SDK version (e.g., "4.6.2")
 #   $2 - Branch name (optional, will auto-detect if not provided)
 # Returns: 0 on success, 1 on failure
 validate_sdk_version() {
@@ -140,10 +146,16 @@ validate_sdk_version() {
         echo "Warning: Unable to get Git branch name, skipping SDK version validation"
         return 0
     fi
-    
+
+    # Skip version check for main branch (we trust main when building from it)
+    if [ "$branch_name" = "main" ]; then
+        echo "Branch is main, skipping SDK version validation (main branch is trusted)"
+        return 0
+    fi
+
     echo "Current branch: $branch_name"
     echo "SDK version from Podfile: $sdk_version"
-    
+
     # Extract version from branch name
     local branch_version=$(extract_branch_version "$branch_name")
     
