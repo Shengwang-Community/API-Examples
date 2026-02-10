@@ -81,7 +81,7 @@ else
 	else
 		echo "Error: Branch name does not match dev/x.x.x format!"
 		echo "Current branch: $BRANCH_NAME"
-		echo "Required format: dev/x.x.x (e.g., dev/4.5.3)"
+		echo "Required format: dev/x.x.x (e.g., dev/4.6.2)"
 		exit 1
 	fi
 fi
