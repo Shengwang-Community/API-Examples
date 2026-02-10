@@ -3,10 +3,6 @@ name: Create Tag
 on:
   workflow_dispatch:
     inputs:
-      input:
-        description: 'Branch name'
-        required: true
-        type: string
       action:
         description: 'push or delete'
         required: false
@@ -35,7 +31,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.input }}
+          ref: main  # 固定为 main 分支
           fetch-depth: 0
 
       - name: Push tag
