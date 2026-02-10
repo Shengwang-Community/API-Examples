@@ -41,8 +41,12 @@ fi
 # Remove origin/ prefix if present (but keep the rest of the path)
 BRANCH_NAME=$(echo "$BRANCH_NAME" | sed 's/^origin\///')
 
-if [ -z "$BRANCH_NAME" ] || [ "$BRANCH_NAME" = "HEAD" ]; then
-	echo "Warning: Unable to get Git branch name, skipping version validation"
+if [ -z "$BRANCH_NAME" ] || [ "$BRANCH_NAME" = "HEAD" ] || [ "$BRANCH_NAME" = "main" ]; then
+	if [ "$BRANCH_NAME" = "main" ]; then
+		echo "Branch is main, skipping version validation (main branch is trusted)"
+	else
+		echo "Warning: Unable to get Git branch name, skipping version validation"
+	fi
 else
 	echo "Current branch: $BRANCH_NAME"
 	

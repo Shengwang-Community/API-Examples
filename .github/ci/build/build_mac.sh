@@ -105,8 +105,19 @@ echo $WORKSPACE/with${BUILD_NUMBER}_$zip_name
 mv result.zip $WORKSPACE/with_${BUILD_NUMBER}_$zip_name
 
 if [ $compress_apiexample = true ]; then
-    sdk_version=$(grep "pod 'ShengwangRtcEngine_macOS'" ./macOS/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p")
+    # Extract SDK version from Podfile (support both commented and uncommented lines)
+    # Try ShengwangRtcEngine_macOS first, then ShengwangAudio_macOS
+    sdk_version=$(grep -E "Shengwang(RtcEngine|Audio)_macOS" ./macOS/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p" | head -1)
     echo "sdk_version: $sdk_version"
+    
+    # Source common functions for version validation
+    source ./.github/ci/build/common_functions.sh
+    
+    # Validate SDK version against branch version
+    validate_sdk_version "$sdk_version" || exit 1
+    
+    # Validate project version against branch version
+    validate_version "./macOS/APIExample.xcodeproj/project.pbxproj" "" "macos" || exit 1
     
     mkdir -p $cn_dir
     echo "cn_dir: $cn_dir"
