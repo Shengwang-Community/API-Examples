@@ -79,6 +79,26 @@ apiexample_cn_name=Shengwang_Native_SDK_for_iOS
 apiexample_global_name=Agora_Native_SDK_for_iOS
 cn_dir=CN
 
+# Source common functions
+source "$(dirname "$0")/common_functions.sh"
+
+# Run version validation
+run_version_validation "iOS/${ios_direction}" "${ios_direction}" "ios" || exit 1
+
+# Validate SDK version in Podfile (skip only for main branch)
+if [ "$BRANCH_NAME" != "main" ]; then
+    if [ -z "$BRANCH_VERSION" ]; then
+        echo "Error: BRANCH_VERSION is not set, cannot validate SDK version"
+        exit 1
+    fi
+    
+    echo "=========================================="
+    echo "Validating SDK version in Podfile..."
+    echo "=========================================="
+    validate_sdk_version "./iOS/${ios_direction}/Podfile" "$BRANCH_VERSION" "ios" || exit 1
+    echo ""
+fi
+
 if [ -z "$sdk_url" -o "$sdk_url" = "none" ]; then
    sdk_url_flag=false
    echo "sdk_url is empty"
@@ -118,19 +138,9 @@ echo $WORKSPACE/with${ios_direction}_${BUILD_NUMBER}_$zip_name
 mv result.zip $WORKSPACE/with${ios_direction}_${BUILD_NUMBER}_$zip_name
 
 if [ $compress_apiexample = true ]; then
-    # Extract SDK version from Podfile (support both commented and uncommented lines)
-    # Try ShengwangRtcEngine_iOS first, then ShengwangAudio_iOS
-    sdk_version=$(grep -E "Shengwang(RtcEngine|Audio)_iOS" ./iOS/${ios_direction}/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p" | head -1)
-    echo "sdk_version: $sdk_version"
-    
-    # Source common functions for version validation
-    source ./.github/ci/build/common_functions.sh
-    
-    # Validate SDK version against branch version
-    validate_sdk_version "$sdk_version" || exit 1
-    
-    # Validate project version against branch version
-    validate_version "./iOS/${ios_direction}/${ios_direction}.xcodeproj/project.pbxproj" "" "ios" || exit 1
+    # Use BRANCH_VERSION for the package name (already validated to match SDK version)
+    sdk_version="${BRANCH_VERSION}"
+    echo "Using version for package: $sdk_version"
     
     mkdir -p $cn_dir
     cp -rf ./iOS/${ios_direction} $cn_dir/

@@ -65,6 +65,26 @@ apiexample_global_name=Agora_Native_SDK_for_Mac
 cn_dir=CN
 global_dir=Global
 
+# Source common functions
+source "$(dirname "$0")/common_functions.sh"
+
+# Run version validation
+run_version_validation "macOS" "APIExample" "macos" || exit 1
+
+# Validate SDK version in Podfile (skip only for main branch)
+if [ "$BRANCH_NAME" != "main" ]; then
+    if [ -z "$BRANCH_VERSION" ]; then
+        echo "Error: BRANCH_VERSION is not set, cannot validate SDK version"
+        exit 1
+    fi
+    
+    echo "=========================================="
+    echo "Validating SDK version in Podfile..."
+    echo "=========================================="
+    validate_sdk_version "./macOS/Podfile" "$BRANCH_VERSION" "macos" || exit 1
+    echo ""
+fi
+
 echo zip_name: $zip_name
 if [ -z "$sdk_url" -o "$sdk_url" = "none" ]; then
    sdk_url_flag=false
@@ -105,19 +125,9 @@ echo $WORKSPACE/with${BUILD_NUMBER}_$zip_name
 mv result.zip $WORKSPACE/with_${BUILD_NUMBER}_$zip_name
 
 if [ $compress_apiexample = true ]; then
-    # Extract SDK version from Podfile (support both commented and uncommented lines)
-    # Try ShengwangRtcEngine_macOS first, then ShengwangAudio_macOS
-    sdk_version=$(grep -E "Shengwang(RtcEngine|Audio)_macOS" ./macOS/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p" | head -1)
-    echo "sdk_version: $sdk_version"
-    
-    # Source common functions for version validation
-    source ./.github/ci/build/common_functions.sh
-    
-    # Validate SDK version against branch version
-    validate_sdk_version "$sdk_version" || exit 1
-    
-    # Validate project version against branch version
-    validate_version "./macOS/APIExample.xcodeproj/project.pbxproj" "" "macos" || exit 1
+    # Use BRANCH_VERSION for the package name (already validated to match SDK version)
+    sdk_version="${BRANCH_VERSION}"
+    echo "Using version for package: $sdk_version"
     
     mkdir -p $cn_dir
     echo "cn_dir: $cn_dir"
