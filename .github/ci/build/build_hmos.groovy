@@ -75,4 +75,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.zip *.hap || true"
 }
 
-pipelineLoad(this, "ApiExample", "build", "harmonyos", "RTC-Sample")
+pipelineLoad(this, "api_examples_shengwang", "build", "harmonyos", "RTC-Sample")
