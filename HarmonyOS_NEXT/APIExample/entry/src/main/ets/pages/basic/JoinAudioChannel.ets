@@ -424,7 +424,7 @@ struct JoinAudioChannel {
               mediaOption.channelProfile = this.channelProfileType;
               mediaOption.clientRoleType = Constants.ClientRole.BROADCASTER;
               let token = await TokenUtils.genRtcToken(this.channelName, "")
-              let ret = this.rtcEngine?.joinChannelWithOptions("", this.channelName, 0, mediaOption)
+              let ret = this.rtcEngine?.joinChannelWithOptions(token, this.channelName, 0, mediaOption)
               if (ret != Constants.ErrorCode.ERR_OK) {
                 ShowToast.longToast("joinChannelWithOptions error " + ret + " : " + RtcEngine.getErrorDescription(ret))
                 return
