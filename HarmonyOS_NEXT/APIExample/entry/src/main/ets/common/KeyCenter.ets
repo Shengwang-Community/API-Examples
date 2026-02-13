@@ -8,4 +8,4 @@ export const AppID: string = 'YOUR APP ID'
 // PS：It is unsafe to place the App Certificate on the client side, it is recommended to place it on the server side to ensure that the App Certificate is not leaked.
 // 声网APP证书。如果项目没有开启证书鉴权，这个字段留空。
 // 注意：App证书放在客户端不安全，推荐放在服务端以确保 App 证书不会泄露。
-export const AppCertificate: string = ''
+export const AppCertificate: string = 'YOUR APP CERTIFICATE'
