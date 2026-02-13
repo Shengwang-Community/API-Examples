@@ -5,9 +5,11 @@ import groovy.transform.Field
 
 buildUtils = new agora.build.BuildUtils()
 
+// macOS local deployment, DevEco Studio installed
 compileConfig = [
     "sourceDir": "api-examples",
-    "docker": "hub.agoralab.co/server/ep/linux/ohos:0.0.1-5.0.5.200",
+    // Local macOS machine, no Docker required
+    // "docker": "hub.agoralab.co/server/ep/linux/ohos:0.0.1-5.0.5.200",
     "non-publish": [
         "command": "./.github/ci/build/build_hmos.sh",
         "extraArgs": "",
@@ -23,23 +25,22 @@ def doBuild(buildVariables) {
     command = compileConfig.get(type).command
     preCommand = compileConfig.get(type).get("preCommand", "")
     postCommand = compileConfig.get(type).get("postCommand", "")
-    docker = compileConfig.docker
     extraArgs = compileConfig.get(type).extraArgs
     extraArgs += " " + params.getOrDefault("extra_args", "")
     
-    // 下载并解压签名文件
+    // Download and extract signing files
     if (params.Package_Publish) {
         // extraArgs = handleSignFiles(extraArgs)
     }
     
+    // Local build without Docker
     def commandConfig = [
         "command": command,
         "sourceRoot": "${compileConfig.sourceDir}",
-        "extraArgs": extraArgs,
-        "docker": docker
+        "extraArgs": extraArgs
     ]
     
-    echo "[INFO] 构建配置: ${commandConfig}"
+    echo "[INFO] Build config: ${commandConfig}"
     
     loadResources(["config.json", "artifactory_utils.py"])
     buildUtils.customBuild(commandConfig, preCommand, postCommand)
@@ -74,4 +75,4 @@ def doPublish(buildVariables) {
     sh "rm -rf *.zip *.hap || true"
 }
 
-pipelineLoad(this, "ApiExample", "build", "harmonyos", "apiexample_linux")
+pipelineLoad(this, "ApiExample", "build", "harmonyos", "RTC-Sample")

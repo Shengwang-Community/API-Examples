@@ -1,91 +1,159 @@
-#! /bin/bash
-# 获取当前脚本所在路径
+#!/bin/bash
+##################################
+# HarmonyOS APIExample Build Script (macOS)
+#
+# Prerequisites:
+# - DevEco Studio installed with command-line tools
+# - Signing certificates in ~/Library/HarmonyOS/sign/
+#
+# Environment Variables:
+# - APP_ID: Agora App ID
+# - sdk_url: SDK URL (for version extraction)
+# - BUILD_NUMBER: Jenkins build number
+# - HMOS_KEY_PWD: Signing key password
+# - HMOS_SIGN_DIR: (optional) Custom signing directory
+##################################
+
+set -e
+
+# Get current script directory
 PROJECT_PATH="$(cd "$(dirname "$0")" && pwd)"
 
-## 配置 APP ID
-# 替换 KeyCenter.ets 中的 APP ID 和证书
-sed -i -e "s#YOUR APP ID#${APP_ID}#g" entry/src/main/ets/common/KeyCenter.ets
-sed -i -e "s#YOUR APP CERTIFICATE##g" entry/src/main/ets/common/KeyCenter.ets
-rm -f entry/src/main/ets/common/KeyCenter.ets-e
+# Record build start time
+START_TIME=$(date +%s)
+echo "=========================================="
+echo "HarmonyOS APIExample Build"
+echo "Started at: $(date '+%Y-%m-%d %H:%M:%S')"
+echo "=========================================="
+echo ""
 
-# 从 SDK URL 中提取版本号
-SDK_VERSION=$(echo "$sdk_url" | awk -F'_' '{print $6}' | cut -d'.' -f1-3)
+# ===== Configure APP ID =====
+echo "Configuring APP ID..."
+sed -i '' "s#YOUR APP ID#${APP_ID}#g" entry/src/main/ets/common/KeyCenter.ets
+sed -i '' "s#YOUR APP CERTIFICATE##g" entry/src/main/ets/common/KeyCenter.ets
+echo "✅ APP ID configured"
 
-# 配置 Java 环境
-JAVA_HOME="/home/jdk-17.0.6"
-export PATH=$PATH:$JAVA_HOME/bin
+# Extract version from SDK URL
+SDK_VERSION=$(echo "$sdk_url" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+if [ -z "$SDK_VERSION" ]; then
+    SDK_VERSION="unknown"
+fi
+echo "SDK Version: $SDK_VERSION"
+echo ""
+
+# ===== Configure Environment (macOS) =====
+echo "=========================================="
+echo "Configuring build environment..."
+echo "=========================================="
+
+# Java environment (use system Java or DevEco bundled)
+if [ -z "$JAVA_HOME" ]; then
+    # Try DevEco Studio bundled JDK
+    DEVECO_JDK="/Applications/DevEco-Studio.app/Contents/jbr/Contents/Home"
+    if [ -d "$DEVECO_JDK" ]; then
+        export JAVA_HOME="$DEVECO_JDK"
+    fi
+fi
+export PATH=$JAVA_HOME/bin:$PATH
+echo "JAVA_HOME: $JAVA_HOME"
 java -version
 
-COMMANDLINE_TOOL_DIR="/home/ohos-sdk/command-line-tools"
+# DevEco Studio paths (macOS)
+DEVECO_HOME="/Applications/DevEco-Studio.app/Contents"
+OHPM_HOME="${DEVECO_HOME}/tools/ohpm"
+HVIGOR_HOME="${DEVECO_HOME}/tools/hvigor"
+TOOLCHAINS_HOME="${DEVECO_HOME}/sdk/default/openharmony/toolchains"
 
-#配置hvigor、ohpm环境变量
-export PATH=${COMMANDLINE_TOOL_DIR}/bin:$PATH
+echo "DevEco Home: $DEVECO_HOME"
+echo "OHPM: $OHPM_HOME"
+echo "Hvigor: $HVIGOR_HOME"
 
-#配置hdc环境变量
+# Configure PATH for ohpm and hvigorw
+export PATH="${OHPM_HOME}/bin:${HVIGOR_HOME}/bin:${TOOLCHAINS_HOME}:$PATH"
+
+# Configure HDC
 init_hdc() {
-    export HDC_HOME=${COMMANDLINE_TOOL_DIR}/sdk/default/openharmony/toolchains
+    export HDC_HOME="${TOOLCHAINS_HOME}"
     export PATH=$HDC_HOME:$PATH
 }
 
-# 安装ohpm
+# Initialize ohpm
 init_ohpm() {
+    echo "Initializing ohpm..."
     ohpm -v
     ohpm config set registry https://ohpm.openharmony.cn/ohpm/
+    echo "✅ ohpm initialized"
 }
 
-# 进入package目录安装依赖
+# Install dependencies
 ohpm_install() {
+    echo "Installing dependencies in $1..."
     cd "$1"
     ohpm install
 }
 
-# 环境适配
+# Build HAP
 buildHAP() {
+    echo ""
+    echo "=========================================="
+    echo "Building HAP..."
+    echo "=========================================="
+    
     ohpm_install "${PROJECT_PATH}"
     ohpm_install "${PROJECT_PATH}/entry"
+    
     cd ${PROJECT_PATH}
     hvigorw clean --no-daemon
     hvigorw assembleHap --mode module -p product=default -p buildMode=debug --no-daemon
+    
+    echo "✅ HAP build completed"
 }
 
+# Sign HAP
 signedHAP() {
-    echo "[INFO] === Starting loadSignAndSigned ==="
+    echo ""
+    echo "=========================================="
+    echo "Signing HAP..."
+    echo "=========================================="
     
-    # 创建证书目录
-    local config_dir=".ohos/config"
-    mkdir -p "${config_dir}"
+    # Signing directory (local macOS path)
+    local sign_dir="${HMOS_SIGN_DIR:-$HOME/Library/HarmonyOS/sign}"
     
-    # 下载证书
-    local sign_url="http://10.80.1.174:8070/hmos/apiexample-hmos-sign.zip"
-    local sign_file="${config_dir}/apiexample-hmos-sign.zip"
-    
-    echo "[INFO] 下载签名文件..."
-    curl -o "${sign_file}" "${sign_url}"
-    
-    # 解压证书
-    cd "${config_dir}"
-    7za x -y apiexample-hmos-sign.zip
-    cd - > /dev/null
-    
-    # 使用解压后的证书文件
-    local cert_file=$(find "${config_dir}/sign" -name "*.cer")
-    local p7b_file=$(find "${config_dir}/sign" -name "*.p7b")
-    local p12_file=$(find "${config_dir}/sign" -name "*.p12")
-    
-    # 检查证书文件是否存在
-    if [ ! -f "$cert_file" ] || [ ! -f "$p7b_file" ] || [ ! -f "$p12_file" ]; then
-        echo "错误：未找到所需的证书文件"
+    # Check signing directory exists
+    if [ ! -d "$sign_dir" ]; then
+        echo "❌ Signing directory not found: $sign_dir"
         exit 1
     fi
     
-    # 获取未签名的 HAP 文件
+    # Find certificate files
+    local cert_file=$(find "${sign_dir}" -name "*.cer" | head -n 1)
+    local p7b_file=$(find "${sign_dir}" -name "*.p7b" | head -n 1)
+    local p12_file=$(find "${sign_dir}" -name "*.p12" | head -n 1)
+    
+    # Verify certificate files exist
+    if [ ! -f "$cert_file" ] || [ ! -f "$p7b_file" ] || [ ! -f "$p12_file" ]; then
+        echo "❌ Required certificate files not found in: $sign_dir"
+        echo "Expected: *.cer, *.p7b, *.p12"
+        exit 1
+    fi
+    
+    echo "Certificate: $cert_file"
+    echo "Profile: $p7b_file"
+    echo "Keystore: $p12_file"
+    
+    # Get unsigned HAP file
     local unsigned_hap="${PROJECT_PATH}/entry/build/default/outputs/default/entry-default-unsigned.hap"
-    # 生成签名后的 HAP 文件名
+    if [ ! -f "$unsigned_hap" ]; then
+        echo "❌ Unsigned HAP not found: $unsigned_hap"
+        exit 1
+    fi
+    
+    # Generate signed HAP filename
     local signed_hap="${PROJECT_PATH}/APIExample_${BUILD_NUMBER}_${SDK_VERSION}_$(date "+%Y%m%d%H%M%S").hap"
     
-    # 签名打包
-    echo "开始签名打包..."
-    java -jar ${COMMANDLINE_TOOL_DIR}/sdk/default/openharmony/toolchains/lib/hap-sign-tool.jar sign-app \
+    # Sign HAP
+    echo "Signing HAP..."
+    java -jar "${TOOLCHAINS_HOME}/lib/hap-sign-tool.jar" sign-app \
         -keyAlias "${HMOS_KEY_PWD}" \
         -signAlg "SHA256withECDSA" \
         -mode "localSign" \
@@ -99,29 +167,41 @@ signedHAP() {
         -signCode "1"
     
     if [ $? -ne 0 ]; then
-        echo "[ERROR] HAP 签名失败"
+        echo "❌ HAP signing failed"
         exit 1
     fi
     
-    # 检查签名后的文件
     if [ ! -f "$signed_hap" ]; then
-        echo "[ERROR] 签名后的 HAP 文件未生成"
+        echo "❌ Signed HAP file not generated"
         exit 1
     fi
     
-    echo "[INFO] HAP 签名成功: $signed_hap"
+    echo "✅ HAP signed successfully: $signed_hap"
 }
 
-function main() {
-    local startTime=$(date '+%s')
+# Main function
+main() {
     init_hdc
     init_ohpm
     buildHAP
     signedHAP
-
-    local endTime=$(date '+%s')
-    local elapsedTime=$(expr $endTime - $startTime)
-    echo "构建成功，耗时 ${elapsedTime} 秒"
+    
+    # Build summary
+    END_TIME=$(date +%s)
+    DURATION=$((END_TIME - START_TIME))
+    MINUTES=$((DURATION / 60))
+    SECONDS=$((DURATION % 60))
+    
+    echo ""
+    echo "=========================================="
+    echo "✅ BUILD COMPLETED SUCCESSFULLY"
+    echo "=========================================="
+    if [ $MINUTES -gt 0 ]; then
+        echo "Total duration: ${MINUTES}m ${SECONDS}s"
+    else
+        echo "Total duration: ${SECONDS}s"
+    fi
+    echo "=========================================="
 }
 
 main
