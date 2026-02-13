@@ -108,7 +108,7 @@ buildHAP() {
     hvigorw clean --no-daemon
     hvigorw assembleHap --mode module -p product=default -p buildMode=debug --no-daemon
     
-    # Check if unsigned HAP was generated (signing may fail but that's OK, we sign manually)
+    # Check if unsigned HAP was generated
     if [ ! -f "${PROJECT_PATH}/entry/build/default/outputs/default/entry-default-unsigned.hap" ]; then
         echo "❌ HAP build failed - unsigned HAP not found"
         exit 1
@@ -117,8 +117,8 @@ buildHAP() {
     echo "✅ HAP build completed"
 }
 
-# Sign HAP
-signedHAP() {
+# Sign HAP manually using hap-sign-tool.jar
+signHAP() {
     echo ""
     echo "=========================================="
     echo "Signing HAP..."
@@ -133,15 +133,22 @@ signedHAP() {
         exit 1
     fi
     
-    # Find certificate files
+    # Certificate files
     local cert_file=$(find "${sign_dir}" -name "*.cer" | head -n 1)
     local p7b_file=$(find "${sign_dir}" -name "*.p7b" | head -n 1)
     local p12_file=$(find "${sign_dir}" -name "*.p12" | head -n 1)
     
     # Verify certificate files exist
-    if [ ! -f "$cert_file" ] || [ ! -f "$p7b_file" ] || [ ! -f "$p12_file" ]; then
-        echo "❌ Required certificate files not found in: $sign_dir"
-        echo "Expected: *.cer, *.p7b, *.p12"
+    if [ ! -f "$cert_file" ]; then
+        echo "❌ Certificate not found: $cert_file"
+        exit 1
+    fi
+    if [ ! -f "$p7b_file" ]; then
+        echo "❌ Profile (.p7b) not found in: $sign_dir"
+        exit 1
+    fi
+    if [ ! -f "$p12_file" ]; then
+        echo "❌ Keystore not found: $p12_file"
         exit 1
     fi
     
@@ -151,10 +158,6 @@ signedHAP() {
     
     # Get unsigned HAP file
     local unsigned_hap="${PROJECT_PATH}/entry/build/default/outputs/default/entry-default-unsigned.hap"
-    if [ ! -f "$unsigned_hap" ]; then
-        echo "❌ Unsigned HAP not found: $unsigned_hap"
-        exit 1
-    fi
     
     # Generate signed HAP filename
     local signed_hap="${PROJECT_PATH}/APIExample_${BUILD_NUMBER}_${SDK_VERSION}_$(date "+%Y%m%d%H%M%S").hap"
@@ -192,7 +195,7 @@ main() {
     init_hdc
     init_ohpm
     buildHAP
-    signedHAP
+    signHAP
     
     # Build summary
     END_TIME=$(date +%s)

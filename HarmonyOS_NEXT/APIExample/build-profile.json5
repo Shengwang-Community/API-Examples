@@ -9,13 +9,13 @@
         "buildOption": {
           "strictMode": {
             "useNormalizedOHMUrl": true
-          },
+          }
         }
       }
     ],
     "buildModeSet": [
       {
-        "name": "debug",
+        "name": "debug"
       },
       {
         "name": "release"
