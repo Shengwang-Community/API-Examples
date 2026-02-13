@@ -59,12 +59,14 @@ echo "JAVA_HOME: $JAVA_HOME"
 java -version
 
 # DevEco Studio paths (macOS)
-DEVECO_HOME="/Applications/DevEco-Studio.app/Contents"
+export DEVECO_HOME="/Applications/DevEco-Studio.app/Contents"
+export DEVECO_SDK_HOME="${DEVECO_HOME}/sdk"
 OHPM_HOME="${DEVECO_HOME}/tools/ohpm"
 HVIGOR_HOME="${DEVECO_HOME}/tools/hvigor"
 TOOLCHAINS_HOME="${DEVECO_HOME}/sdk/default/openharmony/toolchains"
 
 echo "DevEco Home: $DEVECO_HOME"
+echo "DEVECO_SDK_HOME: $DEVECO_SDK_HOME"
 echo "OHPM: $OHPM_HOME"
 echo "Hvigor: $HVIGOR_HOME"
 
