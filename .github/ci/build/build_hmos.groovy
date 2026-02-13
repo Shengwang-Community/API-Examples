@@ -7,7 +7,7 @@ buildUtils = new agora.build.BuildUtils()
 
 // macOS local deployment, DevEco Studio installed
 compileConfig = [
-    "sourceDir": "api-examples",
+    "sourceDir": "api-examples-shengwang",
     // Local macOS machine, no Docker required
     // "docker": "hub.agoralab.co/server/ep/linux/ohos:0.0.1-5.0.5.200",
     "non-publish": [
