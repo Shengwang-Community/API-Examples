@@ -108,6 +108,12 @@ buildHAP() {
     hvigorw clean --no-daemon
     hvigorw assembleHap --mode module -p product=default -p buildMode=debug --no-daemon
     
+    # Check if unsigned HAP was generated (signing may fail but that's OK, we sign manually)
+    if [ ! -f "${PROJECT_PATH}/entry/build/default/outputs/default/entry-default-unsigned.hap" ]; then
+        echo "❌ HAP build failed - unsigned HAP not found"
+        exit 1
+    fi
+    
     echo "✅ HAP build completed"
 }
 
@@ -156,7 +162,7 @@ signedHAP() {
     # Sign HAP
     echo "Signing HAP..."
     java -jar "${TOOLCHAINS_HOME}/lib/hap-sign-tool.jar" sign-app \
-        -keyAlias "${HMOS_KEY_PWD}" \
+        -keyAlias "wayangAgora" \
         -signAlg "SHA256withECDSA" \
         -mode "localSign" \
         -appCertFile "$cert_file" \
