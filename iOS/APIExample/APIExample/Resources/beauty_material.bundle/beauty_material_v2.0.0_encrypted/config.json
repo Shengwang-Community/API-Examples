@@ -4,7 +4,8 @@
         "version": "2.0.0",
         "aspect": "16:9",
         "preferred_fps": 24,
-        "encrypted": true
+        "encrypted": true,
+        "performance_mode": 0
     },
     "user_interface_option": {
         "模板女": "muban_female/",
@@ -18,5 +19,5 @@
     },
     "beauty_config" : "模板女",
     "makeup_config" : "学妹妆",
-    "filter_config" : "原生"
+    "filter_config" : "冷白"
 }
