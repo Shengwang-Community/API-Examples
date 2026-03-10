@@ -3,7 +3,7 @@
 
 def common_pods
   pod 'ShengwangRtcEngine_iOS', '4.5.3'
-  # pod 'sdk', :path => 'sdk.podspec'
+  #pod 'sdk', :path => 'sdk.podspec'
 end
 
 target 'APIExample-SwiftUI' do
