@@ -43,7 +43,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.core.app.PictureInPictureModeChangedInfo
 import androidx.core.util.Consumer
-import io.agora.api.example.compose.BuildConfig
+import io.agora.api.example.compose.utils.AgoraConfig
 import io.agora.api.example.compose.R
 import io.agora.api.example.compose.data.SettingPreferences
 import io.agora.api.example.compose.ui.common.ChannelNameInput
@@ -163,7 +163,7 @@ fun PictureInPicture() {
         RtcEngine.create(RtcEngineConfig().apply {
             mAreaCode = SettingPreferences.getArea()
             mContext = context
-            mAppId = BuildConfig.AGORA_APP_ID
+            mAppId = AgoraConfig.getAppId()
             mEventHandler = object : IRtcEngineEventHandler() {
                 override fun onJoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
                     super.onJoinChannelSuccess(channel, uid, elapsed)
@@ -354,74 +354,74 @@ fun PictureInPicture() {
         Log.d("PiPDebug", "PictureInPicture: Rendering normal mode - full UI")
         // Normal mode with full UI - let Example component handle the scaffold
         Column(modifier = Modifier.fillMaxWidth()) {
-                videoView()
-                Spacer(modifier = Modifier.weight(1f))
+            videoView()
+            Spacer(modifier = Modifier.weight(1f))
 
-                Button(
-                    modifier = Modifier.padding(16.dp, 8.dp),
-                    enabled = isJoined,
-                    onClick = {
-                        if (Build.VERSION.SDK_INT >= 26) {
-                            val appOpsManager: AppOpsManager =
-                                context.getSystemService(AppOpsManager::class.java)
-                            if (appOpsManager.checkOpNoThrow(
-                                    AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
-                                    Process.myUid(),
-                                    context.packageName
-                                ) == AppOpsManager.MODE_ALLOWED
-                            ) {
-                        context.enterPictureInPictureMode(
-                            PictureInPictureParams.Builder()
-                                .setAspectRatio(
-                                    Rational(
-                                        videoViewBound.width().toInt(),
-                                        videoViewBound.height().toInt()
+            Button(
+                modifier = Modifier.padding(16.dp, 8.dp),
+                enabled = isJoined,
+                onClick = {
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        val appOpsManager: AppOpsManager =
+                            context.getSystemService(AppOpsManager::class.java)
+                        if (appOpsManager.checkOpNoThrow(
+                                AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+                                Process.myUid(),
+                                context.packageName
+                            ) == AppOpsManager.MODE_ALLOWED
+                        ) {
+                            context.enterPictureInPictureMode(
+                                PictureInPictureParams.Builder()
+                                    .setAspectRatio(
+                                        Rational(
+                                            videoViewBound.width().toInt(),
+                                            videoViewBound.height().toInt()
+                                        )
                                     )
-                                )
-                                .setActions(emptyList()) // Hide system actions (back button, etc.)
-                                .build()
-                        )
-                        val homeIntent = Intent(Intent.ACTION_MAIN)
-                        homeIntent.addCategory(Intent.CATEGORY_HOME)
-                        context.startActivity(homeIntent)
-                        // isPipOn is now managed by rememberIsInPipMode(), no need to manually set
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Picture-in-Picture permission is not granted",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                                    .setActions(emptyList()) // Hide system actions (back button, etc.)
+                                    .build()
+                            )
+                            val homeIntent = Intent(Intent.ACTION_MAIN)
+                            homeIntent.addCategory(Intent.CATEGORY_HOME)
+                            context.startActivity(homeIntent)
+                            // isPipOn is now managed by rememberIsInPipMode(), no need to manually set
                         } else {
                             Toast.makeText(
                                 context,
-                                "Picture-in-Picture requires Android 8.0 (API 26) or higher",
+                                "Picture-in-Picture permission is not granted",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Picture-in-Picture requires Android 8.0 (API 26) or higher",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                ) {
-                    Text(text = "Enter Picture-in-Picture Mode")
                 }
+            ) {
+                Text(text = "Enter Picture-in-Picture Mode")
+            }
 
-                ChannelNameInput(
-                    channelName = channelName,
-                    isJoined = isJoined,
-                    onJoinClick = {
-                        channelName = it
-                        keyboard?.hide()
-                        permissionLauncher.launch(
-                            arrayOf(
-                                android.Manifest.permission.RECORD_AUDIO,
-                                android.Manifest.permission.CAMERA
-                            )
+            ChannelNameInput(
+                channelName = channelName,
+                isJoined = isJoined,
+                onJoinClick = {
+                    channelName = it
+                    keyboard?.hide()
+                    permissionLauncher.launch(
+                        arrayOf(
+                            android.Manifest.permission.RECORD_AUDIO,
+                            android.Manifest.permission.CAMERA
                         )
-                    },
-                    onLeaveClick = {
-                        rtcEngine.stopPreview()
-                        rtcEngine.leaveChannel()
-                    }
-                )
+                    )
+                },
+                onLeaveClick = {
+                    rtcEngine.stopPreview()
+                    rtcEngine.leaveChannel()
+                }
+            )
         }
     }
 }

@@ -55,7 +55,7 @@ import io.agora.rtc2.video.VideoEncoderConfiguration;
  * The type Process raw data.
  */
 @Example(
-        index = 11,
+        index = 20,
         group = ADVANCED,
         name = R.string.item_processraw,
         actionId = R.id.action_mainFragment_to_ProcessRawData,
@@ -90,7 +90,7 @@ public class ProcessRawData extends BaseFragment implements View.OnClickListener
             /*
              * The App ID issued to you by Agora. See <a href="https://docs.agora.io/en/Agora%20Platform/token#get-an-app-id"> How to get the App ID</a>
              */
-            config.mAppId = getString(R.string.agora_app_id);
+            config.mAppId = getAgoraAppId();
             /* Sets the channel profile of the Agora RtcEngine.
              CHANNEL_PROFILE_COMMUNICATION(0): (Default) The Communication profile.
              Use this profile in one-on-one calls or group calls, where all users can talk freely.

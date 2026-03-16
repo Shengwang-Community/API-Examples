@@ -50,7 +50,7 @@ import io.agora.rtc2.video.VideoEncoderConfiguration;
 /**
  * This demo demonstrates how to make a one-to-one video call
  */
-@Example(index = 11, group = ADVANCED, name = R.string.item_picture_in_picture, actionId = R.id.action_mainFragment_to_picture_in_picture, tipsId = R.string.picture_in_picture)
+@Example(index = 22, group = ADVANCED, name = R.string.item_picture_in_picture, actionId = R.id.action_mainFragment_to_picture_in_picture, tipsId = R.string.picture_in_picture)
 public class PictureInPicture extends BaseFragment implements View.OnClickListener {
     private static final String TAG = PictureInPicture.class.getSimpleName();
 
@@ -111,7 +111,7 @@ public class PictureInPicture extends BaseFragment implements View.OnClickListen
             /*
              * The App ID issued to you by Agora. See <a href="https://docs.agora.io/en/Agora%20Platform/token#get-an-app-id"> How to get the App ID</a>
              */
-            config.mAppId = getString(R.string.agora_app_id);
+            config.mAppId = getAgoraAppId();
             /* Sets the channel profile of the Agora RtcEngine.
              CHANNEL_PROFILE_COMMUNICATION(0): (Default) The Communication profile.
              Use this profile in one-on-one calls or group calls, where all users can talk freely.

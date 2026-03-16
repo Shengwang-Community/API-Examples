@@ -32,7 +32,7 @@ import io.agora.rte.exception.RteException;
  * This demo demonstrates how to make a live stream with url
  */
 @Example(
-        index = 26,
+        index = 42,
         group = ADVANCED,
         name = R.string.ultra_live_streaming_with_url,
         actionId = R.id.action_mainFragment_to_url_live_stream,
@@ -67,11 +67,11 @@ public class UrlLiveStream extends BaseVbFragment<FragmentUrlLiveStreamBinding> 
 
     @Override
     protected void initData() {
-        binding.etRteUrl.setText("rte://" + getString(R.string.agora_app_id));
+        binding.etRteUrl.setText("rte://" + getAgoraAppId());
         try {
             mRte = new Rte(null);
             Config config = new Config();
-            config.setAppId(getContext().getString(R.string.agora_app_id));
+            config.setAppId(getAgoraAppId());
             mRte.setConfigs(config);
             mRte.initMediaEngine((Error error) -> {
                 io.agora.rte.Constants.ErrorCode errCode = error.code();

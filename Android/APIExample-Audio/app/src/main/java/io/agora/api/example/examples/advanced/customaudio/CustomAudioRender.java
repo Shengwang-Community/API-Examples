@@ -38,7 +38,7 @@ import io.agora.rtc2.proxy.LocalAccessPointConfiguration;
 /**
  * This demo demonstrates how to make a one-to-one voice call
  */
-@Example(index = 6, group = ADVANCED, name = R.string.item_customaudiorender, actionId = R.id.action_mainFragment_to_CustomAudioRender, tipsId = R.string.customaudiorender)
+@Example(index = 12, group = ADVANCED, name = R.string.item_customaudiorender, actionId = R.id.action_mainFragment_to_CustomAudioRender, tipsId = R.string.customaudiorender)
 public class CustomAudioRender extends BaseFragment implements View.OnClickListener {
     private static final String TAG = CustomAudioRender.class.getSimpleName();
     private EditText et_channel;
@@ -106,7 +106,7 @@ public class CustomAudioRender extends BaseFragment implements View.OnClickListe
             /*
              * The App ID issued to you by Agora. See <a href="https://docs.agora.io/en/Agora%20Platform/token#get-an-app-id"> How to get the App ID</a>
              */
-            config.mAppId = getString(R.string.agora_app_id);
+            config.mAppId = getAgoraAppId();
             /* Sets the channel profile of the Agora RtcEngine.
              CHANNEL_PROFILE_COMMUNICATION(0): (Default) The Communication profile.
              Use this profile in one-on-one calls or group calls, where all users can talk freely.

@@ -68,7 +68,7 @@ import io.agora.rtc2.video.WatermarkOptions;
  * When turn the Co-host on, others will see you.
  */
 @Example(
-        index = 0,
+        index = 10,
         group = ADVANCED,
         name = R.string.item_livestreaming,
         actionId = R.id.action_mainFragment_to_live_streaming,
@@ -305,7 +305,7 @@ public class LiveStreaming extends BaseFragment implements View.OnClickListener,
              * @param handler IRtcEngineEventHandler is an abstract class providing default implementation.
              *                The SDK uses this class to report to the app on SDK runtime events.*/
             RtcEngineConfig rtcEngineConfig = new RtcEngineConfig();
-            rtcEngineConfig.mAppId = getString(R.string.agora_app_id);
+            rtcEngineConfig.mAppId = getAgoraAppId();
             rtcEngineConfig.mContext = context.getApplicationContext();
             rtcEngineConfig.mEventHandler = iRtcEngineEventHandler;
             /* Sets the channel profile of the Agora RtcEngine. */
