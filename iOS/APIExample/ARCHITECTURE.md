@@ -127,7 +127,7 @@ APIExample/
     │       ├── ContentInspect/              # "Content Inspect"
     │       ├── MutliCamera/                 # "Multi Camera (iOS13+)"
     │       ├── KtvCopyrightMusic/           # "KTV Copyright Music"
-    │       ├── ThirdBeautify/               # "Third Beautify" — third-party beauty SDK
+    │       ├── ThirdBeautify/               # "Third Beautify" — third-party beauty SDK (includes SenseBeautify/ subfolder, domestic)
     │       ├── ARKit/                       # "ARKit"
     │       ├── AudioRouterPlayer/           # "Audio Router (Third Party Player)"
     │       ├── AudioWaveform/               # "Audio Waveform"
@@ -138,7 +138,7 @@ APIExample/
     │       ├── Multipath/                   # "Multipath"
     │       └── VideoChat/                   # (disabled) Group Video Chat
     │
-    ├── Resources/                           # Audio/video sample files, beauty resources
+    ├── Resources/                           # Audio/video sample files; beauty_material.bundle (Agora beauty, domestic)
     ├── Assets.xcassets/
     ├── Base.lproj/                          # Main.storyboard, LaunchScreen.storyboard
     └── zh-Hans.lproj/                       # Chinese localization

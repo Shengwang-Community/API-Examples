@@ -13,7 +13,10 @@ APIExample/
     ├── res/
     │   ├── navigation/nav_graph.xml         # Single nav graph — all case destinations live here
     │   ├── values/strings.xml               # All display names and tips strings
-    │   └── layout/                          # XML layouts for each case Fragment
+    │   ├── values/string_configs.xml        # String config (domestic)
+    │   ├── values-zh/strings.xml            # Chinese display strings (domestic)
+    │   ├── values-zh/arrays.xml             # Chinese arrays (domestic)
+    │   └── layout/                          # XML layouts for each case Fragment (incl. fragment_beauty_scenetime.xml, fragment_cdn_*.xml)
     └── java/io/agora/api/example/
         ├── MainApplication.java             # Scans DEX and registers all @Example cases at startup
         ├── MainActivity.java                # Single-Activity host, owns NavController
@@ -85,7 +88,10 @@ APIExample/
         │   │   ├── AgoraBeauty.java             # [43] "Agora beauty 2.0" — built-in beauty effects
         │   │   ├── Simulcast.java               # [44] "Simulcast" — multi-quality stream publishing
         │   │   ├── Multipath.java               # [45] "Multipath" — multi-path transmission
+        │   │   ├── CDNStreaming/                # CDN live streaming (pull) — EntryFragment, HostFragment, AudienceFragment (nav registration commented out)
         │   │   ├── beauty/                      # Third-party beauty integrations
+        │   │   │   ├── SenseTimeBeauty.java     # SenseTime beauty (domestic)
+        │   │   │   └── SenseTimeBeautySDK.kt    # SenseTime SDK wrapper
         │   │   └── videoRender/                 # Custom video rendering helpers
         │   └── audio/                           # Audio-specific cases (grouped as BASIC)
         │       ├── AudioWaveform.java           # [5] "Audio Waveform" — audio visualization
@@ -144,7 +150,9 @@ APIExample/
 | Relay Streams across Channels | `advanced/HostAcrossChannel.java` | `startOrUpdateChannelMediaRelay()`, `stopChannelMediaRelay()`, `pauseAllChannelMediaRelay()`, `resumeAllChannelMediaRelay()` | Demonstrates relaying media streams from one channel to another |
 | Spatial Audio | `advanced/SpatialSound.java` | `enableAudio()`, `setRemoteUserSpatialAudioParams()`, `createMediaPlayer()` | Demonstrates 3D spatial audio positioning for remote users |
 | Content Inspect | `advanced/ContentInspect.java` | `enableContentInspect()` | Demonstrates real-time content moderation on video streams |
-| Third-party beauty | `advanced/ThirdPartyBeauty.java` | `registerVideoFrameObserver()` | Demonstrates integration with third-party beauty SDKs (e.g. FaceUnity) |
+| Third-party beauty | `advanced/ThirdPartyBeauty.java` | `registerVideoFrameObserver()` | Demonstrates integration with third-party beauty SDKs (e.g. FaceUnity, SenseTime) |
+| SenseTime Beauty (domestic) | `advanced/beauty/SenseTimeBeauty.java` | `registerVideoFrameObserver()`, SenseTimeBeautyAPI, RTC video pipeline | Demonstrates SenseTime beauty SDK integration; uses io.agora.beautyapi.sensetime |
+| CDN Live Streaming (domestic) | `advanced/CDNStreaming/` (EntryFragment, HostFragment, AudienceFragment) | CDN pull streaming | Code and layouts present; nav registration currently commented out |
 | KTV Copyright Music | `advanced/KtvCopyrightMusic.java` | N/A (browser-based documentation link) | Demonstrates the KTV copyright music feature via documentation reference |
 | TransparentRendering | `advanced/TransparentRendering.java` | `setExternalVideoSource()`, `pushExternalVideoFrame()`, `createMediaPlayer()`, `startPreview()` | Demonstrates alpha-channel transparent video rendering |
 | Ultra Live Streaming with Url | `advanced/UrlLiveStream.java` | `Rte()`, `Player()`, `Canvas()`, `player.openWithUrl()`, `player.stop()` | Demonstrates ultra-low-latency live streaming playback via URL using the RTE SDK |
