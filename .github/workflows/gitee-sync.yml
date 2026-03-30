@@ -1,10 +1,12 @@
 name: gitee-sync
 on:
-  pull_request:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  build:
+  sync:
     name: gitee-sync
     runs-on: ubuntu-latest
 
@@ -26,4 +28,4 @@ jobs:
           force_update: true
           account_type: org
           shell_path: ./.github/workflows/gitee-sync-shell.sh
-          github_ref: ${{ github.ref }}
+          github_ref: refs/heads/main
