@@ -98,23 +98,23 @@ dependencies {
     else {
 
         // case 1: full libs
-        implementation "cn.shengwang.rtc:full-sdk:${agoraSdkVersion}"
-        implementation "cn.shengwang.rtc:full-screen-sharing:${agoraSdkVersion}"
+        implementation "io.agora.rtc:full-sdk:${agoraSdkVersion}"
+        implementation "io.agora.rtc:full-screen-sharing:${agoraSdkVersion}"
         // case 2: partial libs
-        // implementation "cn.shengwang.rtc:full-rtc-basic:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:ains:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:full-content-inspect:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:full-virtual-background:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:full-super-resolution:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:spatial-audio:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:audio-beauty:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:clear-vision:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:pvc:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:screen-capture:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:aiaec:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:drm-loader:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:drm:${agoraSdkVersion}"
-        // implementation "cn.shengwang.rtc:full-vqa:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:full-rtc-basic:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:ains:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:full-content-inspect:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:full-virtual-background:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:full-super-resolution:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:spatial-audio:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:audio-beauty:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:clear-vision:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:pvc:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:screen-capture:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:aiaec:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:drm-loader:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:drm:${agoraSdkVersion}"
+        // implementation "io.agora.rtc:full-vqa:${agoraSdkVersion}"
     }
 
 
