@@ -1,5 +1,5 @@
-$agora_sdk = 'https://download.shengwang.cn/sdk/release/Shengwang_Native_SDK_for_Windows_v4.5.3_FULL.zip'
-$ThirdPartysrc = 'https://fullapp.oss-cn-beijing.aliyuncs.com/API-Examples/ThirdParty.zip'
+$agora_sdk = 'https://download.agora.io/sdk/release/Agora_Native_SDK_for_Windows_v4.5.3_FULL.zip'
+$ThirdPartysrc = 'https://demo-app-download.agora.io/api_example/ThirdParty.zip'
 $ThirdPartydes = 'ThirdParty.zip'
 $agora_des = 'AgoraSdk.zip'
 $agora_local_sdk = '../../sdk'
@@ -74,4 +74,3 @@ if ($allOk) {
     Write-Host "Please check network and download, ensure ThirdParty and sdk are not empty, then retry." -ForegroundColor Red
     exit 1
 }
-
