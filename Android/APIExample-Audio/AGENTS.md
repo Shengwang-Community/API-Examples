@@ -31,8 +31,7 @@ See [README.md — Obtain an App Id](README.md#obtain-an-app-id).
 |-------|------|-------------|
 | upsert-case | `.agent/skills/upsert-case/` | Add a new audio case or modify an existing one |
 | query-cases | `.agent/skills/query-cases/` | Query and browse existing audio cases |
-| review-case | `.agent/skills/review-case/` | Review a case against project red lines 
-
+| review-case | `.agent/skills/review-case/` | Review a case against project red lines |
 
 ## Further Reading
 
