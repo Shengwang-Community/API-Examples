@@ -23,14 +23,15 @@
 3. 复制后台的 **App Id** 并备注，稍后启动应用时会用到它
 4. 复制后台的 **App 证书** 并备注，稍后启动应用时会用到它
 
-5. 打开 `Android/APIExample` 并编辑 `local.properties`，将你的 AppID 、App主证书 分别替换到 `Your App Id` 和 `YOUR APP CERTIFICATE`
+5. 打开 `Android/APIExample-Compose` 并编辑项目根目录下的 `local.properties`，填入你的 App ID。如果你的 Agora 项目开启了 App Certificate，并且你希望使用示例内置的 token 生成功能，再填入 `YOUR APP CERTIFICATE`
 
     ```
-    // 声网APP ID。
+    sdk.dir=/path/to/Android/sdk
     AGORA_APP_ID=YOUR APP ID
-    // 声网APP证书。如果项目没有开启证书鉴权，这个字段留空。
     AGORA_APP_CERT=YOUR APP CERTIFICATE
     ```
+
+`AGORA_APP_ID` 为必填项。如果你的项目没有开启 App Certificate，`AGORA_APP_CERT` 留空即可。如果你使用自己的服务端生成 token，建议不要在客户端填写 `AGORA_APP_CERT`，直接使用 token 方式的示例在运行时粘贴 token。
 
 然后你就可以编译并运行项目了。
 

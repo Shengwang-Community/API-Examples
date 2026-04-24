@@ -104,7 +104,7 @@ public class SpatialSound extends BaseFragment {
              *              How to get the App ID</a>
              * @param handler IRtcEngineEventHandler is an abstract class providing default implementation.
              *                The SDK uses this class to report to the app on SDK runtime events.*/
-            String appId = getString(R.string.agora_app_id);
+            String appId = getAgoraAppId();
             RtcEngineConfig config = new RtcEngineConfig();
             config.mContext = getContext().getApplicationContext();
             config.mAppId = appId;
@@ -219,7 +219,7 @@ public class SpatialSound extends BaseFragment {
 
         engine.setClientRole(io.agora.rtc2.Constants.CLIENT_ROLE_BROADCASTER);
 
-        /*Please configure accessToken in the string_config file.
+        /*
          * A temporary token generated in Console. A temporary token is valid for 24 hours. For details, see
          *      https://docs.agora.io/en/Agora%20Platform/token?platform=All%20Platforms#get-a-temporary-token
          * A token generated at the server. This applies to scenarios with high-security requirements. For details, see
