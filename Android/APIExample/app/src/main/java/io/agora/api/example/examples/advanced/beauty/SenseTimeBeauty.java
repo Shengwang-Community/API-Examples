@@ -228,7 +228,7 @@ public class SenseTimeBeauty extends BaseFragment {
                     }
                 }
             };
-            rtcEngine = RtcEngine.create(getContext(), getString(R.string.agora_app_id), mRtcEngineEventHandler);
+            rtcEngine = RtcEngine.create(getContext(), getAgoraAppId(), mRtcEngineEventHandler);
 
             if (rtcEngine == null) {
                 return;
