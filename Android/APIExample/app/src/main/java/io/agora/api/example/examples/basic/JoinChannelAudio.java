@@ -155,7 +155,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (joined) {
-                    int scenario = Constants.AudioScenario.getValue(Constants.AudioScenario.valueOf(audioScenarioInput.getSelectedItem().toString()));
+                    int scenario = getAudioScenarioValue(audioScenarioInput.getSelectedItem().toString());
                     engine.setAudioScenario(scenario);
                 }
             }
@@ -312,7 +312,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
              * The SDK uses this class to report to the app on SDK runtime events.
              */
             config.mEventHandler = iRtcEngineEventHandler;
-            config.mAudioScenario = Constants.AudioScenario.getValue(Constants.AudioScenario.valueOf(audioScenarioInput.getSelectedItem().toString()));
+            config.mAudioScenario = getAudioScenarioValue(audioScenarioInput.getSelectedItem().toString());
             config.mAreaCode = ((MainApplication) getActivity().getApplication()).getGlobalSettings().getAreaCode();
             engine = (RtcEngineEx) RtcEngine.create(config);
             /*
@@ -545,7 +545,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         int audioProfile = Constants.AudioProfile.getValue(Constants.AudioProfile.valueOf(audioProfileInput.getSelectedItem().toString()));
         engine.setAudioProfile(audioProfile);
 
-        int scenario = Constants.AudioScenario.getValue(Constants.AudioScenario.valueOf(audioScenarioInput.getSelectedItem().toString()));
+        int scenario = getAudioScenarioValue(audioScenarioInput.getSelectedItem().toString());
         engine.setAudioScenario(scenario);
 
         ChannelMediaOptions option = new ChannelMediaOptions();
@@ -575,6 +575,17 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
             join.setEnabled(false);
         });
 
+    }
+
+    private int getAudioScenarioValue(String label) {
+        return switch (label) {
+            case "AUDIO_SCENARIO_GAME_STREAMING" -> Constants.AUDIO_SCENARIO_GAME_STREAMING;
+            case "AUDIO_SCENARIO_CHATROOM" -> Constants.AUDIO_SCENARIO_CHATROOM;
+            case "AUDIO_SCENARIO_CHORUS" -> Constants.AUDIO_SCENARIO_CHORUS;
+            case "AUDIO_SCENARIO_MEETING" -> Constants.AUDIO_SCENARIO_MEETING;
+            case "AUDIO_SCENARIO_AI_CLIENT" -> Constants.AUDIO_SCENARIO_AI_CLIENT;
+            default -> Constants.AUDIO_SCENARIO_DEFAULT;
+        };
     }
 
     private final IRtcEngineEventHandler secondHandler = new IRtcEngineEventHandler() {
