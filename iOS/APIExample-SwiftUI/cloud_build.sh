@@ -17,8 +17,13 @@ echo "Starting branch version validation..."
 # Get current branch name (try multiple methods for CI environments)
 BRANCH_NAME=""
 
-# Method 1: Try environment variable (Jenkins/GitLab CI)
-if [ ! -z "$GIT_BRANCH" ]; then
+# Method 1: Try the explicit Jenkins branch parameter first.
+# Jenkins checks out a detached HEAD, so inferring from branches containing
+# HEAD can pick an unrelated release branch before main.
+if [ ! -z "$api_examples_shengwang_branch" ]; then
+    BRANCH_NAME="$api_examples_shengwang_branch"
+    echo "Branch from api_examples_shengwang_branch: $BRANCH_NAME"
+elif [ ! -z "$GIT_BRANCH" ]; then
     BRANCH_NAME="$GIT_BRANCH"
     echo "Branch from GIT_BRANCH: $BRANCH_NAME"
 elif [ ! -z "$BRANCH_NAME" ]; then
@@ -30,16 +35,19 @@ elif [ ! -z "$CI_COMMIT_REF_NAME" ]; then
 elif [ -z "$BRANCH_NAME" ]; then
     BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
     if [ "$BRANCH_NAME" = "HEAD" ]; then
-        # In detached HEAD state, try to get branch from remote
-        BRANCH_NAME=$(git branch -r --contains HEAD | grep -v HEAD | head -1 | sed 's/^[[:space:]]*origin\///')
-        echo "Branch from git branch -r: $BRANCH_NAME"
+        echo "Detached HEAD without explicit branch; skipping branch inference"
+        BRANCH_NAME=""
     else
         echo "Branch from git rev-parse: $BRANCH_NAME"
     fi
 fi
 
-# Remove origin/ prefix if present (but keep the rest of the path)
-BRANCH_NAME=$(echo "$BRANCH_NAME" | sed 's/^origin\///')
+# Remove common git ref prefixes if present (but keep the rest of the path)
+BRANCH_NAME=$(echo "$BRANCH_NAME" | sed \
+	-e 's|^refs/remotes/origin/||' \
+	-e 's|^refs/heads/||' \
+	-e 's|^remotes/origin/||' \
+	-e 's|^origin/||')
 
 if [ -z "$BRANCH_NAME" ] || [ "$BRANCH_NAME" = "HEAD" ] || [ "$BRANCH_NAME" = "main" ]; then
 	if [ "$BRANCH_NAME" = "main" ]; then
@@ -50,8 +58,8 @@ if [ -z "$BRANCH_NAME" ] || [ "$BRANCH_NAME" = "HEAD" ] || [ "$BRANCH_NAME" = "m
 else
 	echo "Current branch: $BRANCH_NAME"
 	
-	# Extract version from branch name (format: dev/x.x.x)
-	if [[ $BRANCH_NAME =~ ^dev/([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+	# Extract version from branch name (for example: dev/x.x.x or release/x.x.x)
+	if [[ $BRANCH_NAME =~ ([0-9]+\.[0-9]+\.[0-9]+) ]]; then
 		BRANCH_VERSION="${BASH_REMATCH[1]}"
 		echo "Branch version: $BRANCH_VERSION"
 		
@@ -83,9 +91,9 @@ else
 		
 		echo "✓ Version validation passed: $BRANCH_VERSION"
 	else
-		echo "Error: Branch name does not match dev/x.x.x format!"
+		echo "Error: Branch name does not contain version number!"
 		echo "Current branch: $BRANCH_NAME"
-		echo "Required format: dev/x.x.x (e.g., dev/4.6.2)"
+		echo "Branch name must contain x.x.x (e.g., dev/4.6.2, release/4.6.2)"
 		exit 1
 	fi
 fi
@@ -269,5 +277,3 @@ fi
 
 echo "=========================================="
 echo ""
-
-
