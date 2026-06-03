@@ -116,8 +116,9 @@ python3 ./.github/ci/build/modify_podfile.py ./$unzip_name/samples/${ios_directi
 echo "start compress"
 7za a -tzip result.zip -r $unzip_name > log.txt
 echo "start move to"
-echo $WORKSPACE/with${ios_direction}_${BUILD_NUMBER}_$zip_name
-mv result.zip $WORKSPACE/with${ios_direction}_${BUILD_NUMBER}_$zip_name
+sdk_des_path=$WORKSPACE/Shengwang_APIExample_iOS_${ios_direction}_${BUILD_NUMBER}_$zip_name
+echo $sdk_des_path
+mv result.zip $sdk_des_path
 
 if [ $compress_apiexample = true ]; then
     # Extract SDK version from Podfile (support both commented and uncommented lines)
