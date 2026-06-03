@@ -40,18 +40,6 @@
 ##################################
 export PATH=$PATH:/opt/homebrew/bin
 
-echo "=========================================="
-echo "=== Git Branch Debug Information ==="
-echo "=========================================="
-echo "GIT_BRANCH: $GIT_BRANCH"
-echo "BRANCH_NAME: $BRANCH_NAME"
-echo "CI_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME"
-echo "Git branches:"
-git branch -a 2>/dev/null || echo "Unable to list git branches"
-echo "Current HEAD:"
-git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "Unable to get HEAD"
-echo "=========================================="
-
 xcode_version=$(xcodebuild -version | grep Xcode | awk '{print $2}')
 echo "Xcode Version: $xcode_version"
 echo ios_direction: $ios_direction
@@ -78,8 +66,35 @@ unzip_name=Agora_Native_SDK_for_iOS_FULL
 zip_name=output.zip
 sdk_url_flag=false
 apiexample_cn_name=Shengwang_Native_SDK_for_iOS
-apiexample_global_name=Agora_Native_SDK_for_iOS
 cn_dir=CN
+
+# Source common functions
+source "$(dirname "$0")/common_functions.sh"
+
+# Run version validation
+run_version_validation "iOS/${ios_direction}" "${ios_direction}" "ios" || exit 1
+
+# Validate SDK version in Podfile (skip only for main branch)
+if [ "$BRANCH_NAME" != "main" ]; then
+    if [ -z "$BRANCH_VERSION" ]; then
+        echo "Error: BRANCH_VERSION is not set, cannot validate SDK version"
+        exit 1
+    fi
+
+    echo "=========================================="
+    echo "Validating SDK version in Podfile..."
+    echo "=========================================="
+    validate_sdk_version "./iOS/${ios_direction}/Podfile" "$BRANCH_VERSION" "ios" || exit 1
+    export BRANCH_VERSION
+    echo ""
+fi
+
+API_EXAMPLES_SDK_VERSION=$(grep -E "^[[:space:]]*#?[[:space:]]*pod[[:space:]]+'Shengwang(RtcEngine|Audio)_iOS'" "./iOS/${ios_direction}/Podfile" | grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -n 1)
+if [ -z "$API_EXAMPLES_SDK_VERSION" ]; then
+    echo "Error: Unable to determine SDK version from ./iOS/${ios_direction}/Podfile"
+    exit 1
+fi
+export API_EXAMPLES_SDK_VERSION
 
 if [ -z "$sdk_url" -o "$sdk_url" = "none" ]; then
    sdk_url_flag=false
@@ -116,25 +131,13 @@ python3 ./.github/ci/build/modify_podfile.py ./$unzip_name/samples/${ios_directi
 echo "start compress"
 7za a -tzip result.zip -r $unzip_name > log.txt
 echo "start move to"
-sdk_des_path=$WORKSPACE/Shengwang_APIExample_iOS_${ios_direction}_${BUILD_NUMBER}_$zip_name
+sdk_des_path=$WORKSPACE/Shengwang_with${ios_direction}_${BUILD_NUMBER}_$zip_name
 echo $sdk_des_path
 mv result.zip $sdk_des_path
 
 if [ $compress_apiexample = true ]; then
-    # Extract SDK version from Podfile (support both commented and uncommented lines)
-    # Try ShengwangRtcEngine_iOS first, then ShengwangAudio_iOS
-    sdk_version=$(grep -E "Shengwang(RtcEngine|Audio)_iOS" ./iOS/${ios_direction}/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p" | head -1)
-    echo "sdk_version: $sdk_version"
-    
-    # Source common functions for version validation
-    source ./.github/ci/build/common_functions.sh
-    
-    # Validate SDK version against branch version
-    validate_sdk_version "$sdk_version" || exit 1
-    
-    # Validate project version against branch version
-    validate_version "./iOS/${ios_direction}/${ios_direction}.xcodeproj/project.pbxproj" "" "ios" || exit 1
-    
+    echo "Using version for package: $API_EXAMPLES_SDK_VERSION"
+
     mkdir -p $cn_dir
     cp -rf ./iOS/${ios_direction} $cn_dir/
     cd $cn_dir/${ios_direction}
@@ -145,7 +148,7 @@ if [ $compress_apiexample = true ]; then
     echo "complete compress api example"
     echo "current path: `pwd`"
     ls -al
-    cn_des_path=$WORKSPACE/${apiexample_cn_name}_v${sdk_version}_APIExample_${BUILD_NUMBER}.zip
+    cn_des_path=$WORKSPACE/${apiexample_cn_name}_v${API_EXAMPLES_SDK_VERSION}_APIExample_${BUILD_NUMBER}.zip
     echo "cn_des_path: $cn_des_path"
     echo "Moving cn_result.zip to $cn_des_path"
     mv cn_result.zip $cn_des_path

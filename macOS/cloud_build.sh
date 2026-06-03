@@ -7,10 +7,6 @@ PROJECT_PATH=$PWD
 if [ "$WORKSPACE" = "" ]; then
 	WORKSPACE=$PWD
 fi
-if [ "$BUILD_NUMBER" = "" ]; then
-	BUILD_NUMBER=888
-fi
-
 # Version validation logic
 echo "Starting branch version validation..."
 

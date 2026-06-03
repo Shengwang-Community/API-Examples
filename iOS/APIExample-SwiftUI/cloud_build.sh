@@ -7,10 +7,6 @@ PROJECT_PATH=$PWD
 if [ "$WORKSPACE" = "" ]; then
 	WORKSPACE=$PWD
 fi
-if [ "$BUILD_NUMBER" = "" ]; then
-	BUILD_NUMBER=888
-fi
-
 # Version validation logic
 echo "Starting branch version validation..."
 
@@ -216,8 +212,14 @@ xcodebuild -exportArchive \
   -allowProvisioningUpdates || exit 1
 
 # 重命名并移动 IPA 文件
-SDK_VERSION=$(echo $sdk_url | cut -d "/" -f 5)
-OUTPUT_FILE=${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}_${SDK_VERSION}_$(date "+%Y%m%d%H%M%S").ipa
+if [ -z "$API_EXAMPLES_SDK_VERSION" ]; then
+	API_EXAMPLES_SDK_VERSION=$(grep -E "pod 'Shengwang(RtcEngine|Audio)_iOS'" Podfile | grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -n 1)
+fi
+if [ -z "$API_EXAMPLES_SDK_VERSION" ]; then
+	echo "Error: Unable to determine SDK version from Podfile"
+	exit 1
+fi
+OUTPUT_FILE=${WORKSPACE}/Shengwang_${TARGET_NAME}_${BUILD_NUMBER}_${API_EXAMPLES_SDK_VERSION}_$(date "+%Y%m%d%H%M%S").ipa
 mv ${EXPORT_PATH}/${TARGET_NAME}.ipa $OUTPUT_FILE
 
 # 清理临时文件

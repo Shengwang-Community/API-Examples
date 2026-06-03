@@ -67,6 +67,34 @@ apiexample_global_name=Agora_Native_SDK_for_Mac
 cn_dir=CN
 global_dir=Global
 
+# Source common functions
+source "$(dirname "$0")/common_functions.sh"
+
+# Run version validation
+run_version_validation "macOS" "APIExample" "macos" || exit 1
+
+# Validate SDK version in Podfile (skip only for main branch)
+if [ "$BRANCH_NAME" != "main" ]; then
+    if [ -z "$BRANCH_VERSION" ]; then
+        echo "Error: BRANCH_VERSION is not set, cannot validate SDK version"
+        exit 1
+    fi
+
+    echo "=========================================="
+    echo "Validating SDK version in Podfile..."
+    echo "=========================================="
+    validate_sdk_version "./macOS/Podfile" "$BRANCH_VERSION" "macos" || exit 1
+    export BRANCH_VERSION
+    echo ""
+fi
+
+API_EXAMPLES_SDK_VERSION=$(grep -E "^[[:space:]]*#?[[:space:]]*pod[[:space:]]+'ShengwangRtcEngine_macOS'" "./macOS/Podfile" | grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -n 1)
+if [ -z "$API_EXAMPLES_SDK_VERSION" ]; then
+    echo "Error: Unable to determine SDK version from ./macOS/Podfile"
+    exit 1
+fi
+export API_EXAMPLES_SDK_VERSION
+
 echo zip_name: $zip_name
 if [ -z "$sdk_url" -o "$sdk_url" = "none" ]; then
    sdk_url_flag=false
@@ -108,20 +136,8 @@ echo $sdk_des_path
 mv result.zip $sdk_des_path
 
 if [ $compress_apiexample = true ]; then
-    # Extract SDK version from Podfile (support both commented and uncommented lines)
-    # Try ShengwangRtcEngine_macOS first, then ShengwangAudio_macOS
-    sdk_version=$(grep -E "Shengwang(RtcEngine|Audio)_macOS" ./macOS/Podfile | sed -n "s/.*'\([0-9.]*\)'.*/\1/p" | head -1)
-    echo "sdk_version: $sdk_version"
-    
-    # Source common functions for version validation
-    source ./.github/ci/build/common_functions.sh
-    
-    # Validate SDK version against branch version
-    validate_sdk_version "$sdk_version" || exit 1
-    
-    # Validate project version against branch version
-    validate_version "./macOS/APIExample.xcodeproj/project.pbxproj" "" "macos" || exit 1
-    
+    echo "Using version for package: $API_EXAMPLES_SDK_VERSION"
+
     mkdir -p $cn_dir
     echo "cn_dir: $cn_dir"
     cp -rf ./macOS $cn_dir/
@@ -135,7 +151,7 @@ if [ $compress_apiexample = true ]; then
     echo "complete compress api example"
     echo "current path: `pwd`"
     ls -al
-    cn_des_path=$WORKSPACE/${apiexample_cn_name}_v${sdk_version}_APIExample_${BUILD_NUMBER}.zip
+    cn_des_path=$WORKSPACE/${apiexample_cn_name}_v${API_EXAMPLES_SDK_VERSION}_APIExample_${BUILD_NUMBER}.zip
     echo "cn_des_path: $cn_des_path"
     echo "Moving cn_result.zip to $cn_des_path"
     mv cn_result.zip $cn_des_path
