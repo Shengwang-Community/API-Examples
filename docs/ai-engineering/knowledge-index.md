@@ -1,0 +1,205 @@
+# API Examples AI Engineering Knowledge Index
+
+This index is the first file to read when an agent turns a product request into API Example changes. It links the existing repository knowledge into one route so the agent does not rediscover platform rules, case patterns, build commands, and known failure modes from scratch.
+
+## Source Priority
+
+Use sources in this order:
+
+1. Product request or issue text provided by the user.
+2. `AGENTS.md` at the repository root for cross-platform boundaries.
+3. Platform `AGENTS.md` for platform selection and red lines.
+4. Project `AGENTS.md` for concrete commands and project-level skills.
+5. Project `ARCHITECTURE.md` for case index, registration rules, and canonical file layout.
+6. `docs/ai-engineering/case-maintenance-matrix.md` for cross-platform parity planning and known gaps.
+7. Existing project `.agent/skills/*/SKILL.md` for case query, creation, and review procedures.
+8. `docs/ai-engineering/release-known-issues.md` for release packaging and pipeline risks.
+9. CI, hook, and build scripts for final verification.
+
+Do not use memory or sibling repositories as the source of truth when the current checkout has conflicting instructions. Treat external knowledge as a hint, then verify it against this repository.
+
+## Repository Boundary
+
+The repository has four independent platform families:
+
+| Platform | Root | Primary Rules |
+| --- | --- | --- |
+| Android | `Android/` | `Android/AGENTS.md` |
+| iOS | `iOS/` | `iOS/AGENTS.md` |
+| macOS | `macOS/` | `macOS/AGENTS.md` |
+| Windows | `windows/` | `windows/AGENTS.md` |
+
+Never share source files, build scripts, SDK dependencies, or generated project metadata across platform roots unless a platform rule explicitly says to do so.
+
+## Project Selection
+
+| Request Type | Default Target |
+| --- | --- |
+| Android full RTC, video, screen sharing, beauty, extensions | `Android/APIExample/` |
+| Android voice-only or audio-only SDK behavior | `Android/APIExample-Audio/` |
+| Android Compose case or Compose parity work | `Android/APIExample-Compose/` |
+| iOS UIKit Swift full RTC | `iOS/APIExample/` |
+| iOS SwiftUI parity work | `iOS/APIExample-SwiftUI/` |
+| iOS Objective-C parity work | `iOS/APIExample-OC/` |
+| iOS audio-only SDK behavior | `iOS/APIExample-Audio/` |
+| macOS Swift Cocoa sample | `macOS/` |
+| Windows C++ MFC sample | `windows/` |
+
+If the product request does not name a platform, ask for scope before editing. If the user asks for parity across platforms, treat each platform as a separate implementation and verification unit.
+
+## Existing Local Skills
+
+| Scope | Skills |
+| --- | --- |
+| `Android/APIExample/` | `query-cases`, `upsert-case`, `review-case` |
+| `Android/APIExample-Audio/` | `query-cases`, `upsert-case`, `review-case` |
+| `Android/APIExample-Compose/` | `query-cases`, `upsert-case`, `review-case` |
+| `iOS/APIExample/` | `query-cases`, `upsert-case`, `review-case` |
+| `iOS/APIExample-Audio/` | `query-cases`, `upsert-case`, `review-case` |
+| `iOS/APIExample-OC/` | `query-cases`, `upsert-case`, `review-case` |
+| `iOS/APIExample-SwiftUI/` | `query-cases`, `upsert-case`, `review-case` |
+| `macOS/` | `upsert-case`, `review-case` |
+| `windows/` | `upsert-case`, `review-case` |
+
+The repository-level orchestration skill is `.agent/skills/api-example-release-iteration/SKILL.md`.
+
+## Agent Acceptance Artifacts
+
+Use `docs/ai-engineering/templates/acceptance-manifest-template.json` when an iteration changes source, workflow gates, matrix state, CI/release logic, or docs that affect agent behavior.
+
+Validate the filled manifest with:
+
+```bash
+python3 docs/ai-engineering/tools/validate_acceptance_manifest.py <manifest.json>
+```
+
+The filled manifest is normally an execution artifact, not a repository document. Commit it only when the user explicitly asks for an evidence snapshot or when it is selected as a curated pilot-run example.
+
+For case backfill work, generate candidate platform execution units from the matrix:
+
+```bash
+python3 docs/ai-engineering/tools/generate_case_backlog.py
+```
+
+Select one generated unit at a time; do not batch unrelated platform projects into one acceptance unit. Use the generated `priority`, `severity`, and `reference_candidates` fields to choose and prepare the next execution unit.
+
+## Case Implementation Knowledge
+
+For cross-platform parity requests:
+
+- Start with `docs/ai-engineering/case-maintenance-matrix.md`.
+- Verify every relevant matrix cell against the target project before editing.
+- Treat `UNKNOWN` as "not checked yet", not as a confirmed gap.
+- Treat each required platform project as a separate acceptance unit.
+
+Before adding a case:
+
+- Use the target project's `query-cases` skill when available.
+- Read the target project's `ARCHITECTURE.md` case index.
+- Confirm whether the case already exists by feature name and SDK API name.
+- Confirm the target group, registration mechanism, display name, and index rules.
+- Extract the reference contract for parity work before implementation. The closest existing target-project case may guide lifecycle, permissions, UI framework, and registration patterns, but product semantics must come from the source reference contract.
+
+While adding or modifying a case:
+
+- Follow the target project's `upsert-case` skill.
+- Keep edits inside the selected project unless the project-level instructions say otherwise.
+- Update `ARCHITECTURE.md` when the case list, path, or key APIs change.
+- Keep sensitive configuration placeholders intact. Do not commit real App IDs, certificates, tokens, or credentials.
+
+After implementation:
+
+- Run the target project's `review-case` skill.
+- Run the applicable build or static check from the project `AGENTS.md`.
+- Record which checks passed, failed, or were skipped with a reason.
+- Fill and validate an acceptance manifest before claiming final acceptance.
+
+## Knowledge Maintenance Protocol
+
+When an iteration uncovers a reusable failure pattern, record it in the right durable document instead of leaving it only in a chat summary.
+
+Use this structure:
+
+- Source: review finding, CI failure, release blocker, customer report, or manual smoke.
+- Impact platform/project.
+- Symptom.
+- Root cause.
+- Guardrail or rule.
+- Verification command or evidence.
+- Updated date.
+
+Where to write it:
+
+- Cross-platform routing or implementation traps: `docs/ai-engineering/knowledge-index.md`.
+- Release, signing, CI, packaging, license, or SDK-version risks: `docs/ai-engineering/release-known-issues.md`.
+- Case coverage state: `docs/ai-engineering/case-maintenance-matrix.md`.
+- Project-specific implementation traps: the target project `ARCHITECTURE.md` or `.agent/skills/*/SKILL.md`.
+
+Do not duplicate the same rule in every file. Put the durable rule at the lowest scope that future agents must read.
+
+When an acceptance manifest includes `knowledge_updates`, the same iteration must list the durable document or skill change in `implementation.files_changed`. The manifest validator enforces this so new failure patterns cannot remain only in the execution summary.
+
+## Cross-Cutting Red Lines
+
+- Every case owns its RTC engine lifecycle.
+- Leave the channel before destroying or releasing the engine.
+- SDK callbacks can arrive on background threads; dispatch UI updates to the platform main thread.
+- Do not hardcode real credentials.
+- Do not mix full SDK and audio-only SDK APIs.
+- Do not move common sample code across platform roots to reduce duplication.
+- Do not edit packaging or CI scripts unless the product request or failure requires it.
+
+## Verification Entrypoints
+
+| Area | Entrypoint |
+| --- | --- |
+| Sensitive info and commit-message hooks | `HOOKS-GUIDE.md`, `.git-hooks/`, `.pre-commit-config.yaml`, `.gitleaks.toml` |
+| Android build/test | project `AGENTS.md`, project Gradle files |
+| iOS build | project `AGENTS.md`, project `Podfile`, `.github/ci/build/build_ios*.sh` |
+| macOS build | `macOS/AGENTS.md`, `macOS/Podfile`, `.github/ci/build/build_mac*.sh` |
+| Windows build | `windows/AGENTS.md`, `.github/ci/build/build_windows.*` |
+| CI/CD | `azure-pipelines.yml`, `.github/ci/`, `.github/workflows/`, `cicd/` |
+| Release known issues | `docs/ai-engineering/release-known-issues.md`, Confluence page `1898512518` |
+
+Prefer the smallest check that validates the changed surface. For docs-only changes, use static validation and link checks instead of full platform builds.
+
+## Pilot Run Reports
+
+`docs/ai-engineering/pilot-runs/` contains curated workflow validation examples, not a log of every agent execution.
+
+Use these reports to understand how a gate was exercised at a point in time. Do not use them as the source of truth for current SDK versions, case coverage, CI status, or release readiness. Re-check the live repository and current CI before reusing any conclusion.
+
+Only add a new pilot-run report when it is intentionally selected as a representative workflow example or when the user explicitly asks for a repository evidence snapshot. Routine run results should stay in the response, PR discussion, CI artifact, or task tracker.
+
+Use `docs/ai-engineering/templates/release-dry-run-template.md` as the starting point when such a repository evidence snapshot is needed.
+
+## Known Failure Patterns To Guard Against
+
+| Pattern | Guardrail |
+| --- | --- |
+| Wrong platform touched during a focused fix | Re-read root and platform `AGENTS.md`; list intended files before editing. |
+| Case added but not visible in app | Verify project registration mechanism and case index. |
+| Android case ordering collision | Use `query-cases` and scan source annotations before choosing a sort index. |
+| SDK callback updates UI directly | Run `review-case`; check every callback that touches UI. |
+| Engine leak after leaving screen | Check leave-channel before destroy/release in the real screen-close path. |
+| Audio-only project receives video API | Re-check selected project SDK type before implementation. |
+| CI diagnosis starts in the wrong layer | Identify the first failing log line before changing scripts or signing settings. |
+| Build machine IP or Jenkins node drift breaks packaging | Verify build-machine reachability before release packaging. |
+| Third-party beauty license expires silently | Track expiration and confirm renewal before release branches are packaged. |
+| Android Extension SDK headers drift from SDK version | Check extension `include` files during SDK version bumps. |
+| iOS/macOS certificates expire on build machines | Inspect or print certificate expiration during release preparation. |
+| SDK dependency version is not bumped on release branch | Verify platform SDK version files against the release target. |
+| Windows packaging fails from path length or permissions | Run Windows script preflight after path or packaging changes. |
+
+## Output Contract
+
+Every completed AI-assisted iteration should end with an acceptance summary:
+
+- Product request interpreted.
+- Target platform/project.
+- Files changed.
+- Skills or docs used.
+- Verification run and results.
+- Open risks or skipped checks.
+
+Use `docs/ai-engineering/release-iteration-gate.md` for the full gate.

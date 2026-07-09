@@ -1,0 +1,188 @@
+{
+  "version": 1,
+  "final_status": "BLOCKED",
+  "product": {
+    "scenario": "<observable sample behavior>",
+    "target": "<platform/project>",
+    "non_goals": []
+  },
+  "reference": {
+    "required": false,
+    "source_case": "",
+    "contract_result": "SKIPPED",
+    "parity_checklist_result": "SKIPPED"
+  },
+  "architecture": {
+    "platform_project": "<platform/project>",
+    "key_constraints": []
+  },
+  "implementation": {
+    "files_changed": [],
+    "skills_docs_used": [],
+    "matrix_updates": []
+  },
+  "review": {
+    "result": "BLOCKED",
+    "findings": []
+  },
+  "testing": {
+    "commands": [
+      {
+        "command": "<command>",
+        "result": "BLOCKED"
+      }
+    ],
+    "skipped_checks": [],
+    "reference_contract_result": "SKIPPED",
+    "parity_checklist_result": "SKIPPED",
+    "build_result": "BLOCKED"
+  },
+  "release": {
+    "required": false,
+    "checks": [],
+    "skipped_checks": []
+  },
+  "ux": {
+    "entry_point": "<menu/path>",
+    "notes": ""
+  },
+  "knowledge_updates": [],
+  "role_results": {
+    "product": {
+      "status": "BLOCKED",
+      "evidence": "<product gate evidence>"
+    },
+    "architecture": {
+      "status": "BLOCKED",
+      "evidence": "<architecture gate evidence>"
+    },
+    "implementation": {
+      "status": "BLOCKED",
+      "evidence": "<implementation gate evidence>"
+    },
+    "review": {
+      "status": "BLOCKED",
+      "evidence": "<review gate evidence>"
+    },
+    "test": {
+      "status": "BLOCKED",
+      "evidence": "<test gate evidence>"
+    },
+    "ux": {
+      "status": "BLOCKED",
+      "evidence": "<ux gate evidence>"
+    }
+  },
+  "role_artifacts": {
+    "product": {
+      "agent_id": "<product agent id>",
+      "dispatch": {
+        "mode": "<codex-subagent|pending>",
+        "run_id": "<product subagent run id>",
+        "prompt": "role-prompts/product.md",
+        "prompt_sha256": "<product prompt sha256>",
+        "artifact": "role-artifacts/product.json",
+        "artifact_sha256": "<product artifact sha256>",
+        "evidence": "<product agent dispatch evidence>"
+      },
+      "summary": "<product agent summary>",
+      "output": {
+        "scenario": "<observable sample behavior>",
+        "target": "<platform/project>",
+        "key_apis": ["<sdk api>"],
+        "non_goals": ["<non-goal>"]
+      }
+    },
+    "architecture": {
+      "agent_id": "<architecture agent id>",
+      "dispatch": {
+        "mode": "<codex-subagent|pending>",
+        "run_id": "<architecture subagent run id>",
+        "prompt": "role-prompts/architecture.md",
+        "prompt_sha256": "<architecture prompt sha256>",
+        "artifact": "role-artifacts/architecture.json",
+        "artifact_sha256": "<architecture artifact sha256>",
+        "evidence": "<architecture agent dispatch evidence>"
+      },
+      "summary": "<architecture agent summary>",
+      "output": {
+        "platform_project": "<platform/project>",
+        "key_constraints": ["<constraint>"],
+        "files_allowed": ["<path>"]
+      }
+    },
+    "implementation": {
+      "agent_id": "<implementation agent id>",
+      "dispatch": {
+        "mode": "<codex-subagent|pending>",
+        "run_id": "<implementation subagent run id>",
+        "prompt": "role-prompts/implementation.md",
+        "prompt_sha256": "<implementation prompt sha256>",
+        "artifact": "role-artifacts/implementation.json",
+        "artifact_sha256": "<implementation artifact sha256>",
+        "evidence": "<implementation agent dispatch evidence>"
+      },
+      "summary": "<implementation agent summary>",
+      "output": {
+        "query_cases": "<query-cases result>",
+        "upsert_case": "<upsert-case result>",
+        "files_changed": ["<path>"],
+        "matrix_update": "<matrix update>"
+      }
+    },
+    "review": {
+      "agent_id": "<review agent id>",
+      "dispatch": {
+        "mode": "<codex-subagent|pending>",
+        "run_id": "<review subagent run id>",
+        "prompt": "role-prompts/review.md",
+        "prompt_sha256": "<review prompt sha256>",
+        "artifact": "role-artifacts/review.json",
+        "artifact_sha256": "<review artifact sha256>",
+        "evidence": "<review agent dispatch evidence>"
+      },
+      "summary": "<review agent summary>",
+      "output": {
+        "result": "BLOCKED",
+        "findings": ["<finding or no-blocker statement>"],
+        "parity_checklist": "<reference parity checklist>"
+      }
+    },
+    "test": {
+      "agent_id": "<test agent id>",
+      "dispatch": {
+        "mode": "<codex-subagent|pending>",
+        "run_id": "<test subagent run id>",
+        "prompt": "role-prompts/test.md",
+        "prompt_sha256": "<test prompt sha256>",
+        "artifact": "role-artifacts/test.json",
+        "artifact_sha256": "<test artifact sha256>",
+        "evidence": "<test agent dispatch evidence>"
+      },
+      "summary": "<test agent summary>",
+      "output": {
+        "commands": ["<command>"],
+        "reference_contract_result": "SKIPPED",
+        "parity_checklist_result": "SKIPPED",
+        "build_result": "BLOCKED"
+      }
+    },
+    "ux": {
+      "agent_id": "<ux agent id>",
+      "dispatch": {
+        "mode": "<codex-subagent|pending>",
+        "run_id": "<ux subagent run id>",
+        "prompt": "role-prompts/ux.md",
+        "prompt_sha256": "<ux prompt sha256>",
+        "artifact": "role-artifacts/ux.json",
+        "artifact_sha256": "<ux artifact sha256>",
+        "evidence": "<ux agent dispatch evidence>"
+      },
+      "summary": "<ux agent summary>",
+      "output": {
+        "entry_point": "<menu/path>",
+        "notes": "<ux notes>"
+      }
+    }
+  }
+}
