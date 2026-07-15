@@ -155,7 +155,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (joined) {
-                    int scenario = Constants.AudioScenario.getValue(Constants.AudioScenario.valueOf(audioScenarioInput.getSelectedItem().toString()));
+                    int scenario = getAudioScenarioValue(audioScenarioInput.getSelectedItem().toString());
                     engine.setAudioScenario(scenario);
                 }
             }
@@ -173,15 +173,23 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
                 }
                 boolean isCommunication = getString(R.string.channel_profile_communication).equals(channelProfileInput.getSelectedItem());
                 if (isCommunication) {
-                    int route = Constants.AUDIO_ROUTE_EARPIECE;
-                    if (getString(R.string.audio_route_earpiece).equals(parent.getSelectedItem())) {
-                        route = Constants.AUDIO_ROUTE_EARPIECE;
-                    } else if (getString(R.string.audio_route_speakerphone).equals(parent.getSelectedItem())) {
-                        route = Constants.AUDIO_ROUTE_SPEAKERPHONE;
+                    int route = Constants.AUDIO_ROUTE_DEFAULT;
+                    if (getString(R.string.audio_route_default).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_DEFAULT;
                     } else if (getString(R.string.audio_route_headset).equals(parent.getSelectedItem())) {
                         route = Constants.AUDIO_ROUTE_HEADSET;
+                    } else if (getString(R.string.audio_route_earpiece).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_EARPIECE;
+                    } else if (getString(R.string.audio_route_headset_no_mic).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_HEADSETNOMIC;
+                    } else if (getString(R.string.audio_route_speakerphone).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_SPEAKERPHONE;
+                    } else if (getString(R.string.audio_route_loudspeaker).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_LOUDSPEAKER;
                     } else if (getString(R.string.audio_route_headset_bluetooth).equals(parent.getSelectedItem())) {
                         route = Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP;
+                    } else if (getString(R.string.audio_route_headset_typec).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_USBDEVICE;
                     }
                     int ret = engine.setRouteInCommunicationMode(route);
                     showShortToast("setRouteInCommunicationMode route=" + route + ", ret=" + ret);
@@ -312,7 +320,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
              * The SDK uses this class to report to the app on SDK runtime events.
              */
             config.mEventHandler = iRtcEngineEventHandler;
-            config.mAudioScenario = Constants.AudioScenario.getValue(Constants.AudioScenario.valueOf(audioScenarioInput.getSelectedItem().toString()));
+            config.mAudioScenario = getAudioScenarioValue(audioScenarioInput.getSelectedItem().toString());
             config.mAreaCode = ((MainApplication) getActivity().getApplication()).getGlobalSettings().getAreaCode();
             engine = (RtcEngineEx) RtcEngine.create(config);
             /*
@@ -545,7 +553,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         int audioProfile = Constants.AudioProfile.getValue(Constants.AudioProfile.valueOf(audioProfileInput.getSelectedItem().toString()));
         engine.setAudioProfile(audioProfile);
 
-        int scenario = Constants.AudioScenario.getValue(Constants.AudioScenario.valueOf(audioScenarioInput.getSelectedItem().toString()));
+        int scenario = getAudioScenarioValue(audioScenarioInput.getSelectedItem().toString());
         engine.setAudioScenario(scenario);
 
         ChannelMediaOptions option = new ChannelMediaOptions();
@@ -575,6 +583,17 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
             join.setEnabled(false);
         });
 
+    }
+
+    private int getAudioScenarioValue(String label) {
+        return switch (label) {
+            case "AUDIO_SCENARIO_GAME_STREAMING" -> Constants.AUDIO_SCENARIO_GAME_STREAMING;
+            case "AUDIO_SCENARIO_CHATROOM" -> Constants.AUDIO_SCENARIO_CHATROOM;
+            case "AUDIO_SCENARIO_CHORUS" -> Constants.AUDIO_SCENARIO_CHORUS;
+            case "AUDIO_SCENARIO_MEETING" -> Constants.AUDIO_SCENARIO_MEETING;
+            case "AUDIO_SCENARIO_AI_CLIENT" -> Constants.AUDIO_SCENARIO_AI_CLIENT;
+            default -> Constants.AUDIO_SCENARIO_DEFAULT;
+        };
     }
 
     private final IRtcEngineEventHandler secondHandler = new IRtcEngineEventHandler() {
@@ -816,33 +835,23 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         @Override
         public void onAudioRouteChanged(int routing) {
             super.onAudioRouteChanged(routing);
-            showShortToast("onAudioRouteChanged : " + routing);
-            runOnUIThread(() -> {
-                String selectedRouteStr = getString(R.string.audio_route_speakerphone);
-                if (routing == Constants.AUDIO_ROUTE_EARPIECE) {
-                    selectedRouteStr = getString(R.string.audio_route_earpiece);
-                } else if (routing == Constants.AUDIO_ROUTE_SPEAKERPHONE) {
-                    selectedRouteStr = getString(R.string.audio_route_speakerphone);
-                } else if (routing == Constants.AUDIO_ROUTE_HEADSET) {
-                    selectedRouteStr = getString(R.string.audio_route_headset);
-                } else if (routing == Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP) {
-                    selectedRouteStr = getString(R.string.audio_route_headset_bluetooth);
-                } else if (routing == Constants.AUDIO_ROUTE_USBDEVICE) {
-                    selectedRouteStr = getString(R.string.audio_route_headset_typec);
-                }
-
-                int selection = 0;
-                for (int i = 0; i < audioRouteInput.getAdapter().getCount(); i++) {
-                    String routeStr = (String) audioRouteInput.getItemAtPosition(i);
-                    if (routeStr.equals(selectedRouteStr)) {
-                        selection = i;
-                        break;
-                    }
-                }
-                audioRouteInput.setSelection(selection);
-            });
+            showShortToast("onAudioRouteChanged: " + getAudioRouteKey(routing));
         }
     };
+
+    private String getAudioRouteKey(int routing) {
+        return switch (routing) {
+            case Constants.AUDIO_ROUTE_DEFAULT -> "AUDIO_ROUTE_DEFAULT";
+            case Constants.AUDIO_ROUTE_HEADSET -> "AUDIO_ROUTE_HEADSET";
+            case Constants.AUDIO_ROUTE_EARPIECE -> "AUDIO_ROUTE_EARPIECE";
+            case Constants.AUDIO_ROUTE_HEADSETNOMIC -> "AUDIO_ROUTE_HEADSETNOMIC";
+            case Constants.AUDIO_ROUTE_SPEAKERPHONE -> "AUDIO_ROUTE_SPEAKERPHONE";
+            case Constants.AUDIO_ROUTE_LOUDSPEAKER -> "AUDIO_ROUTE_LOUDSPEAKER";
+            case Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP -> "AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP";
+            case Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_A2DP -> "AUDIO_ROUTE_BLUETOOTH_DEVICE_A2DP";
+            default -> String.valueOf(routing);
+        };
+    }
 
 
     /**
