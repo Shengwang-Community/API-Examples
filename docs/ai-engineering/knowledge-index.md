@@ -45,7 +45,7 @@ Never share source files, build scripts, SDK dependencies, or generated project 
 | macOS Swift Cocoa sample | `macOS/` |
 | Windows C++ MFC sample | `windows/` |
 
-If the product request does not name a platform, ask for scope before editing. If the user asks for parity across platforms, treat each platform as a separate implementation and verification unit.
+If the product request does not name a platform, default to Android, iOS, macOS, and Windows. Narrow the scope only when the user or Contract records an explicit waiver reason. Treat each required platform as a separate implementation and verification unit.
 
 ## Existing Local Skills
 
@@ -62,6 +62,18 @@ If the product request does not name a platform, ask for scope before editing. I
 | `windows/` | `upsert-case`, `review-case` |
 
 The repository-level orchestration skill is `.agent/skills/api-example-release-iteration/SKILL.md`.
+
+## Codex Role Routing
+
+`docs/ai-engineering/role-routing.json` defines three role types and logical profiles. Provider model names remain runtime inputs through `--model` or `CODEX_MODEL_STANDARD`, `CODEX_MODEL_DEEP`, and `CODEX_MODEL_REVIEW`. The orchestrator starts replayable independent `codex exec` sessions; do not describe them as parent-managed Codex subagents.
+
+The phase order is:
+
+1. `contract`: one shared Contract for product behavior, reference, cross-platform invariants, and platform targets.
+2. `implementation`: Android, iOS, macOS, and Windows agents run independently after Contract passes. A shared checkout serializes them and reconciles each delta before the next run.
+3. `verification`: independent Android, iOS, macOS, and Windows agents run concurrently after their matching implementation passes.
+
+Release checks are mandatory manifest data, not an agent phase. Every platform dispatch has its own timeout, hashed JSONL command log, run identity, host platform, input snapshot, and Contract-selected working directory. Use `--platform` for a focused retry; otherwise the workflow covers all four official roots.
 
 ## Agent Acceptance Artifacts
 
@@ -81,7 +93,7 @@ For case backfill work, generate candidate platform execution units from the mat
 python3 docs/ai-engineering/tools/generate_case_backlog.py
 ```
 
-Select one generated unit at a time; do not batch unrelated platform projects into one acceptance unit. Use the generated `priority`, `severity`, and `reference_candidates` fields to choose and prepare the next execution unit.
+Use the generated priority to select the next product requirement, then deliver that requirement across all four official platform families. Contract selects the applicable project variant inside each platform.
 
 ## Case Implementation Knowledge
 
@@ -90,7 +102,7 @@ For cross-platform parity requests:
 - Start with `docs/ai-engineering/case-maintenance-matrix.md`.
 - Verify every relevant matrix cell against the target project before editing.
 - Treat `UNKNOWN` as "not checked yet", not as a confirmed gap.
-- Treat each required platform project as a separate acceptance unit.
+- Treat each required platform as an independent delivery/verification unit inside one requirement-level acceptance manifest.
 
 Before adding a case:
 
@@ -111,7 +123,7 @@ After implementation:
 
 - Run the target project's `review-case` skill.
 - Run the applicable build or static check from the project `AGENTS.md`.
-- Record which checks passed, failed, or were skipped with a reason.
+- Record which checks passed, failed, or were skipped with a reason. PASS/FAIL commands must match a JSONL `command_execution` event and exit code.
 - Fill and validate an acceptance manifest before claiming final acceptance.
 
 ## Knowledge Maintenance Protocol
@@ -137,7 +149,7 @@ Where to write it:
 
 Do not duplicate the same rule in every file. Put the durable rule at the lowest scope that future agents must read.
 
-When an acceptance manifest includes `knowledge_updates`, the same iteration must list the durable document or skill change in `implementation.files_changed`. The manifest validator enforces this so new failure patterns cannot remain only in the execution summary.
+When an acceptance manifest includes `knowledge_updates`, at least one platform Implementation must list the durable document or skill change in `files_changed`. The validator enforces this so new failure patterns cannot remain only in the execution summary.
 
 ## Cross-Cutting Red Lines
 
@@ -189,6 +201,9 @@ Use `docs/ai-engineering/templates/release-dry-run-template.md` as the starting 
 | Android Extension SDK headers drift from SDK version | Check extension `include` files during SDK version bumps. |
 | iOS/macOS certificates expire on build machines | Inspect or print certificate expiration during release preparation. |
 | SDK dependency version is not bumped on release branch | Verify platform SDK version files against the release target. |
+| Model-declared build result is not backed by command telemetry | Bind each executed verification command to the hashed Codex JSONL log and exit code, and accept build status only for recognized platform build tools. |
+| Platform run misses nested instructions | Start `codex exec` in the Contract-selected target so root/platform/project `AGENTS.md` files load automatically. |
+| CI package and QA result are not traceable | Require CI job/build identity, four platform artifact URLs, and QA owner/result/evidence before non-`BLOCKED` acceptance. |
 | Windows packaging fails from path length or permissions | Run Windows script preflight after path or packaging changes. |
 
 ## Output Contract

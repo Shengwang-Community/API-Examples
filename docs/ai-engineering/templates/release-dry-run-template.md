@@ -54,6 +54,8 @@ Status:
 | Third-party beauty license validity |  |  |
 | Windows path length and permissions |  |  |
 | Pipeline integration status |  |  |
+| CI job/build and four platform artifacts |  |  |
+| QA owner, result, and evidence |  |  |
 
 ### Static Version Snapshot
 
@@ -122,6 +124,8 @@ Testing:
 
 Release:
 - Required:
+- Target SDK version:
+- Artifact URLs:
 - Checks:
 - Skipped checks:
 

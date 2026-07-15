@@ -1,5 +1,4 @@
 import json
-import subprocess
 import sys
 import tempfile
 import textwrap
@@ -7,113 +6,148 @@ import unittest
 from pathlib import Path
 
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-RUNNER = REPO_ROOT / "docs/ai-engineering/tools/prepare_case_execution.py"
-VALIDATOR = REPO_ROOT / "docs/ai-engineering/tools/validate_acceptance_manifest.py"
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
+from prepare_case_execution import collect_sdk_version_checks, prepare_case_execution
+from validate_acceptance_manifest import validate_manifest
 
 
-class CaseExecutionPreparationTest(unittest.TestCase):
-    def run_runner(self, matrix_text, *args):
-        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as handle:
-            handle.write(matrix_text)
-            matrix_path = handle.name
-        try:
-            return subprocess.run(
-                [sys.executable, str(RUNNER), "--matrix", matrix_path, *args],
-                cwd=REPO_ROOT,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                check=False,
+PLATFORMS = ["android", "ios", "macos", "windows"]
+
+
+class PrepareCaseExecutionTest(unittest.TestCase):
+    TARGET_SDK_VERSION = "4.6.4"
+
+    def write_matrix(self):
+        handle = tempfile.NamedTemporaryFile("w", suffix=".md", delete=False)
+        handle.write(
+            textwrap.dedent(
+                """
+                | Feature | SDK Family | Key APIs | Android full | iOS UIKit | macOS | Windows | Notes |
+                | --- | --- | --- | --- | --- | --- | --- | --- |
+                | Join channel audio | Full RTC | `joinChannel`, `setAudioProfile` | `DONE(app/JoinChannelAudio.java)` | `DONE/APIExample/JoinChannelAudio.swift` | `PARTIAL(APIExample/JoinChannelAudio.swift)` | `MISSING` | Keep all official platforms aligned. |
+
+                ## Confirmed Gaps
+
+                | Gap | Affected Units | Severity |
+                | --- | --- | --- |
+                | Basic audio-only join channel | Windows | High - missing foundational case |
+                """
             )
-        finally:
-            Path(matrix_path).unlink(missing_ok=True)
+        )
+        handle.close()
+        self.addCleanup(lambda: Path(handle.name).unlink(missing_ok=True))
+        return Path(handle.name)
 
-    def test_selects_highest_priority_unit_and_emits_execution_package(self):
-        matrix = textwrap.dedent(
-            """
-            | Feature | SDK Family | Key APIs | Android full | Android Compose | Windows | Notes |
-            | --- | --- | --- | --- | --- | --- | --- |
-            | Join channel audio | Full RTC | `joinChannel`, `setAudioProfile` | `DONE(basic/JoinChannelAudio.java)` | `DONE(samples/JoinChannelAudio.kt)` | `MISSING` | Windows has no basic audio-only join case. |
-            | Media metadata | Full RTC | `registerMediaMetadataObserver` | `DONE(advanced/MediaMetadata.java)` | `DONE(samples/MediaMetadata.kt)` | `PARTIAL(Advanced/Metadata; smoke pending)` | Runtime metadata smoke pending. |
-
-            ## Confirmed Gaps
-
-            | Gap | Affected Units | Severity |
-            | --- | --- | --- |
-            | Basic audio-only join channel | Windows | High - missing foundational case |
-            | Media metadata | Windows | Medium - runtime smoke pending |
-            """
+    def test_prepares_one_requirement_with_four_platform_delivery_units(self):
+        package = prepare_case_execution(
+            self.write_matrix(),
+            feature="Join channel audio",
+            target_sdk_version=self.TARGET_SDK_VERSION,
         )
 
-        result = self.run_runner(matrix)
+        manifest = package["acceptance_manifest_seed"]
+        self.assertEqual(manifest["version"], 4)
+        self.assertEqual(sorted(manifest["platforms"]), PLATFORMS)
+        self.assertIn("contract", manifest)
+        self.assertNotIn("roles", manifest)
+        self.assertEqual(sorted(package["role_contracts"]), ["contract", "implementation", "verification"])
+        self.assertEqual(sorted(manifest["contract"]["output"]["platform_targets"]), PLATFORMS)
+        self.assertEqual(manifest["requirement"]["target_sdk_version"], self.TARGET_SDK_VERSION)
+        self.assertTrue(manifest["release"]["required"])
+        self.assertEqual(manifest["release"]["target_sdk_version"], self.TARGET_SDK_VERSION)
+        self.assertEqual(manifest["release"]["qa_acceptance"]["result"], "BLOCKED")
+        self.assertNotIn("publication_channel", manifest["requirement"])
+        self.assertNotIn("publication", manifest["release"])
+        for platform in PLATFORMS:
+            unit = manifest["platforms"][platform]
+            self.assertEqual(sorted(unit), ["implementation", "verification"])
+            self.assertEqual(unit["implementation"]["dispatch"]["mode"], "pending")
+            self.assertEqual(unit["verification"]["status"], "BLOCKED")
+        self.assertEqual(validate_manifest(manifest), [])
 
-        self.assertEqual(result.returncode, 0, result.stderr)
-        package = json.loads(result.stdout)
-        unit = package["execution_unit"]
-        self.assertEqual(unit["feature"], "Join channel audio")
-        self.assertEqual(unit["platform_unit"], "Windows")
-        self.assertEqual(unit["priority"], 10)
-        self.assertEqual(
-            package["reference_contract"]["source_case"],
-            "Android/APIExample/app/src/main/java/io/agora/api/example/examples/basic/JoinChannelAudio.java",
+    def test_platform_defaults_select_official_full_sdk_projects(self):
+        package = prepare_case_execution(
+            self.write_matrix(),
+            feature="Join channel audio",
+            target_sdk_version=self.TARGET_SDK_VERSION,
         )
-        self.assertTrue((REPO_ROOT / package["reference_contract"]["source_case"]).exists())
-        self.assertEqual(package["acceptance_manifest_seed"]["product"]["target"], "windows/")
-        self.assertEqual(package["acceptance_manifest_seed"]["final_status"], "BLOCKED")
-        self.assertEqual(
-            [contract["role"] for contract in package["role_contracts"]],
-            ["product", "architecture", "implementation", "review", "test", "ux"],
-        )
-        self.assertIn("target project upsert-case skill", " ".join(package["execution_steps"]))
-        role_artifacts = package["acceptance_manifest_seed"]["role_artifacts"]
-        self.assertEqual(
-            sorted(role_artifacts),
-            ["architecture", "implementation", "product", "reference", "review", "test", "ux"],
-        )
-        agent_ids = [artifact["agent_id"] for artifact in role_artifacts.values()]
-        self.assertEqual(len(agent_ids), len(set(agent_ids)))
-        self.assertIn("key_apis", role_artifacts["product"]["output"])
+        targets = package["acceptance_manifest_seed"]["contract"]["output"]["platform_targets"]
 
-        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as handle:
-            json.dump(package["acceptance_manifest_seed"], handle)
-            manifest_path = handle.name
-        try:
-            validation = subprocess.run(
-                [sys.executable, str(VALIDATOR), manifest_path],
-                cwd=REPO_ROOT,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                check=False,
+        self.assertEqual(targets["android"]["target_project"], "Android/APIExample/")
+        self.assertEqual(targets["ios"]["target_project"], "iOS/APIExample/")
+        self.assertEqual(targets["macos"]["target_project"], "macOS/")
+        self.assertEqual(targets["windows"]["target_project"], "windows/")
+        self.assertTrue(all(target["required"] for target in targets.values()))
+
+    def test_selects_highest_priority_feature_when_omitted(self):
+        package = prepare_case_execution(
+            self.write_matrix(), target_sdk_version=self.TARGET_SDK_VERSION
+        )
+
+        self.assertEqual(package["requirement"]["feature"], "Join channel audio")
+        self.assertEqual(package["requirement"]["key_apis"], ["joinChannel", "setAudioProfile"])
+
+    def test_package_is_json_serializable(self):
+        serialized = json.dumps(
+            prepare_case_execution(
+                self.write_matrix(), target_sdk_version=self.TARGET_SDK_VERSION
             )
-        finally:
-            Path(manifest_path).unlink(missing_ok=True)
-        self.assertEqual(validation.returncode, 0, validation.stderr + validation.stdout)
+        )
+        self.assertIn('"version": 4', serialized)
 
-    def test_can_filter_to_specific_feature_and_platform_unit(self):
-        matrix = textwrap.dedent(
-            """
-            | Feature | SDK Family | Key APIs | Android full | Android Compose | Windows | Notes |
-            | --- | --- | --- | --- | --- | --- | --- |
-            | Join channel audio | Full RTC | `joinChannel` | `DONE(basic/JoinChannelAudio.java)` | `DONE(samples/JoinChannelAudio.kt)` | `MISSING` | Missing Windows case. |
-            | Media metadata | Full RTC | `registerMediaMetadataObserver` | `DONE(advanced/MediaMetadata.java)` | `DONE(samples/MediaMetadata.kt)` | `MISSING` | Missing Windows metadata case. |
-
-            ## Confirmed Gaps
-
-            | Gap | Affected Units | Severity |
-            | --- | --- | --- |
-            | Basic audio-only join channel | Windows | High - missing foundational case |
-            | Media metadata | Windows | Medium - full-RTC platform gap |
-            """
+    def test_prepares_new_requirement_not_yet_present_in_matrix(self):
+        package = prepare_case_execution(
+            self.write_matrix(),
+            feature="Spatial audio",
+            sdk_family="Full RTC",
+            key_apis=["enableSpatialAudio"],
+            target_sdk_version=self.TARGET_SDK_VERSION,
         )
 
-        result = self.run_runner(matrix, "--feature", "Media metadata", "--platform-unit", "Windows")
+        self.assertEqual(package["requirement"]["feature"], "Spatial audio")
+        self.assertEqual(package["requirement"]["key_apis"], ["enableSpatialAudio"])
+        self.assertEqual(sorted(package["acceptance_manifest_seed"]["platforms"]), PLATFORMS)
 
-        self.assertEqual(result.returncode, 0, result.stderr)
-        unit = json.loads(result.stdout)["execution_unit"]
-        self.assertEqual(unit["feature"], "Media metadata")
-        self.assertEqual(unit["platform_unit"], "Windows")
+    def test_requires_target_sdk_version(self):
+        with self.assertRaisesRegex(ValueError, "target_sdk_version is required"):
+            prepare_case_execution(self.write_matrix(), feature="Join channel audio")
+
+    def test_collects_live_sdk_version_evidence(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            sources = {
+                "android": [("Android/gradle.properties", r"version=(\d+\.\d+\.\d+)")],
+                "ios": [("iOS/Podfile", r"version=(\d+\.\d+\.\d+)")],
+                "macos": [("macOS/Podfile", r"version=(\d+\.\d+\.\d+)")],
+                "windows": [("windows/install.ps1", r"version=(\d+\.\d+\.\d+)")],
+            }
+            for entries in sources.values():
+                path = root / entries[0][0]
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("version=4.6.4\n", encoding="utf-8")
+
+            checks = collect_sdk_version_checks(
+                self.TARGET_SDK_VERSION, repo_root=root, sources=sources
+            )
+
+            self.assertTrue(all(check["result"] == "PASS" for check in checks))
+            self.assertTrue(
+                all(
+                    set(check["actual_versions"].values()) == {self.TARGET_SDK_VERSION}
+                    for check in checks
+                )
+            )
+
+            (root / "windows/install.ps1").write_text("version=4.6.2\n", encoding="utf-8")
+            checks = collect_sdk_version_checks(
+                self.TARGET_SDK_VERSION, repo_root=root, sources=sources
+            )
+            windows = next(check for check in checks if check["name"] == "sdk-version-windows")
+            self.assertEqual(windows["result"], "BLOCKED")
+            self.assertIn("4.6.2", windows["reason"])
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ This matrix is the planning artifact for cross-platform API Example parity work.
 1. Start from the product request and identify the feature name, SDK family, and key SDK APIs.
 2. Find the matching row in this matrix.
 3. For each target platform unit, verify the path with the project `query-cases` skill when present.
-4. Treat each required platform project as a separate acceptance unit.
+4. Treat each required platform project as an independent delivery/verification unit inside one requirement-level acceptance manifest.
 5. Update this matrix when a case is added, moved, renamed, or confirmed not applicable.
 
 ## Status Values

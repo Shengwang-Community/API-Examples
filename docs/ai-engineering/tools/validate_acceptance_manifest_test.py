@@ -1,505 +1,709 @@
+import copy
+import hashlib
 import json
-import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-VALIDATOR = REPO_ROOT / "docs/ai-engineering/tools/validate_acceptance_manifest.py"
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
+from validate_acceptance_manifest import validate_evidence_files, validate_manifest
 
 
-def dispatch_for(role):
-    return {
-        "mode": "codex-subagent",
-        "run_id": f"agent-run-{role}",
-        "prompt": f"role-prompts/{role}.md",
+PLATFORMS = ["android", "ios", "macos", "windows"]
+TARGETS = {
+    "android": "Android/APIExample/",
+    "ios": "iOS/APIExample/",
+    "macos": "macOS/",
+    "windows": "windows/",
+}
+SNAPSHOT_SHA256 = "c" * 64
+BUILD_COMMANDS = {
+    "android": "./gradlew assembleDebug",
+    "ios": "xcodebuild -scheme APIExample build",
+    "macos": "xcodebuild -scheme APIExample build",
+    "windows": "msbuild APIExample.sln /t:Build",
+}
+
+
+def dispatch_for(name, profile):
+    platform = name.split("-")[0]
+    dispatch = {
+        "mode": "codex-exec",
+        "run_id": f"run-{name}",
+        "prompt": f"role-prompts/{name}.md",
         "prompt_sha256": "a" * 64,
-        "artifact": f"role-artifacts/{role}.json",
+        "artifact": f"role-artifacts/{name}.json",
         "artifact_sha256": "b" * 64,
-        "evidence": f"{role} agent completed independently.",
+        "evidence": f"Independent {name} run.",
+        "model_profile": profile,
+        "model": "test-model",
+        "reasoning_effort": "high" if profile in {"deep", "review"} else "medium",
+        "codex_version": "codex-cli test",
+        "input_snapshot": f"input-snapshots/{name}.json",
+        "input_snapshot_sha256": SNAPSHOT_SHA256,
+        "command_log": f"dispatch-logs/{name}.jsonl",
+        "command_log_sha256": "d" * 64,
+        "working_directory": TARGETS.get(name.split("-")[0], "."),
+        "host_platform": "win32" if platform == "windows" else "darwin",
+    }
+    if name.endswith("-implementation"):
+        dispatch["repository_delta"] = f"repository-deltas/{name}.json"
+        dispatch["repository_delta_sha256"] = "e" * 64
+    return dispatch
+
+
+def artifact(name, profile, output):
+    return {
+        "agent_id": f"{name}-agent-1",
+        "dispatch": dispatch_for(name, profile),
+        "status": "PASS",
+        "evidence": f"{name} evidence",
+        "summary": f"{name} completed",
+        "output": output,
     }
 
 
 def base_manifest():
-    role_results = {
-        "product": {"status": "PASS"},
-        "architecture": {"status": "PASS"},
-        "reference": {"status": "PASS"},
-        "implementation": {"status": "PASS"},
-        "review": {"status": "PASS"},
-        "test": {"status": "PASS"},
-        "ux": {"status": "PASS"},
-    }
-    for role, result in role_results.items():
-        result["evidence"] = f"{role} gate evidence"
-
-    role_artifacts = {
-        "product": {
-            "agent_id": "product-agent-1",
-            "dispatch": dispatch_for("product"),
-            "summary": "Product scenario and non-goals are explicit.",
-            "output": {
-                "scenario": "Add Windows basic audio-only join parity.",
-                "target": "windows/",
-                "key_apis": ["joinChannel", "setAudioProfile"],
-                "non_goals": ["Device smoke"],
-            },
-        },
-        "architecture": {
-            "agent_id": "architecture-agent-1",
-            "dispatch": dispatch_for("architecture"),
-            "summary": "Architecture constraints are scoped to Windows.",
-            "output": {
-                "platform_project": "windows/",
-                "key_constraints": ["Windows only"],
-                "files_allowed": ["windows/"],
-            },
-        },
-        "reference": {
-            "agent_id": "reference-agent-1",
-            "dispatch": dispatch_for("reference"),
-            "summary": "Reference contract extracted from Android full Join channel audio.",
-            "output": {
-                "source_case": "Android/APIExample/app/src/main/java/io/agora/api/example/examples/basic/JoinChannelAudio.java",
-                "contract_result": "PASS",
-                "parity_checklist_result": "PASS",
-            },
-        },
-        "implementation": {
-            "agent_id": "implementation-agent-1",
-            "dispatch": dispatch_for("implementation"),
-            "summary": "Implementation changed expected workflow files.",
-            "output": {
-                "query_cases": "No existing Windows basic audio-only join case.",
-                "upsert_case": "Updated workflow only.",
-                "files_changed": ["AGENTS.md", "docs/ai-engineering/knowledge-index.md"],
-                "matrix_update": "Windows Join channel audio MISSING to PARTIAL.",
-            },
-        },
-        "review": {
-            "agent_id": "review-agent-1",
-            "dispatch": dispatch_for("review"),
-            "summary": "Review found no blocking issue.",
-            "output": {
-                "result": "PASS",
-                "findings": ["No blocking findings."],
-                "parity_checklist": "Reference behavior is represented in the manifest.",
-            },
-        },
-        "test": {
-            "agent_id": "test-agent-1",
-            "dispatch": dispatch_for("test"),
-            "summary": "Required static tests passed.",
-            "output": {
-                "commands": ["python3 docs/ai-engineering/tools/validate_acceptance_manifest.py manifest.json"],
-                "reference_contract_result": "PASS",
-                "parity_checklist_result": "PASS",
-                "build_result": "PASS",
-            },
-        },
-        "ux": {
-            "agent_id": "ux-agent-1",
-            "dispatch": dispatch_for("ux"),
-            "summary": "UX entry point is consistent with adjacent samples.",
-            "output": {
-                "entry_point": "Basic -> Join channel audio",
-                "notes": "Matches adjacent Windows cases.",
-            },
-        },
-    }
-
-    return {
-        "version": 1,
-        "final_status": "PASS",
-        "product": {
-            "scenario": "Add Windows basic audio-only join parity.",
-            "target": "windows/",
-            "non_goals": ["Device smoke"],
-        },
-        "reference": {
+    platform_targets = {
+        platform: {
             "required": True,
-            "source_case": "Android/APIExample/app/src/main/java/io/agora/api/example/examples/basic/JoinChannelAudio.java",
-            "contract_result": "PASS",
-            "parity_checklist_result": "PASS",
-        },
-        "architecture": {
-            "platform_project": "windows/",
-            "key_constraints": ["Windows only"],
-        },
-        "implementation": {
-            "files_changed": ["AGENTS.md", "docs/ai-engineering/knowledge-index.md"],
-            "skills_docs_used": [".agent/skills/api-example-release-iteration/SKILL.md"],
-            "matrix_updates": [
+            "target_project": target,
+            "key_constraints": [f"Keep changes in {target}"],
+            "files_allowed": [target],
+            "waiver_reason": "",
+        }
+        for platform, target in TARGETS.items()
+    }
+    platforms = {}
+    for platform, target in TARGETS.items():
+        platforms[platform] = {
+            "implementation": artifact(
+                f"{platform}-implementation",
+                "deep",
                 {
-                    "feature": "Join channel audio",
-                    "platform_unit": "Windows",
-                    "from": "MISSING",
-                    "to": "PARTIAL",
-                    "evidence": "Build/static parity pass; device smoke pending.",
-                }
-            ],
-        },
-        "review": {
-            "result": "PASS",
-            "findings": [],
-        },
-        "testing": {
-            "commands": [
+                    "target_project": target,
+                    "query_cases": "No duplicate case found.",
+                    "upsert_case": "Platform case updated.",
+                    "files_changed": [f"{target}AGENTS.md"],
+                    "matrix_updates": [],
+                },
+            ),
+            "verification": artifact(
+                f"{platform}-verification",
+                "review",
                 {
-                    "command": "python3 docs/ai-engineering/tools/validate_acceptance_manifest.py manifest.json",
                     "result": "PASS",
-                }
-            ],
-            "skipped_checks": [],
-            "reference_contract_result": "PASS",
-            "parity_checklist_result": "PASS",
-            "build_result": "PASS",
+                    "findings": ["No blocking findings."],
+                    "parity_result": "PASS",
+                    "entry_point": "Basic > Join channel audio",
+                    "ux_notes": "Matches adjacent examples.",
+                    "commands": [
+                        {
+                            "kind": "build",
+                            "command": BUILD_COMMANDS[platform],
+                            "result": "PASS",
+                            "evidence": (
+                                f"dispatch-logs/{platform}-verification.jsonl#build; exit_code=0"
+                            ),
+                        }
+                    ],
+                    "build_result": "PASS",
+                    "skipped_checks": [],
+                },
+            ),
+        }
+    return {
+        "version": 4,
+        "final_status": "PASS",
+        "requirement": {
+            "feature": "Join channel audio",
+            "sdk_family": "Full RTC",
+            "key_apis": ["joinChannel", "setAudioProfile"],
+            "target_sdk_version": "4.6.4",
+        },
+        "contract": artifact(
+            "contract",
+            "standard",
+            {
+                "scenario": "Keep the official audio-only join sample aligned on every platform.",
+                "key_apis": ["joinChannel", "setAudioProfile"],
+                "non_goals": ["Release packaging"],
+                "reference": {
+                    "required": True,
+                    "source_case": "Android/APIExample/app/src/main/java/io/agora/api/example/examples/basic/JoinChannelAudio.java",
+                    "contract_result": "PASS",
+                },
+                "cross_platform_requirements": ["Equivalent join, leave, mute, and status behavior"],
+                "platform_targets": platform_targets,
+            },
+        ),
+        "platforms": platforms,
+        "cross_platform_acceptance": {
+            "result": "PASS",
+            "evidence": "All four required platform verification artifacts passed.",
+            "differences": [],
         },
         "release": {
-            "required": False,
-            "checks": [],
+            "required": True,
+            "target_sdk_version": "4.6.4",
+            "checks": [
+                {
+                    "name": f"sdk-version-{platform}",
+                    "result": "PASS",
+                    "expected_version": "4.6.4",
+                    "actual_versions": {f"{platform}/version-source": "4.6.4"},
+                    "evidence": f"{platform} SDK sources match 4.6.4.",
+                    "reason": "",
+                }
+                for platform in PLATFORMS
+            ],
+            "qa_acceptance": {
+                "ci_job_url": "https://ci.example.com/job/api-examples/464",
+                "ci_build_number": "464",
+                "artifacts": {
+                    platform: f"https://artifacts.example.com/4.6.4/{platform}"
+                    for platform in PLATFORMS
+                },
+                "result": "PASS",
+                "owner": "qa-owner",
+                "evidence": "QA accepted CI build 464.",
+            },
             "skipped_checks": [],
         },
-        "ux": {
-            "entry_point": "Basic -> Join channel audio",
-            "notes": "Matches adjacent Windows cases.",
-        },
-        "knowledge_updates": [
-            {
-                "source": "Review finding",
-                "impact_platforms": ["Windows"],
-                "symptom": "Parity case could compile while using the wrong SDK enum.",
-                "root_cause": "Similar target-project sample replaced the source reference contract.",
-                "guardrail": "Extract source reference contract before implementation.",
-                "verification": "Review enum and overload values against source case.",
-                "updated_at": "2026-07-08",
-            }
-        ],
-        "role_results": role_results,
-        "role_artifacts": role_artifacts,
+        "knowledge_updates": [],
     }
 
 
 class AcceptanceManifestValidatorTest(unittest.TestCase):
-    def run_validator(self, manifest):
-        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as handle:
-            json.dump(manifest, handle)
-            manifest_path = handle.name
-        try:
-            return subprocess.run(
-                [sys.executable, str(VALIDATOR), manifest_path],
-                cwd=REPO_ROOT,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                check=False,
-            )
-        finally:
-            Path(manifest_path).unlink(missing_ok=True)
+    def assert_error_contains(self, manifest, expected):
+        errors = validate_manifest(manifest)
+        self.assertTrue(any(expected in error for error in errors), errors)
 
-    def test_valid_manifest_passes(self):
-        result = self.run_validator(base_manifest())
+    def test_accepts_multi_platform_v4_manifest(self):
+        self.assertEqual(validate_manifest(base_manifest()), [])
 
-        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
-        self.assertIn("Acceptance manifest valid", result.stdout)
-
-    def test_failed_role_forces_blocked_final_status(self):
+    def test_rejects_legacy_single_role_tree(self):
         manifest = base_manifest()
-        manifest["role_results"]["review"] = {"status": "FAIL"}
+        manifest["roles"] = {}
 
-        result = self.run_validator(manifest)
+        self.assert_error_contains(manifest, "unsupported top-level field: roles")
 
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("review", result.stderr)
-        self.assertIn("final_status", result.stderr)
-
-    def test_done_matrix_update_requires_reference_parity_and_build_pass(self):
+    def test_requires_all_official_platform_units(self):
         manifest = base_manifest()
-        manifest["implementation"]["matrix_updates"][0]["to"] = "DONE"
-        manifest["testing"]["build_result"] = "BLOCKED"
+        del manifest["platforms"]["windows"]
 
-        result = self.run_validator(manifest)
+        self.assert_error_contains(manifest, "platforms missing required platform: windows")
 
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("DONE", result.stderr)
-        self.assertIn("build_result", result.stderr)
-
-    def test_done_matrix_update_requires_clean_pass_final_status(self):
+    def test_required_platform_blocker_forces_global_blocked(self):
         manifest = base_manifest()
-        manifest["final_status"] = "PASS WITH RISKS"
-        manifest["implementation"]["matrix_updates"][0]["to"] = "DONE"
-        manifest["testing"]["skipped_checks"] = [
-            {
-                "name": "device smoke",
-                "reason": "Device is unavailable.",
-            }
-        ]
+        manifest["platforms"]["windows"]["verification"]["status"] = "BLOCKED"
 
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("DONE", result.stderr)
-        self.assertIn("final_status=PASS", result.stderr)
-
-    def test_changed_file_paths_must_exist(self):
-        manifest = base_manifest()
-        manifest["implementation"]["files_changed"] = ["does/not/exist.md"]
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("does/not/exist.md", result.stderr)
-
-    def test_waived_role_requires_reason(self):
-        manifest = base_manifest()
-        manifest["role_results"]["ux"] = {"status": "WAIVED", "evidence": "UX is not affected."}
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("waiver_reason", result.stderr)
-
-    def test_role_requires_evidence(self):
-        manifest = base_manifest()
-        del manifest["role_results"]["review"]["evidence"]
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("role_results.review.evidence", result.stderr)
-
-    def test_role_artifacts_are_required_for_multi_agent_acceptance(self):
-        manifest = base_manifest()
-        del manifest["role_artifacts"]
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("role_artifacts", result.stderr)
-
-    def test_role_artifact_agent_ids_must_be_unique(self):
-        manifest = base_manifest()
-        manifest["role_artifacts"]["review"]["agent_id"] = "product-agent-1"
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("agent_id", result.stderr)
-        self.assertIn("review", result.stderr)
-
-    def test_role_artifact_output_contract_is_required(self):
-        manifest = base_manifest()
-        del manifest["role_artifacts"]["product"]["output"]["key_apis"]
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("role_artifacts.product.output.key_apis", result.stderr)
-
-    def test_role_artifact_dispatch_is_required_for_multi_agent_acceptance(self):
-        manifest = base_manifest()
-        del manifest["role_artifacts"]["product"]["dispatch"]
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("role_artifacts.product.dispatch", result.stderr)
-
-    def test_pending_dispatch_cannot_pass_final_acceptance(self):
-        manifest = base_manifest()
-        manifest["role_artifacts"]["product"]["dispatch"] = {
-            "mode": "pending",
-            "prompt": "role-prompts/product.md",
-            "artifact": "role-artifacts/product.json",
-        }
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("dispatch.mode=pending", result.stderr)
-        self.assertIn("final_status=BLOCKED", result.stderr)
-
-    def test_accepted_dispatch_must_use_codex_subagent(self):
-        manifest = base_manifest()
-        manifest["role_artifacts"]["product"]["dispatch"]["mode"] = "codex-thread"
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("role_artifacts.product.dispatch.mode=codex-thread", result.stderr)
-        self.assertIn("codex-subagent", result.stderr)
-
-    def test_accepted_dispatch_requires_subagent_provenance(self):
-        manifest = base_manifest()
-        del manifest["role_artifacts"]["product"]["dispatch"]["run_id"]
-        del manifest["role_artifacts"]["product"]["dispatch"]["prompt_sha256"]
-        del manifest["role_artifacts"]["product"]["dispatch"]["artifact_sha256"]
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("role_artifacts.product.dispatch.run_id", result.stderr)
-        self.assertIn("role_artifacts.product.dispatch.prompt_sha256", result.stderr)
-        self.assertIn("role_artifacts.product.dispatch.artifact_sha256", result.stderr)
-
-    def test_lead_agent_cannot_own_role_artifact(self):
-        manifest = base_manifest()
-        manifest["role_artifacts"]["product"]["agent_id"] = "lead-agent"
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("lead-agent", result.stderr)
-
-    def test_template_with_placeholders_is_not_valid_manifest(self):
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(VALIDATOR),
-                "docs/ai-engineering/templates/acceptance-manifest-template.json",
-            ],
-            cwd=REPO_ROOT,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            check=False,
+        self.assert_error_contains(
+            manifest, "platforms.windows.verification.status=BLOCKED requires final_status=BLOCKED"
         )
 
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("placeholder", result.stderr)
-
-    def test_review_result_fail_requires_blocked_final_status(self):
+    def test_required_role_cannot_be_waived(self):
         manifest = base_manifest()
-        manifest["review"]["result"] = "FAIL"
+        artifact = manifest["platforms"]["android"]["verification"]
+        artifact["status"] = "WAIVED"
+        artifact["waiver_reason"] = "No Android worker."
 
-        result = self.run_validator(manifest)
+        self.assert_error_contains(
+            manifest,
+            "platforms.android.verification.status=WAIVED is only valid when the platform is not required",
+        )
 
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("review.result", result.stderr)
-        self.assertIn("final_status", result.stderr)
-
-    def test_reference_section_result_must_match_testing_result(self):
+    def test_blocked_manifest_accepts_pending_windows_verification(self):
         manifest = base_manifest()
-        manifest["reference"]["contract_result"] = "FAIL"
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("reference.contract_result", result.stderr)
-        self.assertIn("testing.reference_contract_result", result.stderr)
-
-    def test_release_check_fail_requires_blocked_final_status(self):
-        manifest = base_manifest()
-        manifest["release"]["required"] = True
-        manifest["release"]["checks"] = [
+        manifest["final_status"] = "BLOCKED"
+        manifest["cross_platform_acceptance"] = {
+            "result": "BLOCKED",
+            "evidence": "Windows CI is pending.",
+            "differences": [],
+        }
+        verification = manifest["platforms"]["windows"]["verification"]
+        verification.update(
             {
-                "name": "Jenkins node reachability",
-                "result": "FAIL",
-                "evidence": "Node is offline.",
+                "agent_id": "windows-verification-agent-pending",
+                "dispatch": {
+                    "mode": "pending",
+                    "prompt": "role-prompts/windows-verification.md",
+                    "artifact": "role-artifacts/windows-verification.json",
+                },
+                "status": "BLOCKED",
+                "evidence": "Windows target build requires Windows CI.",
+                "summary": "Windows verification pending.",
+                "output": {
+                    "result": "BLOCKED",
+                    "findings": [],
+                    "parity_result": "BLOCKED",
+                    "entry_point": "Pending Windows verification.",
+                    "ux_notes": "Pending.",
+                    "commands": [],
+                    "build_result": "BLOCKED",
+                    "skipped_checks": [
+                        {"name": "Windows MSBuild", "reason": "Current host is macOS."}
+                    ],
+                },
+            }
+        )
+
+        self.assertEqual(validate_manifest(manifest), [])
+
+    def test_non_required_platform_accepts_explicit_waiver(self):
+        manifest = base_manifest()
+        target = manifest["contract"]["output"]["platform_targets"]["windows"]
+        target["required"] = False
+        target["waiver_reason"] = "The requested SDK family is not available on Windows."
+        for role in ["implementation", "verification"]:
+            artifact = manifest["platforms"]["windows"][role]
+            artifact["status"] = "WAIVED"
+            artifact["waiver_reason"] = target["waiver_reason"]
+            artifact["dispatch"] = {
+                "mode": "pending",
+                "prompt": f"role-prompts/windows-{role}.md",
+                "artifact": f"role-artifacts/windows-{role}.json",
+            }
+        implementation = manifest["platforms"]["windows"]["implementation"]["output"]
+        implementation["files_changed"] = []
+        implementation["matrix_updates"] = []
+        verification = manifest["platforms"]["windows"]["verification"]["output"]
+        verification["result"] = "SKIPPED"
+        verification["parity_result"] = "SKIPPED"
+        verification["build_result"] = "SKIPPED"
+        verification["commands"] = []
+        verification["skipped_checks"] = []
+
+        self.assertEqual(validate_manifest(manifest), [])
+
+    def test_cross_platform_acceptance_must_pass_for_non_blocked_result(self):
+        manifest = base_manifest()
+        manifest["cross_platform_acceptance"]["result"] = "BLOCKED"
+
+        self.assert_error_contains(manifest, "non-BLOCKED acceptance requires cross_platform_acceptance.result=PASS")
+
+    def test_contract_and_implementation_target_must_match(self):
+        manifest = base_manifest()
+        manifest["platforms"]["ios"]["implementation"]["output"]["target_project"] = "iOS/APIExample-OC/"
+
+        self.assert_error_contains(
+            manifest, "platforms.ios.implementation.output.target_project must match contract target"
+        )
+
+    def test_contract_must_cover_requirement_key_apis(self):
+        manifest = base_manifest()
+        manifest["contract"]["output"]["key_apis"] = ["joinChannel"]
+
+        self.assert_error_contains(
+            manifest,
+            "contract.output.key_apis must include every requirement.key_apis value: setAudioProfile",
+        )
+
+    def test_passing_contract_requires_cross_platform_constraints(self):
+        manifest = base_manifest()
+        manifest["contract"]["output"]["cross_platform_requirements"] = []
+
+        self.assert_error_contains(
+            manifest,
+            "contract.output.cross_platform_requirements is required when Contract passes",
+        )
+
+    def test_implementation_requires_query_and_upsert_results(self):
+        manifest = base_manifest()
+        manifest["platforms"]["android"]["implementation"]["output"]["query_cases"] = ""
+
+        self.assert_error_contains(
+            manifest,
+            "platforms.android.implementation.output.query_cases is required",
+        )
+
+    def test_required_verification_requires_entry_point_and_ux_notes(self):
+        manifest = base_manifest()
+        manifest["platforms"]["ios"]["verification"]["output"]["entry_point"] = ""
+
+        self.assert_error_contains(
+            manifest,
+            "platforms.ios.verification.output.entry_point is required",
+        )
+
+    def test_duplicate_agent_ids_across_platforms_are_rejected(self):
+        manifest = base_manifest()
+        manifest["platforms"]["windows"]["verification"]["agent_id"] = manifest["platforms"]["ios"][
+            "verification"
+        ]["agent_id"]
+
+        self.assert_error_contains(manifest, "duplicates platforms.ios.verification.agent_id")
+
+    def test_duplicate_codex_run_ids_across_roles_are_rejected(self):
+        manifest = base_manifest()
+        implementation_run_id = manifest["platforms"]["ios"]["implementation"]["dispatch"][
+            "run_id"
+        ]
+        manifest["platforms"]["ios"]["verification"]["dispatch"][
+            "run_id"
+        ] = implementation_run_id
+
+        self.assert_error_contains(
+            manifest,
+            "platforms.ios.verification.dispatch.run_id duplicates platforms.ios.implementation.dispatch.run_id",
+        )
+
+    def test_pass_rejects_skipped_platform_checks(self):
+        manifest = base_manifest()
+        manifest["platforms"]["windows"]["verification"]["output"]["skipped_checks"] = [
+            {"name": "runtime", "reason": "No device"}
+        ]
+
+        self.assert_error_contains(manifest, "final_status=PASS cannot include skipped checks")
+
+    def test_done_matrix_update_requires_platform_build_pass(self):
+        manifest = base_manifest()
+        manifest["platforms"]["windows"]["implementation"]["output"]["matrix_updates"] = [
+            {
+                "feature": "Join channel audio",
+                "platform_unit": "Windows",
+                "from": "MISSING",
+                "to": "DONE",
+                "to_cell": "DONE(Basic/JoinChannelAudio/)",
+                "evidence": "Implemented.",
             }
         ]
-        manifest["role_results"]["release"] = {
-            "status": "PASS",
-            "evidence": "Release gate evidence.",
-        }
+        manifest["platforms"]["windows"]["verification"]["output"]["build_result"] = "SKIPPED"
 
-        result = self.run_validator(manifest)
+        self.assert_error_contains(manifest, "Windows matrix update to DONE requires build_result=PASS")
 
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("release.checks[0].result=FAIL", result.stderr)
-        self.assertIn("final_status", result.stderr)
-
-    def test_failed_test_command_requires_blocked_final_status(self):
+    def test_matrix_update_must_match_current_requirement(self):
         manifest = base_manifest()
-        manifest["testing"]["commands"][0]["result"] = "FAIL"
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("testing.commands[0].result=FAIL", result.stderr)
-        self.assertIn("final_status", result.stderr)
-
-    def test_failed_build_result_requires_blocked_final_status(self):
-        manifest = base_manifest()
-        manifest["testing"]["build_result"] = "FAIL"
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("testing.build_result=FAIL", result.stderr)
-        self.assertIn("final_status", result.stderr)
-
-    def test_skipped_test_command_cannot_use_pass_final_status(self):
-        manifest = base_manifest()
-        manifest["testing"]["commands"][0]["result"] = "SKIPPED"
-        manifest["testing"]["commands"][0]["reason"] = "Device is unavailable."
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("testing.commands[0].result=SKIPPED", result.stderr)
-        self.assertIn("final_status=PASS", result.stderr)
-
-    def test_skipped_build_result_cannot_use_pass_final_status(self):
-        manifest = base_manifest()
-        manifest["testing"]["build_result"] = "SKIPPED"
-
-        result = self.run_validator(manifest)
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("testing.build_result=SKIPPED", result.stderr)
-        self.assertIn("final_status=PASS", result.stderr)
-
-    def test_skipped_release_check_cannot_use_pass_final_status(self):
-        manifest = base_manifest()
-        manifest["release"]["required"] = True
-        manifest["release"]["checks"] = [
+        manifest["platforms"]["windows"]["implementation"]["output"]["matrix_updates"] = [
             {
-                "name": "Jenkins node reachability",
-                "result": "SKIPPED",
-                "reason": "Jenkins credentials are unavailable.",
+                "feature": "Media metadata",
+                "platform_unit": "Windows",
+                "from": "MISSING",
+                "to": "PARTIAL",
+                "to_cell": "PARTIAL(pending)",
+                "evidence": "Unrelated update.",
             }
         ]
-        manifest["role_results"]["release"] = {
-            "status": "PASS",
-            "evidence": "Release gate evidence.",
-        }
 
-        result = self.run_validator(manifest)
+        self.assert_error_contains(
+            manifest,
+            "platforms.windows.implementation.output.matrix_updates[0].feature must match requirement.feature",
+        )
 
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("release.checks[0].result=SKIPPED", result.stderr)
-        self.assertIn("final_status=PASS", result.stderr)
+    def test_matrix_update_must_match_contract_target_project(self):
+        manifest = base_manifest()
+        manifest["platforms"]["windows"]["implementation"]["output"]["matrix_updates"] = [
+            {
+                "feature": "Join channel audio",
+                "platform_unit": "Android full",
+                "from": "MISSING",
+                "to": "PARTIAL",
+                "to_cell": "PARTIAL(wrong platform)",
+                "evidence": "Wrong platform update.",
+            }
+        ]
 
-    def test_skipped_test_command_can_use_pass_with_risks_when_reason_is_recorded(self):
+        self.assert_error_contains(
+            manifest,
+            "platforms.windows.implementation.output.matrix_updates[0].platform_unit must match Contract target",
+        )
+
+    def test_matrix_update_cell_status_must_match_structured_status(self):
         manifest = base_manifest()
         manifest["final_status"] = "PASS WITH RISKS"
-        manifest["testing"]["commands"][0]["result"] = "SKIPPED"
-        manifest["testing"]["commands"][0]["reason"] = "Device smoke is unavailable."
+        manifest["platforms"]["android"]["verification"]["output"]["skipped_checks"] = [
+            {"name": "device-smoke", "reason": "Device unavailable."}
+        ]
+        manifest["platforms"]["android"]["implementation"]["output"]["matrix_updates"] = [
+            {
+                "feature": "Join channel audio",
+                "platform_unit": "Android full",
+                "from": "MISSING",
+                "to": "PARTIAL",
+                "to_cell": "DONE(fake/path)",
+                "evidence": "Runtime smoke is pending.",
+            }
+        ]
 
-        result = self.run_validator(manifest)
+        self.assert_error_contains(
+            manifest,
+            "platforms.android.implementation.output.matrix_updates[0].to_cell status must match to=PARTIAL",
+        )
 
-        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
-
-    def test_knowledge_update_requires_durable_doc_change(self):
+    def test_release_cannot_be_disabled(self):
         manifest = base_manifest()
-        manifest["implementation"]["files_changed"] = ["AGENTS.md"]
+        manifest["release"]["required"] = False
 
-        result = self.run_validator(manifest)
+        self.assert_error_contains(manifest, "release.required must be true")
 
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("knowledge_updates", result.stderr)
-        self.assertIn("durable", result.stderr)
-
-    def test_knowledge_update_allows_repository_skill_change(self):
+    def test_rejects_removed_publication_fields(self):
         manifest = base_manifest()
-        manifest["implementation"]["files_changed"] = [".agent/skills/api-example-release-iteration/SKILL.md"]
+        manifest["requirement"]["publication_channel"] = "legacy"
+        manifest["release"]["publication"] = {}
 
-        result = self.run_validator(manifest)
+        self.assert_error_contains(manifest, "unsupported requirement field: publication_channel")
+        self.assert_error_contains(manifest, "unsupported release field: publication")
 
-        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+    def test_release_target_version_must_match_requirement(self):
+        manifest = base_manifest()
+        manifest["release"]["target_sdk_version"] = "4.6.3"
+
+        self.assert_error_contains(
+            manifest, "release.target_sdk_version must match requirement.target_sdk_version"
+        )
+
+    def test_target_sdk_version_requires_semver_triplet(self):
+        manifest = base_manifest()
+        manifest["requirement"]["target_sdk_version"] = "next"
+        manifest["release"]["target_sdk_version"] = "next"
+
+        self.assert_error_contains(manifest, "requirement.target_sdk_version must use x.y.z format")
+
+    def test_release_sdk_check_requires_all_sources_to_match_target(self):
+        manifest = base_manifest()
+        check = manifest["release"]["checks"][0]
+        check["actual_versions"]["android/version-source"] = "4.6.3"
+
+        self.assert_error_contains(manifest, "sdk-version-android actual versions must all match 4.6.4")
+
+    def test_non_blocked_acceptance_requires_all_ci_artifacts(self):
+        manifest = base_manifest()
+        manifest["release"]["qa_acceptance"]["artifacts"]["windows"] = ""
+
+        self.assert_error_contains(
+            manifest, "release.qa_acceptance.artifacts.windows is required"
+        )
+
+    def test_non_blocked_acceptance_requires_qa_pass(self):
+        manifest = base_manifest()
+        manifest["release"]["qa_acceptance"]["result"] = "BLOCKED"
+
+        self.assert_error_contains(
+            manifest,
+            "non-BLOCKED acceptance requires release.qa_acceptance.result=PASS",
+        )
+
+    def test_non_blocked_release_rejects_skipped_checks(self):
+        manifest = base_manifest()
+        manifest["final_status"] = "PASS WITH RISKS"
+        manifest["release"]["skipped_checks"] = [
+            {"name": "qa-device-smoke", "reason": "Device unavailable"}
+        ]
+
+        self.assert_error_contains(
+            manifest,
+            "non-BLOCKED acceptance cannot include skipped release checks",
+        )
+
+    def test_build_pass_requires_bound_command_evidence(self):
+        manifest = base_manifest()
+        del manifest["platforms"]["android"]["verification"]["output"]["commands"][0][
+            "evidence"
+        ]
+
+        self.assert_error_contains(
+            manifest,
+            "platforms.android.verification.output.commands[0].evidence is required",
+        )
+
+    def test_successful_non_build_command_cannot_satisfy_build_result(self):
+        manifest = base_manifest()
+        command = manifest["platforms"]["android"]["verification"]["output"]["commands"][0]
+        command["command"] = "true"
+
+        self.assert_error_contains(
+            manifest,
+            "platforms.android.verification.output.commands[0] is not a recognized android build command",
+        )
+
+    def test_build_tool_name_in_echo_cannot_satisfy_build_result(self):
+        manifest = base_manifest()
+        command = manifest["platforms"]["android"]["verification"]["output"]["commands"][0]
+        command["command"] = "echo ./gradlew assembleDebug"
+
+        self.assert_error_contains(
+            manifest,
+            "platforms.android.verification.output.commands[0] is not a recognized android build command",
+        )
+
+    def test_non_build_tool_modes_cannot_satisfy_build_result(self):
+        for platform, command_text in [
+            ("android", "./gradlew --dry-run assembleDebug"),
+            ("android", "./gradlew --dry-run=true assembleDebug"),
+            ("android", "./gradlew help --task assembleDebug"),
+            ("ios", "xcodebuild -version"),
+            ("ios", "xcodebuild -scheme APIExample -showTestPlans"),
+            ("ios", "xcodebuild -scheme APIExample -resolvePackageDependencies"),
+            ("ios", "xcodebuild -scheme APIExample -checkFirstLaunchStatus"),
+            ("macos", "xcodebuild -showsdks"),
+            ("windows", "msbuild -version"),
+            ("windows", "msbuild APIExample.sln /t:Clean"),
+            ("windows", "msbuild APIExample.sln /preprocess:out.xml"),
+            ("windows", "msbuild APIExample.sln /targets"),
+            ("windows", "msbuild APIExample.sln /validate"),
+            ("windows", "cmake --build build --target help"),
+            ("android", "../fake/gradlew assembleDebug"),
+            ("ios", "/tmp/xcodebuild -scheme APIExample build"),
+            ("windows", "PATH=./fake msbuild APIExample.sln /t:Build"),
+        ]:
+            with self.subTest(platform=platform):
+                manifest = base_manifest()
+                command = manifest["platforms"][platform]["verification"]["output"]["commands"][0]
+                command["command"] = command_text
+
+                self.assert_error_contains(
+                    manifest,
+                    f"platforms.{platform}.verification.output.commands[0] is not a recognized {platform} build command",
+                )
+
+    def test_build_command_cannot_escape_contract_working_directory(self):
+        manifest = base_manifest()
+        command = manifest["platforms"]["ios"]["verification"]["output"]["commands"][0]
+        command["command"] = (
+            "xcodebuild -project ../APIExample-Audio/APIExample.xcodeproj "
+            "-scheme APIExample build"
+        )
+
+        self.assert_error_contains(
+            manifest,
+            "platforms.ios.verification.output.commands[0] is not a recognized ios build command",
+        )
+
+    def test_xcode_default_build_command_from_project_rules_is_accepted(self):
+        manifest = base_manifest()
+        command = manifest["platforms"]["macos"]["verification"]["output"]["commands"][0]
+        command["command"] = (
+            "xcodebuild -workspace APIExample.xcworkspace -scheme APIExample "
+            "-configuration Release"
+        )
+
+        self.assertEqual(validate_manifest(manifest), [])
+
+    def test_windows_build_pass_requires_windows_host_provenance(self):
+        manifest = base_manifest()
+        manifest["platforms"]["windows"]["verification"]["dispatch"]["host_platform"] = "darwin"
+
+        self.assert_error_contains(
+            manifest,
+            "platforms.windows.verification.output.build_result=PASS requires host_platform=win32",
+        )
+
+    def test_rejects_platform_target_outside_its_platform_root(self):
+        manifest = base_manifest()
+        target = manifest["contract"]["output"]["platform_targets"]["android"]
+        target["target_project"] = "iOS/APIExample/"
+        target["files_allowed"] = ["iOS/APIExample/"]
+
+        self.assert_error_contains(
+            manifest,
+            "contract.output.platform_targets.android.target_project must be inside Android/",
+        )
+
+    def test_rejects_platform_target_that_escapes_root_with_parent_segments(self):
+        manifest = base_manifest()
+        target = manifest["contract"]["output"]["platform_targets"]["android"]
+        target["target_project"] = "Android/../iOS/APIExample/"
+        target["files_allowed"] = ["Android/../iOS/APIExample/"]
+
+        self.assert_error_contains(
+            manifest,
+            "contract.output.platform_targets.android.target_project must be inside Android/",
+        )
+
+    def test_rejects_dispatch_path_outside_workspace(self):
+        manifest = base_manifest()
+        manifest["platforms"]["android"]["implementation"]["dispatch"]["prompt"] = "../prompt.md"
+
+        self.assert_error_contains(manifest, "must be relative to the execution workspace")
+
+    def test_files_changed_accepts_deleted_path_inside_contract_scope(self):
+        manifest = base_manifest()
+        manifest["platforms"]["android"]["implementation"]["output"]["files_changed"] = [
+            "Android/APIExample/deleted-case.java"
+        ]
+
+        self.assertEqual(validate_manifest(manifest), [])
+
+    def test_knowledge_update_requires_a_durable_file_change(self):
+        manifest = base_manifest()
+        for platform in PLATFORMS:
+            manifest["platforms"][platform]["implementation"]["output"]["files_changed"] = ["AGENTS.md"]
+        manifest["knowledge_updates"] = [
+            {
+                "source": "pilot",
+                "impact_platforms": PLATFORMS,
+                "symptom": "Build blocked",
+                "root_cause": "Host mismatch",
+                "guardrail": "Use target CI",
+                "verification": "CI build",
+                "updated_at": "2026-07-10",
+            }
+        ]
+
+        self.assert_error_contains(manifest, "knowledge_updates require at least one durable knowledge")
+
+    def test_evidence_files_are_rehashed_from_manifest_directory(self):
+        manifest = base_manifest()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            artifacts = [manifest["contract"]]
+            for platform in PLATFORMS:
+                artifacts.extend(manifest["platforms"][platform].values())
+            for index, item in enumerate(artifacts):
+                dispatch = item["dispatch"]
+                for path_field, hash_field in [
+                    ("prompt", "prompt_sha256"),
+                    ("artifact", "artifact_sha256"),
+                    ("input_snapshot", "input_snapshot_sha256"),
+                    ("command_log", "command_log_sha256"),
+                    ("repository_delta", "repository_delta_sha256"),
+                ]:
+                    if path_field not in dispatch:
+                        continue
+                    path = root / dispatch[path_field]
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    if path_field == "repository_delta":
+                        content = json.dumps(
+                            {"changed_files": item["output"]["files_changed"]}
+                        ).encode()
+                    else:
+                        content = f"{index}:{path_field}\n".encode()
+                    path.write_bytes(content)
+                    dispatch[hash_field] = hashlib.sha256(content).hexdigest()
+
+            self.assertEqual(validate_evidence_files(manifest, root), [])
+            prompt = root / manifest["contract"]["dispatch"]["prompt"]
+            prompt.write_text("tampered\n", encoding="utf-8")
+
+            errors = validate_evidence_files(manifest, root)
+            self.assertTrue(any("contract.dispatch.prompt_sha256 does not match" in error for error in errors))
+
+    def test_evidence_validation_rejects_delta_content_mismatch(self):
+        manifest = base_manifest()
+        implementation = manifest["platforms"]["android"]["implementation"]
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            delta_path = root / implementation["dispatch"]["repository_delta"]
+            delta_path.parent.mkdir(parents=True)
+            delta_path.write_text(
+                json.dumps({"changed_files": ["Android/APIExample/other.java"]}),
+                encoding="utf-8",
+            )
+            implementation["dispatch"]["repository_delta_sha256"] = hashlib.sha256(
+                delta_path.read_bytes()
+            ).hexdigest()
+
+            errors = validate_evidence_files(manifest, root)
+
+            self.assertTrue(
+                any("repository_delta changed_files do not match" in error for error in errors),
+                errors,
+            )
 
 
 if __name__ == "__main__":

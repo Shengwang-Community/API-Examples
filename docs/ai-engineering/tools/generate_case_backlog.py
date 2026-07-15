@@ -49,21 +49,25 @@ def strip_code(value):
 
 
 def parse_status(cell):
+    status, detail = parse_matrix_cell(cell)
+    if status in {"MISSING", "PARTIAL"}:
+        return status, detail
+    return "", ""
+
+
+def parse_matrix_cell(cell):
     value = strip_code(cell)
-    if value == "MISSING":
-        return "MISSING", ""
-    match = re.fullmatch(r"PARTIAL\((.*)\)", value)
+    if value in {"MISSING", "UNKNOWN"}:
+        return value, ""
+    match = re.fullmatch(r"(DONE|PARTIAL|N/A)\((.+)\)", value)
     if match:
-        return "PARTIAL", match.group(1)
+        return match.group(1), match.group(2)
     return "", ""
 
 
 def parse_done_path(cell):
-    value = strip_code(cell)
-    match = re.fullmatch(r"DONE\((.*)\)", value)
-    if match:
-        return match.group(1)
-    return ""
+    status, detail = parse_matrix_cell(cell)
+    return detail if status == "DONE" else ""
 
 
 def parse_key_apis(cell):

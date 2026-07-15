@@ -1,188 +1,286 @@
 {
-  "version": 1,
+  "version": 4,
   "final_status": "BLOCKED",
-  "product": {
-    "scenario": "<observable sample behavior>",
-    "target": "<platform/project>",
-    "non_goals": []
+  "requirement": {
+    "feature": "<feature>",
+    "sdk_family": "<SDK family>",
+    "key_apis": ["<SDK API>"],
+    "target_sdk_version": "<target SDK version>"
   },
-  "reference": {
-    "required": false,
-    "source_case": "",
-    "contract_result": "SKIPPED",
-    "parity_checklist_result": "SKIPPED"
-  },
-  "architecture": {
-    "platform_project": "<platform/project>",
-    "key_constraints": []
-  },
-  "implementation": {
-    "files_changed": [],
-    "skills_docs_used": [],
-    "matrix_updates": []
-  },
-  "review": {
-    "result": "BLOCKED",
-    "findings": []
-  },
-  "testing": {
-    "commands": [
-      {
-        "command": "<command>",
-        "result": "BLOCKED"
+  "contract": {
+    "agent_id": "contract-agent-pending",
+    "dispatch": {
+      "mode": "pending",
+      "prompt": "role-prompts/contract.md",
+      "artifact": "role-artifacts/contract.json"
+    },
+    "status": "BLOCKED",
+    "evidence": "Pending shared Contract.",
+    "summary": "Pending shared behavior, reference, and platform targets.",
+    "output": {
+      "scenario": "<observable behavior>",
+      "key_apis": ["<SDK API>"],
+      "non_goals": [],
+      "reference": {
+        "required": false,
+        "source_case": "",
+        "contract_result": "SKIPPED"
+      },
+      "cross_platform_requirements": ["<shared behavior>"],
+      "platform_targets": {
+        "android": {
+          "required": true,
+          "target_project": "Android/APIExample/",
+          "key_constraints": [],
+          "files_allowed": ["Android/APIExample/"],
+          "waiver_reason": ""
+        },
+        "ios": {
+          "required": true,
+          "target_project": "iOS/APIExample/",
+          "key_constraints": [],
+          "files_allowed": ["iOS/APIExample/"],
+          "waiver_reason": ""
+        },
+        "macos": {
+          "required": true,
+          "target_project": "macOS/",
+          "key_constraints": [],
+          "files_allowed": ["macOS/"],
+          "waiver_reason": ""
+        },
+        "windows": {
+          "required": true,
+          "target_project": "windows/",
+          "key_constraints": [],
+          "files_allowed": ["windows/"],
+          "waiver_reason": ""
+        }
       }
-    ],
-    "skipped_checks": [],
-    "reference_contract_result": "SKIPPED",
-    "parity_checklist_result": "SKIPPED",
-    "build_result": "BLOCKED"
+    }
+  },
+  "platforms": {
+    "android": {
+      "implementation": {
+        "agent_id": "android-implementation-agent-pending",
+        "dispatch": {
+          "mode": "pending",
+          "prompt": "role-prompts/android-implementation.md",
+          "artifact": "role-artifacts/android-implementation.json"
+        },
+        "status": "BLOCKED",
+        "evidence": "Pending Android implementation.",
+        "summary": "Pending Android changes.",
+        "output": {
+          "target_project": "Android/APIExample/",
+          "query_cases": "Pending.",
+          "upsert_case": "Pending.",
+          "files_changed": [],
+          "matrix_updates": []
+        }
+      },
+      "verification": {
+        "agent_id": "android-verification-agent-pending",
+        "dispatch": {
+          "mode": "pending",
+          "prompt": "role-prompts/android-verification.md",
+          "artifact": "role-artifacts/android-verification.json"
+        },
+        "status": "BLOCKED",
+        "evidence": "Pending Android verification.",
+        "summary": "Pending Android review and build.",
+        "output": {
+          "result": "BLOCKED",
+          "findings": [],
+          "parity_result": "BLOCKED",
+          "entry_point": "<Android entry point>",
+          "ux_notes": "",
+          "commands": [],
+          "build_result": "BLOCKED",
+          "skipped_checks": []
+        }
+      }
+    },
+    "ios": {
+      "implementation": {
+        "agent_id": "ios-implementation-agent-pending",
+        "dispatch": {
+          "mode": "pending",
+          "prompt": "role-prompts/ios-implementation.md",
+          "artifact": "role-artifacts/ios-implementation.json"
+        },
+        "status": "BLOCKED",
+        "evidence": "Pending iOS implementation.",
+        "summary": "Pending iOS changes.",
+        "output": {
+          "target_project": "iOS/APIExample/",
+          "query_cases": "Pending.",
+          "upsert_case": "Pending.",
+          "files_changed": [],
+          "matrix_updates": []
+        }
+      },
+      "verification": {
+        "agent_id": "ios-verification-agent-pending",
+        "dispatch": {
+          "mode": "pending",
+          "prompt": "role-prompts/ios-verification.md",
+          "artifact": "role-artifacts/ios-verification.json"
+        },
+        "status": "BLOCKED",
+        "evidence": "Pending iOS verification.",
+        "summary": "Pending iOS review and build.",
+        "output": {
+          "result": "BLOCKED",
+          "findings": [],
+          "parity_result": "BLOCKED",
+          "entry_point": "<iOS entry point>",
+          "ux_notes": "",
+          "commands": [],
+          "build_result": "BLOCKED",
+          "skipped_checks": []
+        }
+      }
+    },
+    "macos": {
+      "implementation": {
+        "agent_id": "macos-implementation-agent-pending",
+        "dispatch": {
+          "mode": "pending",
+          "prompt": "role-prompts/macos-implementation.md",
+          "artifact": "role-artifacts/macos-implementation.json"
+        },
+        "status": "BLOCKED",
+        "evidence": "Pending macOS implementation.",
+        "summary": "Pending macOS changes.",
+        "output": {
+          "target_project": "macOS/",
+          "query_cases": "Pending.",
+          "upsert_case": "Pending.",
+          "files_changed": [],
+          "matrix_updates": []
+        }
+      },
+      "verification": {
+        "agent_id": "macos-verification-agent-pending",
+        "dispatch": {
+          "mode": "pending",
+          "prompt": "role-prompts/macos-verification.md",
+          "artifact": "role-artifacts/macos-verification.json"
+        },
+        "status": "BLOCKED",
+        "evidence": "Pending macOS verification.",
+        "summary": "Pending macOS review and build.",
+        "output": {
+          "result": "BLOCKED",
+          "findings": [],
+          "parity_result": "BLOCKED",
+          "entry_point": "<macOS entry point>",
+          "ux_notes": "",
+          "commands": [],
+          "build_result": "BLOCKED",
+          "skipped_checks": []
+        }
+      }
+    },
+    "windows": {
+      "implementation": {
+        "agent_id": "windows-implementation-agent-pending",
+        "dispatch": {
+          "mode": "pending",
+          "prompt": "role-prompts/windows-implementation.md",
+          "artifact": "role-artifacts/windows-implementation.json"
+        },
+        "status": "BLOCKED",
+        "evidence": "Pending Windows implementation.",
+        "summary": "Pending Windows changes.",
+        "output": {
+          "target_project": "windows/",
+          "query_cases": "Pending.",
+          "upsert_case": "Pending.",
+          "files_changed": [],
+          "matrix_updates": []
+        }
+      },
+      "verification": {
+        "agent_id": "windows-verification-agent-pending",
+        "dispatch": {
+          "mode": "pending",
+          "prompt": "role-prompts/windows-verification.md",
+          "artifact": "role-artifacts/windows-verification.json"
+        },
+        "status": "BLOCKED",
+        "evidence": "Pending Windows verification.",
+        "summary": "Pending Windows review and MSBuild evidence.",
+        "output": {
+          "result": "BLOCKED",
+          "findings": [],
+          "parity_result": "BLOCKED",
+          "entry_point": "<Windows entry point>",
+          "ux_notes": "",
+          "commands": [],
+          "build_result": "BLOCKED",
+          "skipped_checks": []
+        }
+      }
+    }
+  },
+  "cross_platform_acceptance": {
+    "result": "BLOCKED",
+    "evidence": "Pending all required platform verification.",
+    "differences": []
   },
   "release": {
-    "required": false,
-    "checks": [],
+    "required": true,
+    "target_sdk_version": "<target SDK version>",
+    "checks": [
+      {
+        "name": "sdk-version-android",
+        "result": "BLOCKED",
+        "expected_version": "<target SDK version>",
+        "actual_versions": {},
+        "evidence": "",
+        "reason": "Pending live Android SDK version check."
+      },
+      {
+        "name": "sdk-version-ios",
+        "result": "BLOCKED",
+        "expected_version": "<target SDK version>",
+        "actual_versions": {},
+        "evidence": "",
+        "reason": "Pending live iOS SDK version check."
+      },
+      {
+        "name": "sdk-version-macos",
+        "result": "BLOCKED",
+        "expected_version": "<target SDK version>",
+        "actual_versions": {},
+        "evidence": "",
+        "reason": "Pending live macOS SDK version check."
+      },
+      {
+        "name": "sdk-version-windows",
+        "result": "BLOCKED",
+        "expected_version": "<target SDK version>",
+        "actual_versions": {},
+        "evidence": "",
+        "reason": "Pending live Windows SDK version check."
+      }
+    ],
+    "qa_acceptance": {
+      "ci_job_url": "",
+      "ci_build_number": "",
+      "artifacts": {
+        "android": "",
+        "ios": "",
+        "macos": "",
+        "windows": ""
+      },
+      "result": "BLOCKED",
+      "owner": "",
+      "evidence": ""
+    },
     "skipped_checks": []
   },
-  "ux": {
-    "entry_point": "<menu/path>",
-    "notes": ""
-  },
-  "knowledge_updates": [],
-  "role_results": {
-    "product": {
-      "status": "BLOCKED",
-      "evidence": "<product gate evidence>"
-    },
-    "architecture": {
-      "status": "BLOCKED",
-      "evidence": "<architecture gate evidence>"
-    },
-    "implementation": {
-      "status": "BLOCKED",
-      "evidence": "<implementation gate evidence>"
-    },
-    "review": {
-      "status": "BLOCKED",
-      "evidence": "<review gate evidence>"
-    },
-    "test": {
-      "status": "BLOCKED",
-      "evidence": "<test gate evidence>"
-    },
-    "ux": {
-      "status": "BLOCKED",
-      "evidence": "<ux gate evidence>"
-    }
-  },
-  "role_artifacts": {
-    "product": {
-      "agent_id": "<product agent id>",
-      "dispatch": {
-        "mode": "<codex-subagent|pending>",
-        "run_id": "<product subagent run id>",
-        "prompt": "role-prompts/product.md",
-        "prompt_sha256": "<product prompt sha256>",
-        "artifact": "role-artifacts/product.json",
-        "artifact_sha256": "<product artifact sha256>",
-        "evidence": "<product agent dispatch evidence>"
-      },
-      "summary": "<product agent summary>",
-      "output": {
-        "scenario": "<observable sample behavior>",
-        "target": "<platform/project>",
-        "key_apis": ["<sdk api>"],
-        "non_goals": ["<non-goal>"]
-      }
-    },
-    "architecture": {
-      "agent_id": "<architecture agent id>",
-      "dispatch": {
-        "mode": "<codex-subagent|pending>",
-        "run_id": "<architecture subagent run id>",
-        "prompt": "role-prompts/architecture.md",
-        "prompt_sha256": "<architecture prompt sha256>",
-        "artifact": "role-artifacts/architecture.json",
-        "artifact_sha256": "<architecture artifact sha256>",
-        "evidence": "<architecture agent dispatch evidence>"
-      },
-      "summary": "<architecture agent summary>",
-      "output": {
-        "platform_project": "<platform/project>",
-        "key_constraints": ["<constraint>"],
-        "files_allowed": ["<path>"]
-      }
-    },
-    "implementation": {
-      "agent_id": "<implementation agent id>",
-      "dispatch": {
-        "mode": "<codex-subagent|pending>",
-        "run_id": "<implementation subagent run id>",
-        "prompt": "role-prompts/implementation.md",
-        "prompt_sha256": "<implementation prompt sha256>",
-        "artifact": "role-artifacts/implementation.json",
-        "artifact_sha256": "<implementation artifact sha256>",
-        "evidence": "<implementation agent dispatch evidence>"
-      },
-      "summary": "<implementation agent summary>",
-      "output": {
-        "query_cases": "<query-cases result>",
-        "upsert_case": "<upsert-case result>",
-        "files_changed": ["<path>"],
-        "matrix_update": "<matrix update>"
-      }
-    },
-    "review": {
-      "agent_id": "<review agent id>",
-      "dispatch": {
-        "mode": "<codex-subagent|pending>",
-        "run_id": "<review subagent run id>",
-        "prompt": "role-prompts/review.md",
-        "prompt_sha256": "<review prompt sha256>",
-        "artifact": "role-artifacts/review.json",
-        "artifact_sha256": "<review artifact sha256>",
-        "evidence": "<review agent dispatch evidence>"
-      },
-      "summary": "<review agent summary>",
-      "output": {
-        "result": "BLOCKED",
-        "findings": ["<finding or no-blocker statement>"],
-        "parity_checklist": "<reference parity checklist>"
-      }
-    },
-    "test": {
-      "agent_id": "<test agent id>",
-      "dispatch": {
-        "mode": "<codex-subagent|pending>",
-        "run_id": "<test subagent run id>",
-        "prompt": "role-prompts/test.md",
-        "prompt_sha256": "<test prompt sha256>",
-        "artifact": "role-artifacts/test.json",
-        "artifact_sha256": "<test artifact sha256>",
-        "evidence": "<test agent dispatch evidence>"
-      },
-      "summary": "<test agent summary>",
-      "output": {
-        "commands": ["<command>"],
-        "reference_contract_result": "SKIPPED",
-        "parity_checklist_result": "SKIPPED",
-        "build_result": "BLOCKED"
-      }
-    },
-    "ux": {
-      "agent_id": "<ux agent id>",
-      "dispatch": {
-        "mode": "<codex-subagent|pending>",
-        "run_id": "<ux subagent run id>",
-        "prompt": "role-prompts/ux.md",
-        "prompt_sha256": "<ux prompt sha256>",
-        "artifact": "role-artifacts/ux.json",
-        "artifact_sha256": "<ux artifact sha256>",
-        "evidence": "<ux agent dispatch evidence>"
-      },
-      "summary": "<ux agent summary>",
-      "output": {
-        "entry_point": "<menu/path>",
-        "notes": "<ux notes>"
-      }
-    }
-  }
+  "knowledge_updates": []
 }

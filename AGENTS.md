@@ -32,6 +32,7 @@ For AI-assisted version iteration, product-to-implementation routing, multi-agen
 Supporting documents:
 - `docs/ai-engineering/knowledge-index.md` - repository knowledge map for agents.
 - `docs/ai-engineering/release-iteration-gate.md` - product, architecture, review, test, and UX acceptance gates.
+- `docs/ai-engineering/role-routing.json` - shared Contract and independent platform role types with logical Codex profiles.
 - `docs/ai-engineering/release-known-issues.md` - release packaging and pipeline risk checklist.
 
 ## Cross-Platform Rules

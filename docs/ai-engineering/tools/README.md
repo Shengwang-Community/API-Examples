@@ -1,94 +1,99 @@
 # AI Engineering Tools
 
-This directory contains lightweight repository-local validation tools for the AI engineering workflow.
+`orchestrate_case_execution.py` turns one RTC requirement into a shared Contract plus attributed Android, iOS, macOS, and Windows delivery. It launches independent, replayable `codex exec` sessions rather than parent-managed Codex subagent threads.
 
-## Acceptance Manifest Validator
+## Role Types
 
-Use `validate_acceptance_manifest.py` to verify that a filled acceptance manifest has the required role evidence, independent role artifacts, Codex subagent dispatch provenance, test evidence, skipped-check reasons, file paths, matrix status rules, and knowledge-update fields.
+| Phase | Agents | Profile |
+| --- | --- | --- |
+| `contract` | One shared Contract | `standard` |
+| `implementation` | Four platform Implementation agents | `deep` |
+| `verification` | Four independent platform Verification agents | `review` |
 
-```bash
-python3 docs/ai-engineering/tools/validate_acceptance_manifest.py <manifest.json>
-```
+Provider model names remain runtime inputs through `--model` or `CODEX_MODEL_STANDARD`, `CODEX_MODEL_DEEP`, and `CODEX_MODEL_REVIEW`.
 
-The template manifest intentionally contains placeholders and must not pass validation until filled with live evidence. The validator rejects placeholder values, mismatched reference/test results, failed review, release, or test gates without `final_status=BLOCKED`, `SKIPPED` checks under `final_status=PASS`, missing role evidence, missing role artifacts, accepted role artifacts that are not `dispatch.mode=codex-subagent`, missing subagent `run_id`, missing prompt/artifact sha256 provenance, duplicate role `agent_id` values, Lead-owned role artifacts, and `DONE` matrix updates without final status `PASS`, reference, parity, build evidence, and no skipped checks. When `knowledge_updates` are present, at least one durable knowledge document or repository skill must also be listed in `implementation.files_changed`.
-
-The manifest should usually stay outside the commit as an execution artifact. Commit it only when the user explicitly asks for a repository evidence snapshot or when it is selected as a curated pilot-run example.
-
-Run the validator tests with:
-
-```bash
-python3 docs/ai-engineering/tools/validate_acceptance_manifest_test.py
-```
-
-## Case Backlog Generator
-
-Use `generate_case_backlog.py` to convert `MISSING` and `PARTIAL` cells in `case-maintenance-matrix.md` into platform execution units.
-
-```bash
-python3 docs/ai-engineering/tools/generate_case_backlog.py
-```
-
-The output is JSON. Each unit includes priority, severity, target project, key APIs, current matrix status, notes, and `reference_candidates` from `DONE(...)` cells in the same matrix row. Priority comes from the `Confirmed Gaps` table, including known aliases between gap labels and matrix feature names. Use this generator to inspect backlog order; use `orchestrate_case_execution.py` as the normal case-backfill workspace entrypoint.
-
-Run the generator tests with:
-
-```bash
-python3 docs/ai-engineering/tools/generate_case_backlog_test.py
-```
-
-## Case Execution Preparation
-
-Use `prepare_case_execution.py` as the lower-level helper for selecting the next execution unit and emitting a structured package for the Lead Agent. The package includes the selected backlog unit, resolved reference candidate, role contracts, role artifact seeds, execution steps, and an acceptance-manifest seed that validates as the initial `BLOCKED` state.
-
-```bash
-python3 docs/ai-engineering/tools/prepare_case_execution.py
-```
-
-By default it selects the highest-priority actionable unit. Use `--feature` and `--platform-unit` to prepare a specific unit:
-
-```bash
-python3 docs/ai-engineering/tools/prepare_case_execution.py --feature "Join channel audio" --platform-unit "Windows"
-```
-
-This tool does not edit platform source files or spawn agents. It turns the matrix backlog into a machine-readable execution contract that the Lead Agent and role agents must carry through project skills, review, testing, manifest validation, and matrix update.
-
-Run the preparation tests with:
-
-```bash
-python3 docs/ai-engineering/tools/prepare_case_execution_test.py
-```
-
-## Case Execution Orchestrator
-
-Use `orchestrate_case_execution.py` as the normal case-backfill workspace runner. It creates a run workspace, writes role prompts and role artifact templates, assembles completed role artifacts into a final acceptance manifest, validates that manifest, and applies matrix updates only after validation passes with a non-`BLOCKED` final status. `DONE` matrix updates still require final status `PASS`; `PASS WITH RISKS` is limited to non-final updates such as `PARTIAL(...)`.
-
-This tool does not spawn role agents and does not edit platform source files. The active agent runtime must dispatch `role-prompts/*.md` to separate Codex subagents. Each completed role artifact must replace the default `dispatch.mode=pending` seed with `dispatch.mode=codex-subagent`, the subagent `run_id`, prompt/artifact paths, and dispatch evidence before the final status can be `PASS` or `PASS WITH RISKS`; the assemble step records `prompt_sha256` and `artifact_sha256`. The Implementation Agent is responsible for running the target project `query-cases`, `upsert-case`, and `review-case` skills and making any source changes.
-
-## Current Automation Boundary
-
-These tools are workflow infrastructure, not a full autonomous code-generation product. They prepare and validate the execution workspace, but they do not dispatch subagents, generate platform code, run platform builds automatically, or summarize historical failures into knowledge updates. They can validate recorded subagent run ids and prompt/artifact hashes after separate subagents have run. Full automation still requires a separate end-to-end orchestrator.
-
-Initialize a run:
+## Run A Requirement
 
 ```bash
 python3 docs/ai-engineering/tools/orchestrate_case_execution.py init \
   --matrix docs/ai-engineering/case-maintenance-matrix.md \
-  --run-dir /tmp/api-example-case-run
+  --feature "Join channel audio" \
+  --target-sdk-version "4.6.4" \
+  --run-dir /tmp/api-example-requirement
 ```
 
-By default `init` selects the highest-priority actionable unit. Add `--feature` and `--platform-unit` when the user or release scope requires a specific unit.
+For a new feature outside the matrix backlog, add `--sdk-family "Full RTC" --key-api "<API>"`; repeat `--key-api` for multiple APIs.
 
-After separate role agents finish and write `role-artifacts/*.json`, assemble the run:
+Dispatch Contract, then the two platform phases:
+
+```bash
+python3 docs/ai-engineering/tools/orchestrate_case_execution.py dispatch \
+  --run-dir /tmp/api-example-requirement --phase contract --model "<model>"
+
+python3 docs/ai-engineering/tools/orchestrate_case_execution.py dispatch \
+  --run-dir /tmp/api-example-requirement --phase implementation --model "<model>"
+
+python3 docs/ai-engineering/tools/orchestrate_case_execution.py dispatch \
+  --run-dir /tmp/api-example-requirement --phase verification --model "<model>"
+```
+
+Omitting `--platform` covers Android, iOS, macOS, and Windows. Implementation runs are serialized in a shared checkout and reconciled before the next agent starts; Verification runs execute concurrently. Use `--platform windows` for one platform. Use `--retry` only to replace a prior `FAIL` or `BLOCKED` artifact; an Implementation retry automatically invalidates that platform's old Verification.
+
+Each run starts in the Contract-selected target project, writes independent stdout/stderr logs, records its host platform, and has a 900-second default timeout. Input snapshots bind the execution package, current repository state, routing config, and dependency artifact hashes. This lets Codex load nested platform/project `AGENTS.md` files automatically. `--dry-run` resolves prompts, content-aware snapshots, models, working directories, and commands without starting Codex.
+
+Verification PASS/FAIL commands are accepted only when their exact command string and exit code exist in the hashed Codex JSONL log. Build commands must execute a real target-platform build action from the Contract working directory; Windows build `PASS` additionally requires a Windows host. Contract and Verification may create ignored build output but fail if they modify tracked or untracked repository content. Implementation `files_changed` is derived from the real per-run repository delta rather than trusted from model output.
+
+Assemble with an explicit cross-platform conclusion:
 
 ```bash
 python3 docs/ai-engineering/tools/orchestrate_case_execution.py assemble \
-  --run-dir /tmp/api-example-case-run \
+  --run-dir /tmp/api-example-requirement \
   --matrix docs/ai-engineering/case-maintenance-matrix.md \
-  --final-status "PASS WITH RISKS"
+  --final-status "BLOCKED" \
+  --cross-platform-result "BLOCKED" \
+  --cross-platform-evidence "Windows CI pending"
 ```
 
-Run the orchestrator tests with:
+Manifest v4 stores one shared Contract and one Implementation/Verification pair per official platform. Implementation retries preserve attempt history and expose one cumulative net delta whose file list must match the manifest. Matrix updates are applied only after structural and evidence-file validation and never for final `BLOCKED`. Assembly also refreshes all live platform SDK dependency versions.
+
+For non-`BLOCKED` acceptance, add `--ci-job-url`, `--ci-build-number`, one `--artifact-url platform=<url>` for each platform, `--qa-result PASS`, `--qa-owner`, and `--qa-evidence`. This is the repository handoff point; external website publication is not part of the manifest.
+
+## macOS And Windows
+
+Windows Verification on macOS is static review only. It must not download Windows SDKs, emulate, cross-compile, or treat another compiler as MSBuild evidence. Keep the Windows artifact `BLOCKED`, then replace it from Windows CI with:
 
 ```bash
-python3 docs/ai-engineering/tools/orchestrate_case_execution_test.py
+python3 docs/ai-engineering/tools/orchestrate_case_execution.py dispatch \
+  --run-dir /tmp/api-example-requirement \
+  --phase verification \
+  --platform windows \
+  --retry \
+  --model "<model>"
+```
+
+## Supporting Tools
+
+- `generate_case_backlog.py`: reads `MISSING`/`PARTIAL` matrix cells and prioritizes requirement candidates.
+- `prepare_case_execution.py`: creates a v4 requirement package without starting Codex.
+- `validate_acceptance_manifest.py`: validates a filled v4 manifest.
+
+```bash
+python3 docs/ai-engineering/tools/prepare_case_execution.py \
+  --feature "Join channel audio" \
+  --target-sdk-version "4.6.4"
+python3 docs/ai-engineering/tools/validate_acceptance_manifest.py <manifest.json>
+```
+
+The standalone validator resolves evidence paths relative to the manifest and recomputes prompt, role-artifact, input-snapshot, command-log, and repository-delta hashes.
+
+Routine manifests and dispatch logs stay outside the repository unless the user requests an evidence snapshot.
+
+## Tests
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest \
+  docs/ai-engineering/tools/validate_acceptance_manifest_test.py \
+  docs/ai-engineering/tools/generate_case_backlog_test.py \
+  docs/ai-engineering/tools/prepare_case_execution_test.py \
+  docs/ai-engineering/tools/orchestrate_case_execution_test.py
 ```
