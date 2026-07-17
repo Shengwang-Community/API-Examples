@@ -33,6 +33,7 @@ Supporting documents:
 - `docs/ai-engineering/knowledge-index.md` - repository knowledge map for agents.
 - `docs/ai-engineering/release-iteration-gate.md` - product, architecture, review, test, and UX acceptance gates.
 - `docs/ai-engineering/role-routing.json` - shared Contract and independent platform role types with logical Codex profiles.
+- `docs/ai-engineering/repository-profile.json` - repository-specific SDK package names and version sources used by the shared tools.
 - `docs/ai-engineering/release-known-issues.md` - release packaging and pipeline risk checklist.
 
 ## Cross-Platform Rules

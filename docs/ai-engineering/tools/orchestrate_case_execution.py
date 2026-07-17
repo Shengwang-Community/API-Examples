@@ -14,8 +14,10 @@ from pathlib import Path
 
 from generate_case_backlog import parse_matrix_cell, split_markdown_row
 from prepare_case_execution import (
+    DEFAULT_REPOSITORY_PROFILE,
     PLATFORMS,
     collect_sdk_version_checks,
+    load_repository_profile,
     prepare_case_execution,
 )
 from validate_acceptance_manifest import (
@@ -177,7 +179,9 @@ def init_workspace(args):
     run_dir.mkdir(parents=True, exist_ok=True)
     matrix_path = Path(args.matrix).resolve()
     routing_path = Path(args.routing_config).resolve()
+    profile_path = Path(args.repository_profile).resolve()
     routing = load_role_routing(routing_path)
+    load_repository_profile(profile_path)
     package = prepare_case_execution(
         matrix_path,
         args.feature,
@@ -185,10 +189,13 @@ def init_workspace(args):
         sdk_family=args.sdk_family,
         key_apis=args.key_api,
         target_sdk_version=args.target_sdk_version,
+        repository_profile=profile_path,
     )
     package["matrix_path"] = stable_matrix_path(matrix_path)
     package["routing_config"] = repo_relative_path(routing_path)
     package["routing_config_sha256"] = sha256_file(routing_path)
+    package["repository_profile"] = repo_relative_path(profile_path)
+    package["repository_profile_sha256"] = sha256_file(profile_path)
     write_json(run_dir / "execution-package.json", package)
     write_json(run_dir / "acceptance-manifest.json", package["acceptance_manifest_seed"])
 
@@ -325,7 +332,7 @@ def dispatch_workspace(args):
     package = read_json(run_dir / "execution-package.json")
     routing_path = Path(args.routing_config).resolve()
     routing = load_role_routing(routing_path)
-    validate_execution_routing(package, routing_path)
+    validate_execution_configuration(package, routing_path)
     specs = dispatch_specs(run_dir, args.phase, args.platform, args.retry)
     route = routing["roles"][args.phase]
     profile = route["profile"]
@@ -708,11 +715,27 @@ def task_args(task):
     return {key: value for key, value in task.items() if key in allowed}
 
 
-def validate_execution_routing(package, routing_path):
+def resolve_bound_repository_profile(package):
+    profile_value = package.get("repository_profile")
+    if not isinstance(profile_value, str) or not profile_value:
+        raise ValueError("execution package repository profile is missing; re-run init")
+    profile_path = (REPO_ROOT / profile_value).resolve()
+    try:
+        profile_path.relative_to(REPO_ROOT.resolve())
+    except ValueError as exc:
+        raise ValueError("execution package repository profile must be inside the repository") from exc
+    if package.get("repository_profile_sha256") != sha256_file(profile_path):
+        raise ValueError("repository profile content changed since init; re-run init")
+    load_repository_profile(profile_path)
+    return profile_path
+
+
+def validate_execution_configuration(package, routing_path):
     if package.get("routing_config") != repo_relative_path(routing_path):
         raise ValueError("routing config path changed since init; re-run init")
     if package.get("routing_config_sha256") != sha256_file(routing_path):
         raise ValueError("routing config content changed since init; re-run init")
+    resolve_bound_repository_profile(package)
 
 
 def resolve_model(profile, override):
@@ -742,6 +765,7 @@ def read_codex_version(codex_bin):
 
 
 def write_input_snapshot(run_dir, phase, name, dependencies, resolved_routing):
+    package = read_json(run_dir / "execution-package.json")
     dependency_hashes = {
         dependency: sha256_file(run_dir / "role-artifacts" / f"{dependency}.json")
         for dependency in dependencies
@@ -755,6 +779,8 @@ def write_input_snapshot(run_dir, phase, name, dependencies, resolved_routing):
         "dependency_artifact_sha256": dependency_hashes,
         "routing_config": resolved_routing["routing_config"],
         "routing_config_sha256": resolved_routing["routing_config_sha256"],
+        "repository_profile": package["repository_profile"],
+        "repository_profile_sha256": package["repository_profile_sha256"],
     }
     serialized = json.dumps(snapshot, indent=2, ensure_ascii=False) + "\n"
     snapshot_sha256 = sha256_text(serialized)
@@ -1267,6 +1293,7 @@ def assemble_workspace(args):
             "repository scope violation is unresolved; restore the repository and re-run init"
         )
     package = read_json(run_dir / "execution-package.json")
+    profile_path = resolve_bound_repository_profile(package)
     matrix_path = Path(args.matrix).resolve()
     if package.get("matrix_path") != stable_matrix_path(matrix_path):
         raise ValueError("matrix path changed since init; re-run init")
@@ -1287,7 +1314,7 @@ def assemble_workspace(args):
         "differences": args.cross_platform_difference,
     }
     manifest["release"]["checks"] = collect_sdk_version_checks(
-        manifest["requirement"]["target_sdk_version"]
+        manifest["requirement"]["target_sdk_version"], profile_path=profile_path
     )
     errors = validate_manifest(manifest)
     errors.extend(validate_evidence_files(manifest, run_dir))
@@ -1513,6 +1540,7 @@ def main(argv=None):
     init_parser.add_argument("--run-dir", required=True)
     init_parser.add_argument("--index", type=int, default=0)
     init_parser.add_argument("--routing-config", default=str(DEFAULT_ROUTING_CONFIG))
+    init_parser.add_argument("--repository-profile", default=str(DEFAULT_REPOSITORY_PROFILE))
 
     dispatch_parser = subparsers.add_parser("dispatch", help="Dispatch one requirement phase")
     dispatch_parser.add_argument("--run-dir", required=True)

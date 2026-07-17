@@ -11,25 +11,13 @@ from generate_case_backlog import DEFAULT_MATRIX, REPO_ROOT, generate_execution_
 
 
 PLATFORMS = ["android", "ios", "macos", "windows"]
-SDK_VERSION_SOURCES = {
-    "android": [
-        ("Android/APIExample/gradle.properties", r"(?m)^\s*rtc_sdk_version\s*=\s*([0-9]+\.[0-9]+\.[0-9]+)\s*$"),
-        ("Android/APIExample-Audio/gradle.properties", r"(?m)^\s*rtc_sdk_version\s*=\s*([0-9]+\.[0-9]+\.[0-9]+)\s*$"),
-        ("Android/APIExample-Compose/gradle.properties", r"(?m)^\s*rtc_sdk_version\s*=\s*([0-9]+\.[0-9]+\.[0-9]+)\s*$"),
-    ],
-    "ios": [
-        ("iOS/APIExample/Podfile", r"pod\s+'Shengwang(?:RtcEngine|Audio)_iOS',\s*'([0-9]+\.[0-9]+\.[0-9]+)'"),
-        ("iOS/APIExample-Audio/Podfile", r"pod\s+'Shengwang(?:RtcEngine|Audio)_iOS',\s*'([0-9]+\.[0-9]+\.[0-9]+)'"),
-        ("iOS/APIExample-OC/Podfile", r"pod\s+'Shengwang(?:RtcEngine|Audio)_iOS',\s*'([0-9]+\.[0-9]+\.[0-9]+)'"),
-        ("iOS/APIExample-SwiftUI/Podfile", r"pod\s+'Shengwang(?:RtcEngine|Audio)_iOS',\s*'([0-9]+\.[0-9]+\.[0-9]+)'"),
-    ],
-    "macos": [
-        ("macOS/Podfile", r"pod\s+'ShengwangRtcEngine_macOS',\s*'([0-9]+\.[0-9]+\.[0-9]+)'"),
-    ],
-    "windows": [
-        ("windows/APIExample/install.ps1", r"Shengwang_Native_SDK_for_Windows_v([0-9]+\.[0-9]+\.[0-9]+)_FULL\.zip"),
-    ],
+DEFAULT_REPOSITORY_PROFILE = REPO_ROOT / "docs/ai-engineering/repository-profile.json"
+PROFILE_SOURCE_FIELDS = {
+    "gradle-property": {"path", "kind", "key"},
+    "cocoapods": {"path", "kind", "package"},
+    "archive-name": {"path", "kind", "prefix", "suffix"},
 }
+SEMVER_CAPTURE = r"([0-9]+\.[0-9]+\.[0-9]+)"
 DEFAULT_PLATFORM_TARGETS = {
     "android": "Android/APIExample/",
     "ios": "iOS/APIExample/",
@@ -142,17 +130,91 @@ def default_platform_targets():
     }
 
 
-def collect_sdk_version_checks(target_sdk_version, repo_root=REPO_ROOT, sources=None):
+def load_repository_profile(profile_path=DEFAULT_REPOSITORY_PROFILE):
+    path = Path(profile_path)
+    profile = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(profile, dict):
+        raise ValueError("repository profile must be a JSON object")
+    if set(profile) != {"version", "sdk_version_sources"}:
+        raise ValueError("repository profile must contain only version and sdk_version_sources")
+    if profile.get("version") != 1:
+        raise ValueError("repository profile version must be 1")
+    sources = profile.get("sdk_version_sources")
+    if not isinstance(sources, dict) or set(sources) != set(PLATFORMS):
+        raise ValueError("repository profile must define SDK version sources for every platform")
+    for platform in PLATFORMS:
+        entries = sources[platform]
+        if not isinstance(entries, list) or not entries:
+            raise ValueError(f"repository profile {platform} SDK version sources must be non-empty")
+        seen_paths = set()
+        for index, source in enumerate(entries):
+            if not isinstance(source, dict):
+                raise ValueError(f"repository profile {platform} source {index} must be an object")
+            kind = source.get("kind")
+            expected_fields = PROFILE_SOURCE_FIELDS.get(kind)
+            if expected_fields is None:
+                raise ValueError(
+                    f"repository profile {platform} source {index} has unknown kind {kind}"
+                )
+            if set(source) != expected_fields:
+                raise ValueError(
+                    f"repository profile {platform} source {index} must contain "
+                    + ", ".join(sorted(expected_fields))
+                )
+            if not all(
+                isinstance(source[field], str) and source[field] for field in expected_fields
+            ):
+                raise ValueError(
+                    f"repository profile {platform} source {index} fields must be non-empty strings"
+                )
+            source_path = Path(source["path"])
+            if source_path.is_absolute() or ".." in source_path.parts:
+                raise ValueError(
+                    "repository profile source path must be repository-relative: "
+                    + source["path"]
+                )
+            normalized_path = source_path.as_posix()
+            if normalized_path in seen_paths:
+                raise ValueError(
+                    f"repository profile contains duplicate source path: {normalized_path}"
+                )
+            seen_paths.add(normalized_path)
+    return profile
+
+
+def sdk_version_pattern(source):
+    kind = source["kind"]
+    if kind == "gradle-property":
+        return rf"(?m)^\s*{re.escape(source['key'])}\s*=\s*{SEMVER_CAPTURE}\s*$"
+    if kind == "cocoapods":
+        package = re.escape(source["package"])
+        return rf"pod\s+['\"]{package}['\"]\s*,\s*['\"]{SEMVER_CAPTURE}['\"]"
+    if kind == "archive-name":
+        return re.escape(source["prefix"]) + SEMVER_CAPTURE + re.escape(source["suffix"])
+    raise ValueError(f"unsupported SDK version source kind: {kind}")
+
+
+def collect_sdk_version_checks(
+    target_sdk_version,
+    repo_root=REPO_ROOT,
+    sources=None,
+    profile_path=DEFAULT_REPOSITORY_PROFILE,
+):
+    if sources is None:
+        sources = load_repository_profile(profile_path)["sdk_version_sources"]
     checks = []
-    for platform, entries in (sources or SDK_VERSION_SOURCES).items():
+    for platform in PLATFORMS:
+        entries = sources[platform]
         actual_versions = {}
         problems = []
-        for path_text, pattern in entries:
+        for source in entries:
+            path_text = source["path"]
             path = Path(repo_root) / path_text
             if not path.exists():
                 actual_versions[path_text] = ""
                 problems.append(f"missing {path_text}")
                 continue
+            pattern = sdk_version_pattern(source)
             matches = sorted(set(re.findall(pattern, path.read_text(encoding="utf-8"))))
             if len(matches) != 1:
                 actual_versions[path_text] = ""
@@ -179,7 +241,7 @@ def collect_sdk_version_checks(target_sdk_version, repo_root=REPO_ROOT, sources=
     return checks
 
 
-def build_manifest_seed(requirement, source_case):
+def build_manifest_seed(requirement, source_case, version_sources):
     reference_required = bool(source_case)
     reference_result = "BLOCKED" if reference_required else "SKIPPED"
     targets = default_platform_targets()
@@ -242,7 +304,9 @@ def build_manifest_seed(requirement, source_case):
         "release": {
             "required": True,
             "target_sdk_version": requirement["target_sdk_version"],
-            "checks": collect_sdk_version_checks(requirement["target_sdk_version"]),
+            "checks": collect_sdk_version_checks(
+                requirement["target_sdk_version"], sources=version_sources
+            ),
             "skipped_checks": [],
         },
         "knowledge_updates": [],
@@ -273,9 +337,11 @@ def prepare_case_execution(
     sdk_family=None,
     key_apis=None,
     target_sdk_version=None,
+    repository_profile=DEFAULT_REPOSITORY_PROFILE,
 ):
     if not target_sdk_version:
         raise ValueError("target_sdk_version is required")
+    profile = load_repository_profile(repository_profile)
     backlog = generate_execution_units(matrix_path)
     matching = [
         unit for unit in backlog["execution_units"] if feature is None or unit["feature"] == feature
@@ -314,7 +380,9 @@ def prepare_case_execution(
             "Record cross-platform differences and final acceptance.",
             "Validate the manifest before applying matrix updates.",
         ],
-        "acceptance_manifest_seed": build_manifest_seed(requirement, source_case),
+        "acceptance_manifest_seed": build_manifest_seed(
+            requirement, source_case, profile["sdk_version_sources"]
+        ),
         "validation_command": "python3 docs/ai-engineering/tools/validate_acceptance_manifest.py <manifest.json>",
         "blockers": blockers,
     }
@@ -327,6 +395,7 @@ def main(argv=None):
     parser.add_argument("--sdk-family", help="Required when the feature is not actionable in the matrix")
     parser.add_argument("--key-api", action="append", help="Key SDK API; repeat for multiple APIs")
     parser.add_argument("--target-sdk-version", required=True)
+    parser.add_argument("--repository-profile", default=str(DEFAULT_REPOSITORY_PROFILE))
     parser.add_argument("--index", type=int, default=0)
     parser.add_argument("--output")
     args = parser.parse_args(argv)
@@ -338,6 +407,7 @@ def main(argv=None):
             sdk_family=args.sdk_family,
             key_apis=args.key_api,
             target_sdk_version=args.target_sdk_version,
+            repository_profile=Path(args.repository_profile),
         )
     except (OSError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

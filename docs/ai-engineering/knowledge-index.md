@@ -11,10 +11,11 @@ Use sources in this order:
 3. Platform `AGENTS.md` for platform selection and red lines.
 4. Project `AGENTS.md` for concrete commands and project-level skills.
 5. Project `ARCHITECTURE.md` for case index, registration rules, and canonical file layout.
-6. `docs/ai-engineering/case-maintenance-matrix.md` for cross-platform parity planning and known gaps.
-7. Existing project `.agent/skills/*/SKILL.md` for case query, creation, and review procedures.
-8. `docs/ai-engineering/release-known-issues.md` for release packaging and pipeline risks.
-9. Repository hooks and platform build scripts for final verification.
+6. `docs/ai-engineering/repository-profile.json` for repository-specific SDK package names and version sources.
+7. `docs/ai-engineering/case-maintenance-matrix.md` for cross-platform parity planning and known gaps.
+8. Existing project `.agent/skills/*/SKILL.md` or `.agents/skills/*/SKILL.md` for case query, creation, and review procedures.
+9. `docs/ai-engineering/release-known-issues.md` for release packaging and pipeline risks.
+10. Repository hooks and platform build scripts for final verification.
 
 Do not use memory or sibling repositories as the source of truth when the current checkout has conflicting instructions. Treat external knowledge as a hint, then verify it against this repository.
 
@@ -62,6 +63,12 @@ If the product request does not name a platform, default to Android, iOS, macOS,
 | `windows/` | `upsert-case`, `review-case` |
 
 The repository-level orchestration skill is `.agent/skills/api-example-release-iteration/SKILL.md`.
+
+## Repository Profile
+
+`docs/ai-engineering/repository-profile.json` contains the SDK version sources that differ between API Examples distributions. Shared Python tools parse source kinds such as Gradle properties, CocoaPods packages, and SDK archive names without embedding distribution package names in code.
+
+The orchestrator stores the profile path and SHA-256 in the execution package and input snapshots. Dispatch and assembly stop if the checked-in profile changes after initialization. Coverage state and historical knowledge do not belong in this profile; keep them in the matrix and durable knowledge documents.
 
 ## Codex Role Routing
 
@@ -145,7 +152,7 @@ Where to write it:
 - Cross-platform routing or implementation traps: `docs/ai-engineering/knowledge-index.md`.
 - Release, signing, CI, packaging, license, or SDK-version risks: `docs/ai-engineering/release-known-issues.md`.
 - Case coverage state: `docs/ai-engineering/case-maintenance-matrix.md`.
-- Project-specific implementation traps: the target project `ARCHITECTURE.md` or `.agent/skills/*/SKILL.md`.
+- Project-specific implementation traps: the target project `ARCHITECTURE.md`, `.agent/skills/*/SKILL.md`, or `.agents/skills/*/SKILL.md`.
 
 Do not duplicate the same rule in every file. Put the durable rule at the lowest scope that future agents must read.
 

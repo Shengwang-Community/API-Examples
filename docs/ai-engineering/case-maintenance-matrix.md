@@ -1,6 +1,6 @@
 # API Examples Case Maintenance Matrix
 
-This matrix is the planning artifact for cross-platform API Example parity work. It does not replace platform `AGENTS.md`, project `ARCHITECTURE.md`, or project `.agent/skills/*`; every row must be verified against the target project before implementation.
+This matrix is the planning artifact for cross-platform API Example parity work. It does not replace platform `AGENTS.md`, project `ARCHITECTURE.md`, or project `.agent/skills/*` / `.agents/skills/*`; every row must be verified against the target project before implementation.
 
 ## How To Use
 

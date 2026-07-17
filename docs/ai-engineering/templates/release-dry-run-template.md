@@ -20,6 +20,7 @@ Do not fill this template with stale values from an older run. Re-check the live
 - `AGENTS.md`
 - `.agent/skills/api-example-release-iteration/SKILL.md`
 - `docs/ai-engineering/knowledge-index.md`
+- `docs/ai-engineering/repository-profile.json`
 - `docs/ai-engineering/release-iteration-gate.md`
 - `docs/ai-engineering/release-known-issues.md`
 - Platform `AGENTS.md` files:

@@ -24,6 +24,8 @@ python3 docs/ai-engineering/tools/orchestrate_case_execution.py init \
 
 For a new feature outside the matrix backlog, add `--sdk-family "Full RTC" --key-api "<API>"`; repeat `--key-api` for multiple APIs.
 
+The default `docs/ai-engineering/repository-profile.json` defines repository-specific SDK version sources. Shared tools support Gradle property, CocoaPods package, and SDK archive-name sources without hard-coding a distribution in Python. `init` accepts `--repository-profile` for a checked-in alternative and binds its path and SHA-256 into the execution package.
+
 Dispatch Contract, then the two platform phases:
 
 ```bash
@@ -39,7 +41,7 @@ python3 docs/ai-engineering/tools/orchestrate_case_execution.py dispatch \
 
 Omitting `--platform` covers Android, iOS, macOS, and Windows. Implementation runs are serialized in a shared checkout and reconciled before the next agent starts; Verification runs execute concurrently. Use `--platform windows` for one platform. Use `--retry` only to replace a prior `FAIL` or `BLOCKED` artifact; an Implementation retry automatically invalidates that platform's old Verification.
 
-Each run starts in the Contract-selected target project, writes independent stdout/stderr logs, records its host platform, and has a 900-second default timeout. Input snapshots bind the execution package, current repository state, routing config, and dependency artifact hashes. This lets Codex load nested platform/project `AGENTS.md` files automatically. `--dry-run` resolves prompts, content-aware snapshots, models, working directories, and commands without starting Codex.
+Each run starts in the Contract-selected target project, writes independent stdout/stderr logs, records its host platform, and has a 900-second default timeout. Input snapshots bind the execution package, current repository state, routing config, repository profile, and dependency artifact hashes. This lets Codex load nested platform/project `AGENTS.md` files automatically. `--dry-run` resolves prompts, content-aware snapshots, models, working directories, and commands without starting Codex.
 
 Verification PASS/FAIL commands are accepted only when their exact command string and exit code exist in the hashed Codex JSONL log. Build commands must execute a real target-platform build action from the Contract working directory; Windows build `PASS` additionally requires a Windows host. Contract and Verification may create ignored build output but fail if they modify tracked or untracked repository content. Implementation `files_changed` is derived from the real per-run repository delta rather than trusted from model output.
 
@@ -80,7 +82,8 @@ python3 docs/ai-engineering/tools/orchestrate_case_execution.py dispatch \
 ```bash
 python3 docs/ai-engineering/tools/prepare_case_execution.py \
   --feature "Join channel audio" \
-  --target-sdk-version "4.6.4"
+  --target-sdk-version "4.6.4" \
+  --repository-profile docs/ai-engineering/repository-profile.json
 python3 docs/ai-engineering/tools/validate_acceptance_manifest.py <manifest.json>
 ```
 

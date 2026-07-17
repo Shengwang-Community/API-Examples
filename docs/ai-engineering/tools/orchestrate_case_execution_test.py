@@ -218,6 +218,7 @@ class RequirementOrchestratorTest(unittest.TestCase):
             self.init_workspace(matrix_path, run_dir)
 
             manifest = json.loads((run_dir / "acceptance-manifest.json").read_text())
+            package = json.loads((run_dir / "execution-package.json").read_text())
             artifact_names = sorted(path.stem for path in (run_dir / "role-artifacts").glob("*.json"))
             expected = ["contract"] + [
                 f"{platform}-{role}"
@@ -227,6 +228,42 @@ class RequirementOrchestratorTest(unittest.TestCase):
             self.assertEqual(artifact_names, sorted(expected))
             self.assertEqual(sorted(manifest["platforms"]), PLATFORMS)
             self.assertNotIn("roles", manifest)
+            self.assertEqual(
+                package["repository_profile"],
+                "docs/ai-engineering/repository-profile.json",
+            )
+            self.assertEqual(len(package["repository_profile_sha256"]), 64)
+
+    def test_execution_configuration_rejects_repository_profile_drift(self):
+        routing_path = REPO_ROOT / "docs/ai-engineering/role-routing.json"
+        package = {
+            "routing_config": "docs/ai-engineering/role-routing.json",
+            "routing_config_sha256": orchestrator.sha256_file(routing_path),
+            "repository_profile": "docs/ai-engineering/repository-profile.json",
+            "repository_profile_sha256": "0" * 64,
+        }
+
+        with self.assertRaisesRegex(ValueError, "repository profile content changed"):
+            orchestrator.validate_execution_configuration(package, routing_path)
+
+    def test_contract_input_snapshot_binds_repository_profile(self):
+        matrix_path = self.write_matrix()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            run_dir = Path(tmpdir) / "run"
+            self.init_workspace(matrix_path, run_dir)
+            codex_bin = self.write_fake_codex(tmpdir)
+            self.dispatch_contract(run_dir, codex_bin)
+
+            package = json.loads((run_dir / "execution-package.json").read_text())
+            artifact = json.loads((run_dir / "role-artifacts/contract.json").read_text())
+            snapshot_path = run_dir / artifact["dispatch"]["input_snapshot"]
+            snapshot = json.loads(snapshot_path.read_text())
+
+            self.assertEqual(snapshot["repository_profile"], package["repository_profile"])
+            self.assertEqual(
+                snapshot["repository_profile_sha256"],
+                package["repository_profile_sha256"],
+            )
 
     def test_init_accepts_new_requirement_outside_the_matrix_backlog(self):
         matrix_path = self.write_matrix()

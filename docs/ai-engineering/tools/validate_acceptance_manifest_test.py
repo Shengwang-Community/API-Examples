@@ -11,7 +11,11 @@ TOOLS_DIR = Path(__file__).resolve().parent
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
 
-from validate_acceptance_manifest import validate_evidence_files, validate_manifest
+from validate_acceptance_manifest import (
+    is_durable_knowledge_path,
+    validate_evidence_files,
+    validate_manifest,
+)
 
 
 PLATFORMS = ["android", "ios", "macos", "windows"]
@@ -624,6 +628,14 @@ class AcceptanceManifestValidatorTest(unittest.TestCase):
         ]
 
         self.assert_error_contains(manifest, "knowledge_updates require at least one durable knowledge")
+
+    def test_durable_knowledge_accepts_both_skill_directory_conventions(self):
+        self.assertTrue(is_durable_knowledge_path(".agent/skills/review-case/SKILL.md"))
+        self.assertTrue(
+            is_durable_knowledge_path(
+                "Android/APIExample/.agents/skills/review-case/SKILL.md"
+            )
+        )
 
     def test_evidence_files_are_rehashed_from_manifest_directory(self):
         manifest = base_manifest()

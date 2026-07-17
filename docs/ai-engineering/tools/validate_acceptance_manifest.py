@@ -80,6 +80,7 @@ DURABLE_KNOWLEDGE_PATHS = {
     "docs/ai-engineering/release-iteration-gate.md",
     "docs/ai-engineering/release-known-issues.md",
     "docs/ai-engineering/case-maintenance-matrix.md",
+    "docs/ai-engineering/repository-profile.json",
     "docs/ai-engineering/role-routing.json",
 }
 PLACEHOLDER_RE = re.compile(r"<[^>\n]+>")
@@ -1064,6 +1065,8 @@ def is_durable_knowledge_path(path_text):
         or normalized.endswith("/ARCHITECTURE.md")
         or normalized.startswith(".agent/skills/")
         or "/.agent/skills/" in normalized
+        or normalized.startswith(".agents/skills/")
+        or "/.agents/skills/" in normalized
     )
 
 

@@ -15,7 +15,7 @@ Contract runs once. In a shared checkout, Android/iOS/macOS/Windows Implementati
 
 ## Intake Gate
 
-Before Contract starts, identify feature behavior, SDK family, key APIs, target SDK version, reference case, expected user flow, repository scope, and available target verification hosts. All four top-level platforms are required by default. Contract may choose the appropriate project variant per platform.
+Before Contract starts, identify feature behavior, SDK family, key APIs, target SDK version, reference case, expected user flow, repository scope, and available target verification hosts. Confirm that the checked-in repository profile describes the current SDK package names and version sources. All four top-level platforms are required by default. Contract may choose the appropriate project variant per platform.
 
 ## Contract Gate
 
@@ -122,7 +122,7 @@ python3 docs/ai-engineering/tools/orchestrate_case_execution.py dispatch \
 
 If the product requirement is not yet an actionable matrix row, initialize it directly with `--sdk-family` and one or more `--key-api` arguments.
 
-Omitting `--platform` dispatches all four platform roles. Implementation runs are serialized in the shared checkout and reconciled after each run; Verification runs execute concurrently. Each independent `codex exec` run has a timeout, host provenance, a target-project working directory, and a hashed JSONL log. A prior `FAIL`/`BLOCKED` platform artifact can be replaced with `--retry`.
+Omitting `--platform` dispatches all four platform roles. Implementation runs are serialized in the shared checkout and reconciled after each run; Verification runs execute concurrently. Each independent `codex exec` run has a timeout, host provenance, a target-project working directory, and a hashed JSONL log. The execution package and input snapshots bind the checked-in repository profile by path and SHA-256. A prior `FAIL`/`BLOCKED` platform artifact can be replaced with `--retry`.
 
 ## Automation Boundary
 

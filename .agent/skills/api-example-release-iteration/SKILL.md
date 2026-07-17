@@ -21,7 +21,7 @@ Android, iOS, macOS, and Windows are required by default. Contract may choose th
 
 ## Source Route
 
-Read root `AGENTS.md`, this knowledge index and gate, then each platform/project `AGENTS.md`, `ARCHITECTURE.md`, and available `query-cases`, `upsert-case`, and `review-case` skills. Read `release-known-issues.md` only for release, SDK version, CI, signing, packaging, license, or third-party asset work.
+Read root `AGENTS.md`, the repository profile, this knowledge index and gate, then each platform/project `AGENTS.md`, `ARCHITECTURE.md`, and available `query-cases`, `upsert-case`, and `review-case` skills. Project skills may use either `.agent/skills/` or `.agents/skills/`. Read `release-known-issues.md` only for release, SDK version, CI, signing, packaging, license, or third-party asset work.
 
 ## Agent Topology
 
@@ -56,6 +56,8 @@ python3 docs/ai-engineering/tools/orchestrate_case_execution.py init \
   --target-sdk-version "<version>" \
   --run-dir /tmp/api-example-requirement
 ```
+
+The default `docs/ai-engineering/repository-profile.json` supplies repository-specific SDK package names and version sources. Use `--repository-profile` only for a checked-in alternative profile. The execution package records its repository-relative path and SHA-256.
 
 For a new requirement not yet actionable in the matrix, also pass `--sdk-family "<family>"` and repeat `--key-api "<API>"` as needed.
 
