@@ -162,17 +162,6 @@ def base_manifest():
                 }
                 for platform in PLATFORMS
             ],
-            "qa_acceptance": {
-                "ci_job_url": "https://ci.example.com/job/api-examples/464",
-                "ci_build_number": "464",
-                "artifacts": {
-                    platform: f"https://artifacts.example.com/4.6.4/{platform}"
-                    for platform in PLATFORMS
-                },
-                "result": "PASS",
-                "owner": "qa-owner",
-                "evidence": "QA accepted CI build 464.",
-            },
             "skipped_checks": [],
         },
         "knowledge_updates": [],
@@ -223,7 +212,7 @@ class AcceptanceManifestValidatorTest(unittest.TestCase):
         manifest["final_status"] = "BLOCKED"
         manifest["cross_platform_acceptance"] = {
             "result": "BLOCKED",
-            "evidence": "Windows CI is pending.",
+            "evidence": "Windows-host verification is pending.",
             "differences": [],
         }
         verification = manifest["platforms"]["windows"]["verification"]
@@ -236,7 +225,7 @@ class AcceptanceManifestValidatorTest(unittest.TestCase):
                     "artifact": "role-artifacts/windows-verification.json",
                 },
                 "status": "BLOCKED",
-                "evidence": "Windows target build requires Windows CI.",
+                "evidence": "Windows target build requires a Windows host.",
                 "summary": "Windows verification pending.",
                 "output": {
                     "result": "BLOCKED",
@@ -471,22 +460,11 @@ class AcceptanceManifestValidatorTest(unittest.TestCase):
 
         self.assert_error_contains(manifest, "sdk-version-android actual versions must all match 4.6.4")
 
-    def test_non_blocked_acceptance_requires_all_ci_artifacts(self):
+    def test_rejects_external_ci_and_qa_metadata(self):
         manifest = base_manifest()
-        manifest["release"]["qa_acceptance"]["artifacts"]["windows"] = ""
+        manifest["release"]["qa_acceptance"] = {}
 
-        self.assert_error_contains(
-            manifest, "release.qa_acceptance.artifacts.windows is required"
-        )
-
-    def test_non_blocked_acceptance_requires_qa_pass(self):
-        manifest = base_manifest()
-        manifest["release"]["qa_acceptance"]["result"] = "BLOCKED"
-
-        self.assert_error_contains(
-            manifest,
-            "non-BLOCKED acceptance requires release.qa_acceptance.result=PASS",
-        )
+        self.assert_error_contains(manifest, "unsupported release field: qa_acceptance")
 
     def test_non_blocked_release_rejects_skipped_checks(self):
         manifest = base_manifest()

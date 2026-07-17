@@ -2,7 +2,7 @@
 
 Source: [API Example release issue list](https://confluence.agoralab.co/pages/viewpage.action?pageId=1898512518), Confluence page `1898512518`, version 13.
 
-Use this file as the local release-risk checklist for API Examples. The Confluence page remains the source for team discussion history; this document keeps the actionable gates close to the repository workflow.
+Use this file as reference knowledge for API Examples release risks. The repository acceptance manifest does not own Jenkins packaging, QA validation, artifact distribution, or website publication.
 
 ## Release Risk Checklist
 
@@ -17,7 +17,7 @@ Use this file as the local release-risk checklist for API Examples. The Confluen
 | Pipeline integration | API Examples release pipelines depend on SDK release pipeline integration and CI team configuration. | Confirm domestic and overseas pipeline status before declaring release automation ready. |
 | Manual release process | Release handbooks can drift from current scripts and pipeline behavior. | Review operation manuals when packaging scripts, signing, or pipeline entrypoints change. |
 | Smoke testing time | Manual self-test time can exceed the release window. | Prefer a minimum automated smoke plan; record unsupported platforms or device coverage gaps explicitly. |
-| CI and QA traceability | A locally successful build can be mistaken for the CI package that QA actually verified. | Require the CI job/build number, four platform artifact URLs, and QA owner/result/evidence before release acceptance. |
+| External packaging handoff | Repository verification can be mistaken for completed packaging or QA. | Treat Jenkins packaging and QA as downstream processes; do not store their URLs or completion state in the repository acceptance manifest. |
 
 ## Release Branch Gate
 
@@ -30,9 +30,8 @@ When creating or validating a release branch:
    - macOS: `macOS/Podfile`.
    - Windows: project SDK package or dependency location used by the build scripts.
 3. Verify Android Extension `include` files when SDK headers are part of the case.
-4. Run or review the relevant CI packaging path for changed platforms.
-5. Record skipped build checks with owner, reason, and follow-up.
-6. Run the repository SDK-version checker through manifest assembly and require every recorded source to equal the target version.
+4. Record skipped repository build checks with a reason and follow-up.
+5. Run the repository SDK-version checker through manifest assembly and require every recorded source to equal the target version.
 
 ## Packaging Gate
 
@@ -43,7 +42,7 @@ Before declaring packaging ready:
 3. Confirm Windows scripts are not affected by path length or permission changes.
 4. Confirm third-party license assets required by sample cases are valid.
 5. Confirm API Examples pipeline integration status for the target distribution region.
-6. Record the CI job/build number, four platform artifacts, and QA acceptance evidence.
+6. Hand off to Jenkins and QA without importing external job or artifact metadata into the repository manifest.
 
 ## Automation Backlog
 
@@ -56,4 +55,3 @@ These items should be considered automation candidates rather than one-time manu
 - iOS/macOS certificate expiration printing in CI.
 - Windows path length and script permission preflight.
 - Minimal Android/iOS device smoke, with BrowserStack or equivalent if approved.
-- CI artifact and QA acceptance evidence capture.

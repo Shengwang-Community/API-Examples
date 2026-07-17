@@ -51,16 +51,16 @@ python3 docs/ai-engineering/tools/orchestrate_case_execution.py assemble \
   --matrix docs/ai-engineering/case-maintenance-matrix.md \
   --final-status "BLOCKED" \
   --cross-platform-result "BLOCKED" \
-  --cross-platform-evidence "Windows CI pending"
+  --cross-platform-evidence "Windows-host verification pending"
 ```
 
 Manifest v4 stores one shared Contract and one Implementation/Verification pair per official platform. Implementation retries preserve attempt history and expose one cumulative net delta whose file list must match the manifest. Matrix updates are applied only after structural and evidence-file validation and never for final `BLOCKED`. Assembly also refreshes all live platform SDK dependency versions.
 
-For non-`BLOCKED` acceptance, add `--ci-job-url`, `--ci-build-number`, one `--artifact-url platform=<url>` for each platform, `--qa-result PASS`, `--qa-owner`, and `--qa-evidence`. This is the repository handoff point; external website publication is not part of the manifest.
+Assembly does not accept CI job URLs, package artifact URLs, or QA metadata. Jenkins packaging, QA validation, artifact distribution, and website publication are external handoff processes rather than repository acceptance gates.
 
 ## macOS And Windows
 
-Windows Verification on macOS is static review only. It must not download Windows SDKs, emulate, cross-compile, or treat another compiler as MSBuild evidence. Keep the Windows artifact `BLOCKED`, then replace it from Windows CI with:
+Windows Verification on macOS is static review only. It must not download Windows SDKs, emulate, cross-compile, or treat another compiler as MSBuild evidence. Keep the Windows artifact `BLOCKED`, then replace it from a real Windows host with:
 
 ```bash
 python3 docs/ai-engineering/tools/orchestrate_case_execution.py dispatch \

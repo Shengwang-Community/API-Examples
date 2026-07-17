@@ -35,15 +35,7 @@ REQUIRED_TOP_LEVEL = {
     "knowledge_updates",
 }
 REQUIREMENT_FIELDS = {"feature", "sdk_family", "key_apis", "target_sdk_version"}
-RELEASE_FIELDS = {"required", "target_sdk_version", "checks", "qa_acceptance", "skipped_checks"}
-QA_ACCEPTANCE_FIELDS = {
-    "ci_job_url",
-    "ci_build_number",
-    "artifacts",
-    "result",
-    "owner",
-    "evidence",
-}
+RELEASE_FIELDS = {"required", "target_sdk_version", "checks", "skipped_checks"}
 CONTRACT_OUTPUT_FIELDS = {
     "scenario",
     "key_apis",
@@ -983,47 +975,11 @@ def validate_release(manifest, errors):
                 errors.append(
                     f"non-BLOCKED acceptance requires {check.get('name')}=PASS"
                 )
-    validate_qa_acceptance(release.get("qa_acceptance"), manifest, errors)
     for index, skipped in enumerate(release.get("skipped_checks", [])):
         if not isinstance(skipped, dict) or not skipped.get("reason"):
             errors.append(f"release.skipped_checks[{index}].reason is required")
     if manifest.get("final_status") != "BLOCKED" and release.get("skipped_checks"):
         errors.append("non-BLOCKED acceptance cannot include skipped release checks")
-
-
-def validate_qa_acceptance(qa, manifest, errors):
-    if not isinstance(qa, dict):
-        errors.append("release.qa_acceptance must be an object")
-        return
-    for field in sorted(set(qa) - QA_ACCEPTANCE_FIELDS):
-        errors.append(f"unsupported release.qa_acceptance field: {field}")
-    result = qa.get("result")
-    validate_result(result, "release.qa_acceptance.result", manifest.get("final_status"), errors)
-    if manifest.get("final_status") == "BLOCKED":
-        return
-    if not is_http_url(qa.get("ci_job_url")):
-        errors.append("release.qa_acceptance.ci_job_url is required as an HTTP URL")
-    if not is_non_empty(qa.get("ci_build_number")):
-        errors.append("release.qa_acceptance.ci_build_number is required")
-    artifacts = qa.get("artifacts")
-    if not isinstance(artifacts, dict):
-        errors.append("release.qa_acceptance.artifacts must be an object")
-    else:
-        for platform in PLATFORMS:
-            if not is_http_url(artifacts.get(platform)):
-                errors.append(
-                    f"release.qa_acceptance.artifacts.{platform} is required as an HTTP URL"
-                )
-    if result != "PASS":
-        errors.append("non-BLOCKED acceptance requires release.qa_acceptance.result=PASS")
-    for field in ["owner", "evidence"]:
-        if not is_non_empty(qa.get(field)):
-            errors.append(f"release.qa_acceptance.{field} is required")
-
-
-def is_http_url(value):
-    return isinstance(value, str) and value.startswith(("https://", "http://"))
-
 
 def validate_knowledge_updates(manifest, errors):
     updates = manifest.get("knowledge_updates", [])

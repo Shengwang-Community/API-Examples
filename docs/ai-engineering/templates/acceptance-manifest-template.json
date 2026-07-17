@@ -267,19 +267,6 @@
         "reason": "Pending live Windows SDK version check."
       }
     ],
-    "qa_acceptance": {
-      "ci_job_url": "",
-      "ci_build_number": "",
-      "artifacts": {
-        "android": "",
-        "ios": "",
-        "macos": "",
-        "windows": ""
-      },
-      "result": "BLOCKED",
-      "owner": "",
-      "evidence": ""
-    },
     "skipped_checks": []
   },
   "knowledge_updates": []

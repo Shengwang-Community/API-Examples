@@ -15,7 +15,7 @@ Contract runs once. In a shared checkout, Android/iOS/macOS/Windows Implementati
 
 ## Intake Gate
 
-Before Contract starts, identify feature behavior, SDK family, key APIs, target SDK version, reference case, expected user flow, release scope, and available target build/CI workers. All four top-level platforms are required by default. Contract may choose the appropriate project variant per platform.
+Before Contract starts, identify feature behavior, SDK family, key APIs, target SDK version, reference case, expected user flow, repository scope, and available target verification hosts. All four top-level platforms are required by default. Contract may choose the appropriate project variant per platform.
 
 ## Contract Gate
 
@@ -40,7 +40,7 @@ Each platform Implementation passes only when it:
 - Completes registration, localization, lifecycle cleanup, and architecture index updates.
 - Lets the orchestrator derive its real platform file delta and records matrix proposals.
 
-Platform source roots are independent, but Implementation runs sharing one checkout are serialized so cross-root edits cannot be credited to the wrong agent. Each run refreshes an input snapshot bound to the execution package and dependency artifacts; retries retain attempt provenance and produce one cumulative net delta. Separate CI workspaces may execute them concurrently only when each produces an independently attributable patch.
+Platform source roots are independent, but Implementation runs sharing one checkout are serialized so cross-root edits cannot be credited to the wrong agent. Each run refreshes an input snapshot bound to the execution package and dependency artifacts; retries retain attempt provenance and produce one cumulative net delta. Separate workspaces may execute them concurrently only when each produces an independently attributable patch.
 
 ## Platform Verification Gate
 
@@ -48,7 +48,7 @@ Each Verification independently checks:
 
 - Contract/reference parity, SDK types/defaults, lifecycle, threading, errors, and cleanup.
 - Registration, display name, inputs, feedback, layout, and audio/video affordances.
-- The strongest valid build or static command on the current host/CI worker.
+- The strongest valid build or static command on the current verification host.
 - Each executed PASS/FAIL command is bound to the hashed Codex JSONL command event and exit code; build results use recognized platform build actions from the Contract working directory.
 - Dispatch provenance records the host platform. Windows build `PASS` requires a Windows host.
 - The Verification run does not modify tracked or untracked repository content.
@@ -58,7 +58,7 @@ For non-`BLOCKED` acceptance, every required platform needs role status, review 
 
 ## Host Mismatch
 
-Host mismatch never authorizes SDK downloads, emulation, cross-compilation, or substitute compilers as evidence. On macOS, Windows Verification may report static findings but must keep `build_result=BLOCKED` and role status `BLOCKED`. Windows CI can replace that artifact using `--platform windows --retry`.
+Host mismatch never authorizes SDK downloads, emulation, cross-compilation, or substitute compilers as evidence. On macOS, Windows Verification may report static findings but must keep `build_result=BLOCKED` and role status `BLOCKED`. A retry on a real Windows host can replace that artifact using `--platform windows --retry`.
 
 ## Cross-Platform Gate
 
@@ -72,16 +72,9 @@ Any required platform blocker or cross-platform result other than `PASS` forces 
 
 ## Release Checklist
 
-Release is mandatory manifest data, not an agent. `requirement.target_sdk_version` and `release.target_sdk_version` must match. The orchestrator refreshes Android, iOS, macOS, and Windows dependency versions from live repository files during assembly.
+Release is mandatory manifest data, not an agent. `requirement.target_sdk_version` and `release.target_sdk_version` must match. The orchestrator refreshes Android, iOS, macOS, and Windows dependency versions from live repository files during assembly. Non-`BLOCKED` acceptance requires all SDK-version checks to pass and permits no skipped repository release checks.
 
-For non-`BLOCKED` acceptance, CI and QA additionally require:
-
-- A traceable CI job URL and build number.
-- One CI artifact URL for Android, iOS, macOS, and Windows.
-- QA result `PASS`, QA owner, and acceptance evidence.
-- No skipped release checks.
-
-External website publication is outside this repository workflow. A final `PASS` means the API Examples release is ready for that handoff.
+Jenkins packaging, QA validation, artifact URLs, and external website publication are downstream processes outside this repository workflow. A final `PASS` means the API Example source and repository checks are ready for that external handoff; the manifest does not represent packaging or QA completion.
 
 ## Manifest V4
 
@@ -106,7 +99,7 @@ Validate it with:
 python3 docs/ai-engineering/tools/validate_acceptance_manifest.py <manifest.json>
 ```
 
-The validator enforces platform completeness, unique agent/run provenance, Contract target boundaries, platform result closure, cross-platform closure, matrix rules, CI/QA checks, repository paths, evidence-file hashes, and knowledge writeback.
+The validator enforces platform completeness, unique agent/run provenance, Contract target boundaries, platform result closure, cross-platform closure, matrix rules, SDK-version checks, repository paths, evidence-file hashes, and knowledge writeback.
 
 ## Orchestration
 
@@ -133,7 +126,7 @@ Omitting `--platform` dispatches all four platform roles. Implementation runs ar
 
 ## Automation Boundary
 
-The tools prepare platform agents, serialize shared-checkout implementation, parallelize immutable verification, enforce dependencies/timeouts, validate v4, and gate matrix changes. The Lead still approves phase advancement, retries, intentional differences, CI/QA evidence, and final status.
+The tools prepare platform agents, serialize shared-checkout implementation, parallelize immutable verification, enforce dependencies/timeouts, validate v4, and gate matrix changes. The Lead still approves phase advancement, retries, intentional differences, and final status.
 
 ## Final Summary
 
@@ -155,7 +148,8 @@ Cross-platform:
 - Intentional differences:
 
 Release:
-- SDK checks, CI build/artifacts, QA result:
+- SDK-version checks:
+- External handoff required: Jenkins packaging and QA
 
 Manifest:
 - Path/validation:

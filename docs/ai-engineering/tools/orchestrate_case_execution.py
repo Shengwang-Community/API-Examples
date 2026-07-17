@@ -1289,7 +1289,6 @@ def assemble_workspace(args):
     manifest["release"]["checks"] = collect_sdk_version_checks(
         manifest["requirement"]["target_sdk_version"]
     )
-    apply_qa_acceptance_evidence(manifest["release"]["qa_acceptance"], args)
     errors = validate_manifest(manifest)
     errors.extend(validate_evidence_files(manifest, run_dir))
     if errors:
@@ -1305,34 +1304,6 @@ def assemble_workspace(args):
     write_json(output_path, manifest)
     print(f"Acceptance manifest valid: {output_path}")
     return 0
-
-
-def apply_qa_acceptance_evidence(qa, args):
-    qa["artifacts"].update(
-        parse_key_value_args(args.artifact_url, set(PLATFORMS), "--artifact-url")
-    )
-    for field, value in [
-        ("ci_job_url", args.ci_job_url),
-        ("ci_build_number", args.ci_build_number),
-        ("owner", args.qa_owner),
-        ("evidence", args.qa_evidence),
-    ]:
-        if value is not None:
-            qa[field] = value
-    qa["result"] = args.qa_result
-
-
-def parse_key_value_args(values, allowed_keys, flag):
-    parsed = {}
-    for value in values:
-        key, separator, item = value.partition("=")
-        if not separator or key not in allowed_keys or not item:
-            raise ValueError(
-                f"{flag} must use one of {', '.join(sorted(allowed_keys))}=<url>"
-            )
-        parsed[key] = item
-    return parsed
-
 
 def load_role_artifacts(artifact_dir):
     artifacts = {}
@@ -1567,20 +1538,6 @@ def main(argv=None):
         "--cross-platform-evidence", default="Pending required platform verification."
     )
     assemble_parser.add_argument("--cross-platform-difference", action="append", default=[])
-    assemble_parser.add_argument(
-        "--artifact-url",
-        action="append",
-        default=[],
-        help="CI artifact as platform=<url>; repeat for every platform",
-    )
-    assemble_parser.add_argument("--ci-job-url")
-    assemble_parser.add_argument("--ci-build-number")
-    assemble_parser.add_argument(
-        "--qa-result", choices=["PASS", "FAIL", "BLOCKED"], default="BLOCKED"
-    )
-    assemble_parser.add_argument("--qa-owner")
-    assemble_parser.add_argument("--qa-evidence")
-
     args = parser.parse_args(argv)
     try:
         if getattr(args, "timeout_seconds", 1) <= 0:

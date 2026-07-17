@@ -1,6 +1,6 @@
 ---
 name: api-example-release-iteration
-description: Use when turning an RTC API Examples product requirement into aligned Android, iOS, macOS, and Windows changes with attributed implementation, independent verification, and release acceptance
+description: Use when turning an RTC API Examples product requirement into aligned Android, iOS, macOS, and Windows changes with attributed implementation and independent repository acceptance
 ---
 
 # API Example Release Iteration
@@ -12,9 +12,9 @@ Use this skill for one product requirement across all official platform families
 Identify before editing:
 
 - Product scenario and key RTC SDK APIs.
-- New case, existing case update, docs-only, or CI/release work.
+- New case, existing case update, docs-only, or SDK-version work.
 - Reference case for behavior and parity.
-- Verification budget and available platform/CI workers.
+- Verification budget and available platform hosts.
 - Target RTC SDK version.
 
 Android, iOS, macOS, and Windows are required by default. Contract may choose the appropriate full/audio/Compose/UIKit/Objective-C project for each platform; marking a platform not required needs an explicit waiver reason.
@@ -35,7 +35,7 @@ Lead
   Cross-platform acceptance
 ```
 
-This is one Lead plus nine independent `codex exec` runs. They are replayable release-pipeline runs, not parent-managed Codex subagent threads. Contract executes once. In a shared checkout, platform Implementation agents run one at a time so each repository delta belongs to one run; platform Verification agents run concurrently after their corresponding Implementation passes.
+This is one Lead plus nine independent `codex exec` runs. They are replayable requirement-workflow runs, not parent-managed Codex subagent threads. Contract executes once. In a shared checkout, platform Implementation agents run one at a time so each repository delta belongs to one run; platform Verification agents run concurrently after their corresponding Implementation passes.
 
 | Role Type | Responsibility | Profile |
 | --- | --- | --- |
@@ -92,16 +92,7 @@ python3 docs/ai-engineering/tools/orchestrate_case_execution.py assemble \
   --matrix docs/ai-engineering/case-maintenance-matrix.md \
   --final-status "<PASS|PASS WITH RISKS|BLOCKED>" \
   --cross-platform-result "<PASS|FAIL|BLOCKED>" \
-  --cross-platform-evidence "<evidence>" \
-  --ci-job-url "<url>" \
-  --ci-build-number "<build number>" \
-  --artifact-url android="<url>" \
-  --artifact-url ios="<url>" \
-  --artifact-url macos="<url>" \
-  --artifact-url windows="<url>" \
-  --qa-result PASS \
-  --qa-owner "<owner>" \
-  --qa-evidence "<evidence>"
+  --cross-platform-evidence "<evidence>"
 ```
 
 ## Platform Rules
@@ -110,19 +101,19 @@ python3 docs/ai-engineering/tools/orchestrate_case_execution.py assemble \
 - The dispatcher runs platform roles from that target project. In a shared checkout it refreshes the package/dependency snapshot, completes and reconciles one Implementation before starting the next, derives that role's cumulative net repository delta, and rejects changes outside Contract paths.
 - Each Implementation agent follows only its platform/project instructions.
 - Platform source files, dependencies, and build scripts are never shared across roots.
-- Verification covers code review, reference parity, discoverability, UX, and valid local/CI checks. Executed PASS/FAIL commands must bind to the Codex JSONL command event and exit code, Contract working directory, and recorded host platform.
+- Verification covers code review, reference parity, discoverability, UX, and valid checks on the current verification host. Executed PASS/FAIL commands must bind to the Codex JSONL command event and exit code, Contract working directory, and recorded host platform.
 - Contract and Verification runs may create ignored build output but must not modify tracked or untracked repository content.
 - A required platform `FAIL` or `BLOCKED` forces the whole requirement to `BLOCKED`.
 - Final non-`BLOCKED` acceptance requires all required platform review, parity, and build results to pass, plus cross-platform acceptance `PASS`.
 
 ## Host Mismatch
 
-On macOS, Windows Verification may perform repository-local static review only. It must not download Windows SDK archives, emulate Windows, cross-compile, or use a substitute compiler as build evidence. Keep Windows Verification and the requirement `BLOCKED` until Windows/MSBuild CI evidence is written through a platform retry.
+On macOS, Windows Verification may perform repository-local static review only. It must not download Windows SDK archives, emulate Windows, cross-compile, or use a substitute compiler as build evidence. Keep Windows Verification and the requirement `BLOCKED` until the Verification role is retried on a real Windows host with MSBuild evidence.
 
 ## Matrix And Release
 
-Each platform Implementation may propose zero or more matrix updates. `DONE` requires final `PASS`, platform parity/build `PASS`, and no skipped checks. Release remains manifest data, not another agent, but is mandatory: all SDK dependency sources must match the target version, CI must provide four platform artifacts, and QA must record a passing result with owner and evidence. External website publication is outside this workflow.
+Each platform Implementation may propose zero or more matrix updates. `DONE` requires final `PASS`, platform parity/build `PASS`, and no skipped checks. Release data is limited to repository SDK-version consistency. Jenkins packaging, QA validation, artifact distribution, and external website publication are outside this workflow and must not be recorded as manifest gates.
 
 ## Final Output
 
-Report the shared Contract, each platform's files and Verification result, declared platform differences, release checks, manifest validation, and final status. Do not describe the workflow as fully autonomous: the Lead still advances phases, handles retries, and owns final cross-platform judgment.
+Report the shared Contract, each platform's files and Verification result, declared platform differences, SDK-version checks, manifest validation, and final status. Do not describe the workflow as fully autonomous: the Lead still advances phases, handles retries, and owns final cross-platform judgment.

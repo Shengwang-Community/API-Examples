@@ -14,7 +14,7 @@ Use sources in this order:
 6. `docs/ai-engineering/case-maintenance-matrix.md` for cross-platform parity planning and known gaps.
 7. Existing project `.agent/skills/*/SKILL.md` for case query, creation, and review procedures.
 8. `docs/ai-engineering/release-known-issues.md` for release packaging and pipeline risks.
-9. CI, hook, and build scripts for final verification.
+9. Repository hooks and platform build scripts for final verification.
 
 Do not use memory or sibling repositories as the source of truth when the current checkout has conflicting instructions. Treat external knowledge as a hint, then verify it against this repository.
 
@@ -77,7 +77,7 @@ Release checks are mandatory manifest data, not an agent phase. Every platform d
 
 ## Agent Acceptance Artifacts
 
-Use `docs/ai-engineering/templates/acceptance-manifest-template.json` when an iteration changes source, workflow gates, matrix state, CI/release logic, or docs that affect agent behavior.
+Use `docs/ai-engineering/templates/acceptance-manifest-template.json` when an iteration changes source, workflow gates, matrix state, SDK-version logic, or docs that affect agent behavior.
 
 Validate the filled manifest with:
 
@@ -203,7 +203,7 @@ Use `docs/ai-engineering/templates/release-dry-run-template.md` as the starting 
 | SDK dependency version is not bumped on release branch | Verify platform SDK version files against the release target. |
 | Model-declared build result is not backed by command telemetry | Bind each executed verification command to the hashed Codex JSONL log and exit code, and accept build status only for recognized platform build tools. |
 | Platform run misses nested instructions | Start `codex exec` in the Contract-selected target so root/platform/project `AGENTS.md` files load automatically. |
-| CI package and QA result are not traceable | Require CI job/build identity, four platform artifact URLs, and QA owner/result/evidence before non-`BLOCKED` acceptance. |
+| External packaging metadata leaks into repository acceptance | Keep Jenkins jobs, artifact URLs, QA evidence, and website publication outside the acceptance manifest. |
 | Windows packaging fails from path length or permissions | Run Windows script preflight after path or packaging changes. |
 
 ## Output Contract

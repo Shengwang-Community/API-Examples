@@ -58,7 +58,7 @@ class PrepareCaseExecutionTest(unittest.TestCase):
         self.assertEqual(manifest["requirement"]["target_sdk_version"], self.TARGET_SDK_VERSION)
         self.assertTrue(manifest["release"]["required"])
         self.assertEqual(manifest["release"]["target_sdk_version"], self.TARGET_SDK_VERSION)
-        self.assertEqual(manifest["release"]["qa_acceptance"]["result"], "BLOCKED")
+        self.assertNotIn("qa_acceptance", manifest["release"])
         self.assertNotIn("publication_channel", manifest["requirement"])
         self.assertNotIn("publication", manifest["release"])
         for platform in PLATFORMS:

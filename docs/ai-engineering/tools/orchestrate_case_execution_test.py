@@ -144,7 +144,7 @@ class RequirementOrchestratorTest(unittest.TestCase):
                             status = "BLOCKED"
                             output = {{
                                 "result": "BLOCKED",
-                                "findings": ["Windows build requires Windows CI."],
+                                "findings": ["Windows build requires a Windows host."],
                                 "parity_result": "PASS",
                                 "entry_point": "Basic > Join channel audio",
                                 "ux_notes": "Static review only on this host.",
@@ -917,7 +917,7 @@ class RequirementOrchestratorTest(unittest.TestCase):
                 "--cross-platform-result",
                 "BLOCKED",
                 "--cross-platform-evidence",
-                "Target SDK and Windows CI evidence are pending.",
+                "Target SDK and Windows-host build evidence are pending.",
             )
 
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
@@ -937,7 +937,7 @@ class RequirementOrchestratorTest(unittest.TestCase):
             )
             self.assertEqual(validation.returncode, 0, validation.stderr)
 
-    def test_pass_assemble_requires_ci_and_qa_evidence(self):
+    def test_assemble_reports_only_repository_gates_without_external_metadata(self):
         matrix_path = self.write_matrix()
         with tempfile.TemporaryDirectory() as tmpdir:
             run_dir = Path(tmpdir) / "run"
@@ -973,7 +973,8 @@ class RequirementOrchestratorTest(unittest.TestCase):
             )
 
             self.assertEqual(result.returncode, 1)
-            self.assertIn("release.qa_acceptance.ci_job_url is required", result.stderr)
+            self.assertIn("sdk-version-android", result.stderr)
+            self.assertNotIn("qa_acceptance", result.stderr)
 
     def test_assemble_rejects_matrix_path_changed_since_init(self):
         matrix_path = self.write_matrix()

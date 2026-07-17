@@ -179,17 +179,6 @@ def collect_sdk_version_checks(target_sdk_version, repo_root=REPO_ROOT, sources=
     return checks
 
 
-def build_qa_acceptance_seed():
-    return {
-        "ci_job_url": "",
-        "ci_build_number": "",
-        "artifacts": {platform: "" for platform in PLATFORMS},
-        "result": "BLOCKED",
-        "owner": "",
-        "evidence": "",
-    }
-
-
 def build_manifest_seed(requirement, source_case):
     reference_required = bool(source_case)
     reference_result = "BLOCKED" if reference_required else "SKIPPED"
@@ -254,7 +243,6 @@ def build_manifest_seed(requirement, source_case):
             "required": True,
             "target_sdk_version": requirement["target_sdk_version"],
             "checks": collect_sdk_version_checks(requirement["target_sdk_version"]),
-            "qa_acceptance": build_qa_acceptance_seed(),
             "skipped_checks": [],
         },
         "knowledge_updates": [],

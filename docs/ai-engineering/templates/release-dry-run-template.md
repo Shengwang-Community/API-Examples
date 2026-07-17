@@ -2,7 +2,7 @@
 
 Use this template only when a release dry run is intentionally selected as a repository-level evidence snapshot. Routine execution results should stay in the agent response, PR discussion, CI artifact, or task tracker.
 
-Do not fill this template with stale values from an older run. Re-check the live repository, target release version, and current CI evidence before completing every section.
+Do not fill this template with stale values from an older run. Re-check the live repository and target release version before completing every section.
 
 ## Scope
 
@@ -24,8 +24,7 @@ Do not fill this template with stale values from an older run. Re-check the live
 - `docs/ai-engineering/release-known-issues.md`
 - Platform `AGENTS.md` files:
 - Platform SDK version files:
-- CI/build scripts:
-- External evidence:
+- Platform build scripts:
 
 ## Findings
 
@@ -41,7 +40,7 @@ Status:
 
 Evidence:
 
-### Release Packaging Gate
+### Repository Release Gate
 
 Status:
 
@@ -49,13 +48,8 @@ Status:
 | --- | --- | --- |
 | SDK version consistency |  |  |
 | Android Extension include freshness |  |  |
-| Jenkins/build-machine reachability |  |  |
-| iOS/macOS certificate expiration |  |  |
 | Third-party beauty license validity |  |  |
-| Windows path length and permissions |  |  |
-| Pipeline integration status |  |  |
-| CI job/build and four platform artifacts |  |  |
-| QA owner, result, and evidence |  |  |
+| Repository build checks |  |  |
 
 ### Static Version Snapshot
 
@@ -125,9 +119,9 @@ Testing:
 Release:
 - Required:
 - Target SDK version:
-- Artifact URLs:
 - Checks:
 - Skipped checks:
+- External handoff: Jenkins packaging and QA
 
 UX:
 - Entry point:
