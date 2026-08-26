@@ -102,11 +102,6 @@ echo "-----------------------------------"
 cd ${PROJECT_PATH}
 
 #下载美颜资源
-echo "start download bytedance resource : $bytedance_lib"
-curl -L -O "$bytedance_lib"
-unzip -o vender_bytedance_iOS.zip
-rm -f vender_bytedance_iOS.zip
-
 echo "start download sense resource : $sense_lib"
 curl -L -O "$sense_lib"
 unzip -o vender_sense_iOS.zip
@@ -121,9 +116,8 @@ rm -f vender_fu_iOS.zip
 sed -i -e "s#\#  pod 'ijkplayer'#  pod 'ijkplayer'#g" Podfile
 
 #打开第三方美颜
-sed -i -e "s#\#  pod 'SenseLib'#  pod 'SenseLib'#g" Podfile
-sed -i -e "s#\#  pod 'bytedEffect'#  pod 'bytedEffect'#g" Podfile
-sed -i -e "s#\#  pod 'fuLib'#  pod 'fuLib'#g" Podfile
+sed -i -e "s#\#pod 'SenseLib'#pod 'SenseLib'#g" Podfile
+sed -i -e "s#\#pod 'fuLib'#pod 'fuLib'#g" Podfile
 
 echo "work space: $WORKSPACE"
 echo "project path: $PROJECT_PATH"
