@@ -53,7 +53,6 @@ class MenuController: NSViewController {
         MenuItem(name: "Spatial Audio".localized, identifier: "menuCell", controller: "SpatialAudio", storyboard: "SpatialAudio"),
         MenuItem(name: "Content Inspect".localized, identifier: "menuCell", controller: "ContentInspect", storyboard: "ContentInspect"),
         MenuItem(name: "Multi Camera Sourece".localized, identifier: "menuCell", controller: "MultiCameraSourece", storyboard: "MultiCameraSourece"),
-        MenuItem(name: "Face Capture".localized, identifier: "menuCell", controller: "FaceCapture", storyboard: "FaceCapture"),
         MenuItem(name: "URL Streaming(RTE Player)".localized, identifier: "menuCell", controller: "RtePlayer", storyboard: "RtePlayer"),
         MenuItem(name: "Multipath".localized, identifier: "menuCell", controller: "Multipath", storyboard: "Multipath"),
         MenuItem(name: "Simulcast".localized, identifier: "menuCell", controller: "Simulcast", storyboard: "Simulcast")
@@ -63,6 +62,10 @@ class MenuController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if Bundle.main.url(forResource: "AgoraBeautyMaterial", withExtension: "bundle") == nil {
+            menus.removeAll { $0.storyboard == "AgoraBeauty" }
+            tableView.reloadData()
+        }
     }
     
     @IBAction func onClickSetting(_ sender: NSButton) {
@@ -146,4 +149,3 @@ class ViewController: NSViewController {
         }
     }
 }
-

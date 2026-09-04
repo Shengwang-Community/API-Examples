@@ -142,9 +142,6 @@
 		E77D54D228F5649500D51C1E /* AgoraSampleBufferRender.m in Sources */ = {isa = PBXBuildFile; fileRef = E77D54D128F5649500D51C1E /* AgoraSampleBufferRender.m */; };
 		E77D54D628F56D3A00D51C1E /* sample.yuv in Resources */ = {isa = PBXBuildFile; fileRef = E77D54D528F56D3A00D51C1E /* sample.yuv */; };
 		E77D54D828F5702B00D51C1E /* SampleBufferDisplayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E77D54D728F5702B00D51C1E /* SampleBufferDisplayView.xib */; };
-		E7883AE02B046CB8003CCF44 /* FaceCapture.strings in Resources */ = {isa = PBXBuildFile; fileRef = E7883ADB2B046CB8003CCF44 /* FaceCapture.strings */; };
-		E7883AE12B046CB8003CCF44 /* FaceCapture.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7883ADD2B046CB8003CCF44 /* FaceCapture.storyboard */; };
-		E7883AE22B046CB8003CCF44 /* FaceCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7883ADF2B046CB8003CCF44 /* FaceCapture.swift */; };
 		E7899BD42860B2F600851463 /* NSData+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7899BD32860B2F600851463 /* NSData+Extension.swift */; };
 		E7AD0DEA29CAAF2B00C9A4B0 /* JoinChannelVideoRecorder.strings in Resources */ = {isa = PBXBuildFile; fileRef = E7AD0DE529CAAF2B00C9A4B0 /* JoinChannelVideoRecorder.strings */; };
 		E7AD0DEB29CAAF2B00C9A4B0 /* JoinChannelVideoRecorder.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7AD0DE729CAAF2B00C9A4B0 /* JoinChannelVideoRecorder.storyboard */; };
@@ -158,7 +155,6 @@
 		F734789C2DE956020030C0CE /* AgoraBeauty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F734789B2DE956020030C0CE /* AgoraBeauty.swift */; };
 		F734789F2DE9560F0030C0CE /* AgoraBeauty.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F734789D2DE9560F0030C0CE /* AgoraBeauty.storyboard */; };
 		F73478A12DE957CD0030C0CE /* AgoraBeautyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F73478A02DE957CD0030C0CE /* AgoraBeautyManager.swift */; };
-		F73479112DF192410030C0CE /* beauty_material.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F73479102DF192410030C0CE /* beauty_material.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -350,9 +346,6 @@
 		E77D54D128F5649500D51C1E /* AgoraSampleBufferRender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AgoraSampleBufferRender.m; sourceTree = "<group>"; };
 		E77D54D528F56D3A00D51C1E /* sample.yuv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sample.yuv; sourceTree = "<group>"; };
 		E77D54D728F5702B00D51C1E /* SampleBufferDisplayView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SampleBufferDisplayView.xib; sourceTree = "<group>"; };
-		E7883ADC2B046CB8003CCF44 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/FaceCapture.strings"; sourceTree = "<group>"; };
-		E7883ADE2B046CB8003CCF44 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/FaceCapture.storyboard; sourceTree = "<group>"; };
-		E7883ADF2B046CB8003CCF44 /* FaceCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceCapture.swift; sourceTree = "<group>"; };
 		E7899BD32860B2F600851463 /* NSData+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+Extension.swift"; sourceTree = "<group>"; };
 		E7AD0DE629CAAF2B00C9A4B0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/JoinChannelVideoRecorder.strings"; sourceTree = "<group>"; };
 		E7AD0DE829CAAF2B00C9A4B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/JoinChannelVideoRecorder.storyboard; sourceTree = "<group>"; };
@@ -366,7 +359,7 @@
 		F734789B2DE956020030C0CE /* AgoraBeauty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeauty.swift; sourceTree = "<group>"; };
 		F734789E2DE9560F0030C0CE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/AgoraBeauty.storyboard; sourceTree = "<group>"; };
 		F73478A02DE957CD0030C0CE /* AgoraBeautyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeautyManager.swift; sourceTree = "<group>"; };
-		F73479102DF192410030C0CE /* beauty_material.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = beauty_material.bundle; sourceTree = "<group>"; };
+		F73479102DF192410030C0CE /* AgoraBeautyMaterial.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AgoraBeautyMaterial.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -546,7 +539,7 @@
 		034C629D25297ABB00296ECF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F73479102DF192410030C0CE /* beauty_material.bundle */,
+				F73479102DF192410030C0CE /* AgoraBeautyMaterial.bundle */,
 				DD33C1AF2CBFBF4E0046F50C /* hlg-hdr.yuv */,
 				E7AD0DF829CD84F800C9A4B0 /* sample.mov */,
 				E77D54D528F56D3A00D51C1E /* sample.yuv */,
@@ -576,7 +569,6 @@
 				ABB90AF22DF85C69007FDDEB /* Simulcast */,
 				F734788C2DE9558D0030C0CE /* AgoraBeauty */,
 				DD33C1A92CBF9DEA0046F50C /* RtePlayer */,
-				E7883ADA2B046CB8003CCF44 /* FaceCapture */,
 				E732E9242A3960A2004403AF /* MultiCameraSourece */,
 				E7AD0DFA29CDA4F100C9A4B0 /* CustomVideoSourcePushMulti */,
 				E7AD0DEF29CAF78C00C9A4B0 /* LocalVideoTranscoding */,
@@ -922,16 +914,6 @@
 			path = "JoinChannelVideo(Token)";
 			sourceTree = "<group>";
 		};
-		E7883ADA2B046CB8003CCF44 /* FaceCapture */ = {
-			isa = PBXGroup;
-			children = (
-				E7883ADB2B046CB8003CCF44 /* FaceCapture.strings */,
-				E7883ADD2B046CB8003CCF44 /* FaceCapture.storyboard */,
-				E7883ADF2B046CB8003CCF44 /* FaceCapture.swift */,
-			);
-			path = FaceCapture;
-			sourceTree = "<group>";
-		};
 		E7AD0DE429CAAF2B00C9A4B0 /* JoinChannelVideo(Recorder) */ = {
 			isa = PBXGroup;
 			children = (
@@ -1012,6 +994,7 @@
 				03896D2A24F8A00F008593CD /* Resources */,
 				032C0FA2254873AC00D80A57 /* Embed Frameworks */,
 				D1D867115490181C41253FA3 /* [CP] Embed Pods Frameworks */,
+				F73479122DF192410030C0CE /* Copy Optional Beauty Resources */,
 			);
 			buildRules = (
 			);
@@ -1086,13 +1069,11 @@
 			files = (
 				DD962C642CBA491600B8AAA7 /* AgoraALD.driver in Resources */,
 				E77D54D828F5702B00D51C1E /* SampleBufferDisplayView.xib in Resources */,
-				F73479112DF192410030C0CE /* beauty_material.bundle in Resources */,
 				E7AD0DF929CD84F800C9A4B0 /* sample.mov in Resources */,
 				E75279D529F6737100358F18 /* LiveStreaming.storyboard in Resources */,
 				E77D54BF28F553DA00D51C1E /* JoinChannelVideoToken.storyboard in Resources */,
 				033A9FDB252EB05A00BC26E1 /* PrecallTest.storyboard in Resources */,
 				E7AD0E0029CDA4F100C9A4B0 /* CustomVideoSourcePushMulti.strings in Resources */,
-				E7883AE12B046CB8003CCF44 /* FaceCapture.storyboard in Resources */,
 				E7AD0DEA29CAAF2B00C9A4B0 /* JoinChannelVideoRecorder.strings in Resources */,
 				033A9FFA252EB5FD00BC26E1 /* ScreenShare.storyboard in Resources */,
 				E732E92A2A3960A2004403AF /* MultiCameraSourece.strings in Resources */,
@@ -1132,7 +1113,6 @@
 				671BD67B27E0A4F50076D5E1 /* output.raw in Resources */,
 				E71E7B0C289B96FA00B846C7 /* VideoProcess.storyboard in Resources */,
 				033A9FCC252EB03F00BC26E1 /* CustomVideoSourcePush.storyboard in Resources */,
-				E7883AE02B046CB8003CCF44 /* FaceCapture.strings in Resources */,
 				671BD67127DF478A0076D5E1 /* CustomVideoRender.storyboard in Resources */,
 				DD33C1AA2CBF9DEA0046F50C /* RtePlayer.storyboard in Resources */,
 				E702C1E728B4DB4800D7C7ED /* LiveStreaming.storyboard in Resources */,
@@ -1224,6 +1204,25 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F73479122DF192410030C0CE /* Copy Optional Beauty Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Optional Beauty Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -eu\n\nSOURCE=\"${PROJECT_DIR:?}/APIExample/Resources/AgoraBeautyMaterial.bundle\"\nDESTINATION=\"${TARGET_BUILD_DIR:?}/${UNLOCALIZED_RESOURCES_FOLDER_PATH:?}/AgoraBeautyMaterial.bundle\"\n\n/bin/rm -rf \"${DESTINATION}\"\nif [ -d \"${SOURCE}\" ]; then\n    /usr/bin/ditto \"${SOURCE}\" \"${DESTINATION}\"\nelse\n    echo \"warning: AgoraBeautyMaterial.bundle is unavailable; Agora Beauty is hidden. Internal builds can provide it by running cloud_build.sh with JFROG_API_KEY.\"\nfi\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1283,7 +1282,6 @@
 				033A9F9E252EA86A00BC26E1 /* CustomVideoSourcePush.swift in Sources */,
 				8BD4AE73272513FF00E95B87 /* SimpleFilter.swift in Sources */,
 				E77D54C028F553DA00D51C1E /* JoinChannelVideoToken.swift in Sources */,
-				E7883AE22B046CB8003CCF44 /* FaceCapture.swift in Sources */,
 				0336A1CA25034F4700D61B7F /* ExternalAudio.mm in Sources */,
 				E779025B2A482CFC008791AD /* KFMP4Demuxer.m in Sources */,
 				DD8A1F922CA55AA4001CEC51 /* AgoraPCMPlayer.swift in Sources */,
@@ -1614,22 +1612,6 @@
 			name = JoinChannelVideoToken.storyboard;
 			sourceTree = "<group>";
 		};
-		E7883ADB2B046CB8003CCF44 /* FaceCapture.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E7883ADC2B046CB8003CCF44 /* zh-Hans */,
-			);
-			name = FaceCapture.strings;
-			sourceTree = "<group>";
-		};
-		E7883ADD2B046CB8003CCF44 /* FaceCapture.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E7883ADE2B046CB8003CCF44 /* Base */,
-			);
-			name = FaceCapture.storyboard;
-			sourceTree = "<group>";
-		};
 		E7AD0DE529CAAF2B00C9A4B0 /* JoinChannelVideoRecorder.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1823,7 +1805,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 4.6.2;
+				MARKETING_VERSION = 4.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.api.examples;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1855,7 +1837,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 4.6.2;
+				MARKETING_VERSION = 4.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.api.examples;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

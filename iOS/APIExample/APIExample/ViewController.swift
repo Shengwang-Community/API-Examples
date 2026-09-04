@@ -59,7 +59,8 @@ class ViewController: AGViewController {
             MenuItem(name: "Local Composite Graph".localized, storyboard: "LocalCompositeGraph", controller: ""),
             MenuItem(name: "Video Process".localized, storyboard: "VideoProcess", controller: "VideoProcess"),
             MenuItem(name: "Agora Beauty".localized, storyboard: "AgoraBeauty", controller: "AgoraBeauty"),
-            MenuItem(name: "Rhythm Player".localized, storyboard: "RhythmPlayer", controller: "RhythmPlayer"),
+            // Hidden because the Rhythm Player APIs are deprecated since RTC SDK 4.6.0.
+            // MenuItem(name: "Rhythm Player".localized, storyboard: "RhythmPlayer", controller: "RhythmPlayer"),
             MenuItem(name: "Create Data Stream".localized, storyboard: "CreateDataStream", controller: ""),
             MenuItem(name: "Media Channel Relay".localized, storyboard: "MediaChannelRelay", controller: ""),
             MenuItem(name: "Spatial Audio".localized, storyboard: "SpatialAudio", controller: "SpatialAudioMain"),
@@ -73,7 +74,6 @@ class ViewController: AGViewController {
             MenuItem(name: "ARKit".localized, storyboard: "ARKit", controller: ""),
             MenuItem(name: "Audio Router(Third Party Player)".localized, storyboard: "AudioRouterPlayer", controller: ""),
             MenuItem(name: "Audio Waveform".localized, storyboard: "AudioWaveform", controller: ""),
-            MenuItem(name: "Face Capture".localized, storyboard: "FaceCapture", controller: ""),
             MenuItem(name: "Transparent Render".localized, storyboard: "TransparentRender", controller: ""),
             MenuItem(name: "URL Streaming(RTE Player)".localized, storyboard: "RtePlayer", controller: ""),
             MenuItem(name: "Simulcast".localized, storyboard: "Simulcast", controller: "SimulcasthEntry"),
@@ -82,6 +82,12 @@ class ViewController: AGViewController {
     ]
     override func viewDidLoad() {
         super.viewDidLoad()
+        if Bundle.main.url(forResource: "AgoraBeautyMaterial", withExtension: "bundle") == nil {
+            for index in menus.indices {
+                menus[index].rows.removeAll { $0.storyboard == "AgoraBeauty" }
+            }
+        }
+
         Floaty.global.button.addItem(title: "Send Logs", handler: { _ in
             LogUtils.writeAppLogsToDisk()
             let activity = UIActivityViewController(activityItems: [NSURL(fileURLWithPath: LogUtils.logFolder(), 

@@ -101,8 +101,6 @@ if [ -z "$sdk_url" -o "$sdk_url" = "none" ]; then
    echo "sdk_url is empty"
    echo unzip_name: $unzip_name 
    mkdir -p ./$unzip_name/samples
-   cp -rf ./macOS ./$unzip_name/samples/APIExample || exit 1
-   ls -al ./$unzip_name/samples/API-Example/
 else 
    sdk_url_flag=true
    zip_name=${sdk_url##*/}
@@ -121,8 +119,11 @@ else
    rm -f ./$unzip_name/Package.swift
    
    mkdir ./$unzip_name/samples
-   cp -rf ./macOS ./$unzip_name/samples/APIExample || exit 1
-   ls -al ./$unzip_name/samples/API-Example/
+fi
+
+cp -rf ./macOS ./$unzip_name/samples/APIExample || exit 1
+ls -al ./$unzip_name/samples/API-Example/
+if [ $sdk_url_flag = true ]; then
    mv ./$unzip_name/samples/APIExample/sdk.podspec ./$unzip_name/
 fi
 
@@ -159,8 +160,8 @@ if [ $compress_apiexample = true ]; then
     ls -al $WORKSPACE/
 fi
 
-#if [ $compile_project = true ]; then
-#    cd ./$unzip_name/samples/APIExample
-#    ./cloud_build.sh || exit 1
-#    cd -
-#fi
+if [ $compile_project = true ]; then
+    cd ./$unzip_name/samples/APIExample
+    ./cloud_build.sh || exit 1
+    cd -
+fi

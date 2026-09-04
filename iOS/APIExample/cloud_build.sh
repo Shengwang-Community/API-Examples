@@ -102,6 +102,12 @@ echo "-----------------------------------"
 cd ${PROJECT_PATH}
 
 #下载美颜资源
+curl --fail --location -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -o AgoraBeautyMaterial.bundle.zip "https://artifactory-api.bj2.agoralab.co/artifactory/qa_test_data/beauty/AgoraBeautyMaterial.bundle.zip" || exit 1
+rm -rf APIExample/Resources/AgoraBeautyMaterial.bundle
+unzip -q AgoraBeautyMaterial.bundle.zip -d APIExample/Resources || exit 1
+rm -f AgoraBeautyMaterial.bundle.zip
+test -f APIExample/Resources/AgoraBeautyMaterial.bundle/beauty_material_functional/config.json || exit 1
+
 echo "start download sense resource from Artifactory"
 curl --fail --location -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -o vender_sense_iOS.zip "https://artifactory-api.bj2.agoralab.co/artifactory/qa_test_data/beauty/vender_sense_iOS.zip" || exit 1
 rm -rf SenseLib

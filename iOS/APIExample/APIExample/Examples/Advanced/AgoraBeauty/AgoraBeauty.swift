@@ -139,7 +139,7 @@ class AgoraBeautyMain: BaseViewController {
         })
         
         beautyManager = AgoraBeautyManager(agoraKit: agoraKit)
-        beautyManager.beautyMakeupStyle = "default makeup style".localized
+        beautyManager.beautyMakeupStyle = "Makeup-Young"
         beautyManager.makeUpEnable = false
         setupUI()
     }
@@ -154,8 +154,8 @@ class AgoraBeautyMain: BaseViewController {
                     LogUtils.log(message: "left channel, duration: \(stats.duration)", level: .info)
                 }
             }
-            AgoraRtcEngineKit.destroy()
             beautyManager.destory()
+            AgoraRtcEngineKit.destroy()
         }
     }
     
@@ -730,6 +730,6 @@ extension AgoraBeautyMain {
     
     @objc func beautyShapeSegmentAction(_ view: UISegmentedControl) {
         let style = AgoraFaceShapeStyle(rawValue: UInt(view.selectedSegmentIndex)) ?? .female
-        beautyManager.beautyShapeStyle = style == .male ? "Male Template Title".localized : "Female Template Title".localized
+        beautyManager.beautyShapeStyle = style == .male ? "Beauty-Ordinary" : "Beauty-Basic"
     }
 }

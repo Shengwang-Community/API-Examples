@@ -1254,7 +1254,7 @@ void CLiveBroadcastingDlg::OnBnClickedCheckVideoImage()
 	if (!m_rtcEngine || !m_initialize)
 		return;
 	ImageTrackOptions options;
-	CString strPath = GetExePath() + _T("\\bg_blue.png");
+	CString strPath = GetExePath() + _T("\\res\\bg_blue.png");
 	m_imgPng = cs2utf8(strPath);
 	options.imageUrl = m_imgPng.c_str();
 	options.fps = 15;

@@ -123,8 +123,7 @@ if exist en.ini (copy en.ini $(SolutionDir)$(Configuration))
 copy $(SolutionDir)APIExample\Advanced\LocalVideoTranscoding\agora.png $(SolutionDir)$(Configuration)
 copy $(SolutionDir)APIExample\Advanced\LocalVideoTranscoding\agora.jpg $(SolutionDir)$(Configuration)
 if exist sample.yuv (copy sample.yuv $(SolutionDir)$(Configuration))
-if exist $(SolutionDir)APIExample\res\yuvj_full_range_alpha_1280_540_left.mp4 (copy $(SolutionDir)APIExample\res\yuvj_full_range_alpha_1280_540_left.mp4 $(SolutionDir)$(Configuration))
-if exist $(SolutionDir)APIExample\res\hdr_1280_720.yuv (copy $(SolutionDir)APIExample\res\hdr_1280_720.yuv $(SolutionDir)$(Configuration))
+xcopy /Y /S /I "$(SolutionDir)APIExample\res" "$(TargetDir)res"
 </Command>
     </PostBuildEvent>
     <Manifest>
@@ -172,8 +171,7 @@ if exist en.ini (copy en.ini $(SolutionDir)$(Platform)\$(Configuration))
 copy $(SolutionDir)APIExample\Advanced\LocalVideoTranscoding\agora.png $(SolutionDir)$(Platform)\$(Configuration)
 copy $(SolutionDir)APIExample\Advanced\LocalVideoTranscoding\agora.jpg $(SolutionDir)$(Platform)\$(Configuration)
 if exist sample.yuv (copy sample.yuv $(SolutionDir)$(Platform)$(Configuration))
-if exist $(SolutionDir)APIExample\res\yuvj_full_range_alpha_1280_540_left.mp4 (copy $(SolutionDir)APIExample\res\yuvj_full_range_alpha_1280_540_left.mp4 $(SolutionDir)$(Configuration))
-if exist $(SolutionDir)APIExample\res\hdr_1280_720.yuv (copy $(SolutionDir)APIExample\res\hdr_1280_720.yuv $(SolutionDir)$(Configuration))
+xcopy /Y /S /I "$(SolutionDir)APIExample\res" "$(TargetDir)res"
 </Command>
     </PostBuildEvent>
     <Manifest>
@@ -221,8 +219,7 @@ copy $(SolutionDir)APIExample\Advanced\LocalVideoTranscoding\agora.png $(Solutio
 copy $(SolutionDir)APIExample\Advanced\LocalVideoTranscoding\agora.jpg $(SolutionDir)$(Configuration)
 
 if exist sample.yuv (copy sample.yuv $(SolutionDir)$(Configuration))
-if exist $(SolutionDir)APIExample\res\yuvj_full_range_alpha_1280_540_left.mp4 (copy $(SolutionDir)APIExample\res\yuvj_full_range_alpha_1280_540_left.mp4 $(SolutionDir)$(Configuration))
-if exist $(SolutionDir)APIExample\res\hdr_1280_720.yuv (copy $(SolutionDir)APIExample\res\hdr_1280_720.yuv $(SolutionDir)$(Configuration))</Command>
+xcopy /Y /S /I "$(SolutionDir)APIExample\res" "$(TargetDir)res"</Command>
     </PostBuildEvent>
     <ManifestResourceCompile>
       <ResourceOutputFileName>
@@ -271,8 +268,7 @@ if exist en.ini (copy en.ini $(SolutionDir)$(Platform)\$(Configuration))
 copy $(SolutionDir)APIExample\Advanced\LocalVideoTranscoding\agora.jpg $(SolutionDir)$(Platform)\$(Configuration)
 
 if exist sample.yuv (copy sample.yuv $(SolutionDir)$(Platform)\$(Configuration))
-if exist $(SolutionDir)APIExample\res\yuvj_full_range_alpha_1280_540_left.mp4 (copy $(SolutionDir)APIExample\res\yuvj_full_range_alpha_1280_540_left.mp4 $(SolutionDir)$(Configuration))
-if exist $(SolutionDir)APIExample\res\hdr_1280_720.yuv (copy $(SolutionDir)APIExample\res\hdr_1280_720.yuv $(SolutionDir)$(Configuration))</Command>
+xcopy /Y /S /I "$(SolutionDir)APIExample\res" "$(TargetDir)res"</Command>
     </PostBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -295,7 +291,6 @@ if exist $(SolutionDir)APIExample\res\hdr_1280_720.yuv (copy $(SolutionDir)APIEx
     <ClInclude Include="Advanced\CustomAudioCapture\CAgoraCaptureAudioDlg.h" />
     <ClInclude Include="Advanced\CustomEncrypt\CAgoraCustomEncryptDlg.h" />
     <ClInclude Include="Advanced\CustomVideoCapture\CAgoraCaptureVideoDlg.h" />
-    <ClInclude Include="Advanced\FaceCapture\CAgoraFaceCaptureDlg.h" />
     <ClInclude Include="Advanced\LocalVideoTranscoding\CLocalVideoTranscodingDlg.h" />
     <ClInclude Include="Advanced\MediaEncrypt\CAgoraMediaEncryptDlg.h" />
     <ClInclude Include="Advanced\MediaPlayer\CAgoraMediaPlayer.h" />
@@ -354,7 +349,6 @@ if exist $(SolutionDir)APIExample\res\hdr_1280_720.yuv (copy $(SolutionDir)APIEx
     <ClCompile Include="Advanced\CustomAudioCapture\CAgoraCaptureAudioDlg.cpp" />
     <ClCompile Include="Advanced\CustomEncrypt\CAgoraCustomEncryptDlg.cpp" />
     <ClCompile Include="Advanced\CustomVideoCapture\CAgoraCaptureVideoDlg.cpp" />
-    <ClCompile Include="Advanced\FaceCapture\CAgoraFaceCaptureDlg.cpp" />
     <ClCompile Include="Advanced\LocalVideoTranscoding\CLocalVideoTranscodingDlg.cpp" />
     <ClCompile Include="Advanced\MediaEncrypt\CAgoraMediaEncryptDlg.cpp" />
     <ClCompile Include="Advanced\MediaPlayer\CAgoraMediaPlayer.cpp" />
