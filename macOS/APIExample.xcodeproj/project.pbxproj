@@ -1221,7 +1221,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -eu\n\nSOURCE=\"${PROJECT_DIR:?}/APIExample/Resources/AgoraBeautyMaterial.bundle\"\nDESTINATION=\"${TARGET_BUILD_DIR:?}/${UNLOCALIZED_RESOURCES_FOLDER_PATH:?}/AgoraBeautyMaterial.bundle\"\n\n/bin/rm -rf \"${DESTINATION}\"\nif [ -d \"${SOURCE}\" ]; then\n    /usr/bin/ditto \"${SOURCE}\" \"${DESTINATION}\"\nelse\n    echo \"warning: AgoraBeautyMaterial.bundle is unavailable; Agora Beauty is hidden. Internal builds can provide it by running cloud_build.sh with JFROG_API_KEY.\"\nfi\n";
+			shellScript = "set -eu\n\nSOURCE=\"${PROJECT_DIR:?}/APIExample/Resources/AgoraBeautyMaterial.bundle\"\nDESTINATION=\"${TARGET_BUILD_DIR:?}/${UNLOCALIZED_RESOURCES_FOLDER_PATH:?}/AgoraBeautyMaterial.bundle\"\n\n/bin/rm -rf \"${DESTINATION}\"\nif [ -d \"${SOURCE}\" ]; then\n    /usr/bin/ditto \"${SOURCE}\" \"${DESTINATION}\"\nelse\n    echo \"warning: AgoraBeautyMaterial.bundle is unavailable. Internal builds can provide it by running cloud_build.sh with JFROG_API_KEY.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -85,6 +85,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
     private Spinner audioProfileInput;
     private Spinner audioScenarioInput;
     private Spinner audioRouteInput;
+    private boolean syncingAudioRouteSelection;
     private EditText et_channel;
     private Button mute, join;
     private SeekBar record, playout, inear;
@@ -169,6 +170,10 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         audioRouteInput.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (syncingAudioRouteSelection) {
+                    syncingAudioRouteSelection = false;
+                    return;
+                }
                 if (!joined) {
                     return;
                 }
@@ -685,7 +690,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         @Override
         public void onAudioRouteChanged(int routing) {
             super.onAudioRouteChanged(routing);
-            Log.d(TAG, "secondHandler onAudioRouteChanged : " + routing);
+            Log.d(TAG, "secondHandler onAudioRouteChanged : " + getAudioRouteKey(routing));
         }
     };
 
@@ -840,6 +845,41 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         public void onAudioRouteChanged(int routing) {
             super.onAudioRouteChanged(routing);
             showShortToast("onAudioRouteChanged: " + getAudioRouteKey(routing));
+            runOnUIThread(() -> {
+                String selectedRouteStr;
+                if (routing == Constants.AUDIO_ROUTE_DEFAULT) {
+                    selectedRouteStr = getString(R.string.audio_route_default);
+                } else if (routing == Constants.AUDIO_ROUTE_EARPIECE) {
+                    selectedRouteStr = getString(R.string.audio_route_earpiece);
+                } else if (routing == Constants.AUDIO_ROUTE_SPEAKERPHONE) {
+                    selectedRouteStr = getString(R.string.audio_route_speakerphone);
+                } else if (routing == Constants.AUDIO_ROUTE_HEADSET) {
+                    selectedRouteStr = getString(R.string.audio_route_headset);
+                } else if (routing == Constants.AUDIO_ROUTE_HEADSETNOMIC) {
+                    selectedRouteStr = getString(R.string.audio_route_headset_no_mic);
+                } else if (routing == Constants.AUDIO_ROUTE_LOUDSPEAKER) {
+                    selectedRouteStr = getString(R.string.audio_route_loudspeaker);
+                } else if (routing == Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP
+                        || routing == Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_A2DP) {
+                    selectedRouteStr = getString(R.string.audio_route_headset_bluetooth);
+                } else if (routing == Constants.AUDIO_ROUTE_USBDEVICE
+                        || routing == Constants.AUDIO_ROUTE_USB_HEADSET) {
+                    selectedRouteStr = getString(R.string.audio_route_headset_typec);
+                } else {
+                    return;
+                }
+
+                for (int i = 0; i < audioRouteInput.getAdapter().getCount(); i++) {
+                    String routeStr = (String) audioRouteInput.getItemAtPosition(i);
+                    if (routeStr.equals(selectedRouteStr)) {
+                        if (audioRouteInput.getSelectedItemPosition() != i) {
+                            syncingAudioRouteSelection = true;
+                            audioRouteInput.setSelection(i);
+                        }
+                        return;
+                    }
+                }
+            });
         }
     };
 

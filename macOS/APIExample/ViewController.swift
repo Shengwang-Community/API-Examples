@@ -62,10 +62,6 @@ class MenuController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if Bundle.main.url(forResource: "AgoraBeautyMaterial", withExtension: "bundle") == nil {
-            menus.removeAll { $0.storyboard == "AgoraBeauty" }
-            tableView.reloadData()
-        }
     }
     
     @IBAction func onClickSetting(_ sender: NSButton) {

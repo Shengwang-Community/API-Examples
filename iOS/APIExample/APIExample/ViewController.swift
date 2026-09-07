@@ -82,12 +82,6 @@ class ViewController: AGViewController {
     ]
     override func viewDidLoad() {
         super.viewDidLoad()
-        if Bundle.main.url(forResource: "AgoraBeautyMaterial", withExtension: "bundle") == nil {
-            for index in menus.indices {
-                menus[index].rows.removeAll { $0.storyboard == "AgoraBeauty" }
-            }
-        }
-
         Floaty.global.button.addItem(title: "Send Logs", handler: { _ in
             LogUtils.writeAppLogsToDisk()
             let activity = UIActivityViewController(activityItems: [NSURL(fileURLWithPath: LogUtils.logFolder(), 

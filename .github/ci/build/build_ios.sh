@@ -140,9 +140,6 @@ if [ $compress_apiexample = true ]; then
 
     mkdir -p $cn_dir
     cp -rf ./iOS/${ios_direction} $cn_dir/
-    cd $cn_dir/${ios_direction}
-    ./cloud_project.sh || exit 1
-    cd -
     echo "start compress api example"
     7za a -tzip cn_result.zip $cn_dir
     echo "complete compress api example"

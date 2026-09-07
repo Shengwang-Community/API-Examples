@@ -422,7 +422,7 @@ extension AgoraBeautyMain {
                 let values = makeupList[i]["value"] as? [Int] ?? []
                 let defaultIndex = values.firstIndex(of: defaultValue) ?? 0
                 
-                segmentView.selectedSegmentIndex = Int(getDefaultSegmentValueForKey(key: key))
+                segmentView.selectedSegmentIndex = defaultIndex
                 segmentView.addTarget(self, action: #selector(makeupSegmentAction(_:)), for: .valueChanged)
                 valueView = segmentView
             }
@@ -556,6 +556,7 @@ extension AgoraBeautyMain {
         let makeupList = beautyManager.makeupList
         let key = makeupList[index]["key"] as? String ?? ""
         let values = makeupList[index]["value"] as? [Int] ?? []
+        guard values.indices.contains(view.selectedSegmentIndex) else { return }
         let value = Int32(values[view.selectedSegmentIndex])
 
         makeupParams[key] = value
