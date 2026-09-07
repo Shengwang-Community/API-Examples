@@ -2,7 +2,7 @@
 
 *English | [中文](README.zh.md)*
 
-This project presents you a set of API examples to help you understand how to use Agora APIs.
+This project presents a set of API examples to help you understand how to use Shengwang APIs.
 
 
 ## Prerequisites
@@ -15,14 +15,10 @@ This section shows you how to prepare, build, and run the sample application.
 
 ### Prepare Dependencies
 
-Change directory into **macOS** folder, run following command to install project dependencies,
+Change to the `macOS` directory and install the project dependencies with CocoaPods. See the [official CocoaPods guide](https://guides.cocoapods.org/using/getting-started.html) for installation instructions.
 
-use cocoapods
-
-[install cocoapods](http://t.zoukankan.com/lijiejoy-p-9680485.html)
-
-
-```
+```bash
+cd macOS
 pod install
 ```
 
@@ -32,7 +28,7 @@ Verify `APIExample.xcworkspace` has been properly generated.
 
 To build and run the sample application, get an App Id:
 
-1. Create a developer account at [agora.io](https://dashboard.agora.io/signin/). Once you finish the signup process, you will be redirected to the Dashboard.
+1. Create a developer account in the [Shengwang Console](https://dashboard.agora.io/signin/). Once you finish the signup process, you will be redirected to the Dashboard.
 2. Navigate in the Dashboard tree on the left to **Projects** > **Project List**.
 3. Save the **App Id** from the Dashboard for later use.
 4. Generate a temp **Access Token** (valid for 24 hours) from dashboard page with given channel name, save for later use.
@@ -41,19 +37,19 @@ To build and run the sample application, get an App Id:
 
     ``` Swift
     /**
-      Agora assigns App IDs to app developers to identify projects and organizations.
+      Shengwang assigns App IDs to app developers to identify projects and organizations.
      If you have multiple completely separate apps in your organization, for example built by different teams,
      you should use different App IDs.
      If applications need to communicate with each other, they should use the same App ID.
-     In order to get the APP ID, you can open the agora console (https://console.agora.io/) to create a project,
+     To get an App ID, open the Shengwang Console (https://console.agora.io/) and create a project;
      then the APP ID can be found in the project detail page.
      */
      static let AppId: String = <# YOUR APPID#>
      
      /**
-      Agora provides App certificate to generate Token. You can deploy and generate a token on your server,
+      Shengwang provides App Certificates for generating tokens. You can deploy a token generator on your server,
      or use the console to generate a temporary token.
-     In order to get the APP ID, you can open the agora console (https://console.agora.io/) to create a project with the App Certificate enabled,
+     To get an App Certificate, open the Shengwang Console (https://console.agora.io/) and create a project with App Certificate authentication enabled;
      then the APP Certificate can be found in the project detail page.If the project does not have certificates enabled, leave this field blank.
      PS: It is unsafe to place the App Certificate on the client side, it is recommended to place it on the server side to ensure that the App Certificate is not leaked.
      */
@@ -64,16 +60,32 @@ To build and run the sample application, get an App Id:
 
 Then you can compile and run the project using `APIExample.xcworkspace`.
 
+### Shengwang Beauty 2.0 Resources
+
+The Shengwang Beauty 2.0 material package is not included in this repository. Before building locally,
+obtain `AgoraBeautyMaterial.bundle.zip` from Shengwang technical support and extract it to
+`macOS/APIExample/Resources/`.
+
+The extracted resources should have the following structure:
+
+```text
+macOS/APIExample/Resources/
+└── AgoraBeautyMaterial.bundle/
+    ├── beauty_material_functional/
+    │   ├── config.json
+    │   └── ...
+    └── ...
+```
+
+The extracted bundle is ignored by Git.
+
 
 ## Contact Us
 
-- For potential issues, take a look at our [FAQ](https://docs.agora.io/en/faq) first
-- Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials
-- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use case
-- Repositories managed by developer communities can be found at [Agora Community](https://github.com/AgoraIO-Community)
-- You can find full API documentation at [Document Center](https://docs.agora.io/en/)
-- If you encounter problems during integration, you can ask question in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io)
-- You can file bugs about this sample at [issue](https://github.com/AgoraIO/Basic-Video-Call/issues)
+- Browse the [Shengwang documentation](https://doc.shengwang.cn/) for product guides and API references.
+- Explore more samples in [Shengwang Community](https://github.com/Shengwang-Community).
+- Ask integration questions in the [developer community](https://rtcdeveloper.com/).
+- File bugs about this sample at [issues](https://github.com/Shengwang-Community/API-Examples/issues).
 
 ## License
 

@@ -95,6 +95,17 @@ if "%compress_apiexample%"=="true" (
         exit /b 1
     )
     cd ..\..
+
+    REM Beauty 2.0 material is generated only for executable builds. A reused
+    REM Jenkins workspace may still contain it from an earlier compile job.
+    if exist windows\APIExample\Release\beauty_agora (
+        echo "Removing generated Beauty material from source package..."
+        rmdir /S /Q windows\APIExample\Release\beauty_agora
+        if exist windows\APIExample\Release\beauty_agora (
+            echo Failed to remove Beauty material from source package!
+            exit /b 1
+        )
+    )
     
     REM Compress windows\APIExample (code + dependencies) to zip
     echo "Compressing APIExample code package..."

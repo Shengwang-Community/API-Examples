@@ -62,29 +62,28 @@ APIExample/
         │   │   ├── ProcessRawData.java          # [20] "Raw Video Data" — video raw data processing
         │   │   ├── SimpleExtension.java         # [21] "Simple Extension" — custom video extension
         │   │   ├── PictureInPicture.java        # [22] "Picture In Picture" — PiP mode
-        │   │   ├── FaceCapture.java             # [23] "Face Capture" — face detection
-        │   │   ├── VideoQuickSwitch.java        # [24] "Quick Switch Channel" — fast channel switching
-        │   │   ├── JoinMultipleChannel.java     # [25] "Join Multiple Channel" — multi-channel join
-        │   │   ├── ChannelEncryption.java       # [26] "Media Stream Encryption" — built-in encryption
-        │   │   ├── PlayAudioFiles.java          # [27] "Play Audio Files" — audio mixing
-        │   │   ├── PreCallTest.java             # [28] "Pre-call Tests" — network/device test before joining
-        │   │   ├── MediaPlayer.java             # [29] "MediaPlayer" — play media files
-        │   │   ├── MediaRecorder.java           # [30] "Local/Remote MediaRecorder" — record media streams
-        │   │   ├── ScreenSharing.java           # [31] "Screen Sharing" — screen capture & share
-        │   │   ├── VideoProcessExtension.java   # [32] "Video Process Extension" — video filter extension
-        │   │   ├── LocalVideoTranscoding.java   # [33] "LocalVideoTranscoding" — local video compositing
-        │   │   ├── RhythmPlayer.java            # [34] "Rhythm Player" — metronome/rhythm playback
-        │   │   ├── SendDataStream.java          # [35] "Send Data Stream" — data channel messaging
-        │   │   ├── HostAcrossChannel.java       # [36] "Relay Streams across Channels" — cross-channel relay
-        │   │   ├── SpatialSound.java            # [37] "Spatial Audio" — 3D spatial audio
-        │   │   ├── ContentInspect.java          # [38] "Content Inspect" — content moderation
-        │   │   ├── ThirdPartyBeauty.java        # [39] "Third-party beauty" — third-party beauty SDK
-        │   │   ├── KtvCopyrightMusic.java       # [40] "KTV Copyright Music" — licensed music
-        │   │   ├── TransparentRendering.java    # [41] "TransparentRendering" — alpha channel rendering
-        │   │   ├── UrlLiveStream.java           # [42] "Ultra Live Streaming with Url" — URL-based live stream
-        │   │   ├── AgoraBeauty.java             # [43] "Agora beauty 2.0" — built-in beauty effects
-        │   │   ├── Simulcast.java               # [44] "Simulcast" — multi-quality stream publishing
-        │   │   ├── Multipath.java               # [45] "Multipath" — multi-path transmission
+        │   │   ├── VideoQuickSwitch.java        # [23] "Quick Switch Channel" — fast channel switching
+        │   │   ├── JoinMultipleChannel.java     # [24] "Join Multiple Channel" — multi-channel join
+        │   │   ├── ChannelEncryption.java       # [25] "Media Stream Encryption" — built-in encryption
+        │   │   ├── PlayAudioFiles.java          # [26] "Play Audio Files" — audio mixing
+        │   │   ├── PreCallTest.java             # [27] "Pre-call Tests" — network/device test before joining
+        │   │   ├── MediaPlayer.java             # [28] "MediaPlayer" — play media files
+        │   │   ├── MediaRecorder.java           # [29] "Local/Remote MediaRecorder" — record media streams
+        │   │   ├── ScreenSharing.java           # [30] "Screen Sharing" — screen capture & share
+        │   │   ├── VideoProcessExtension.java   # [31] "Video Process Extension" — video filter extension
+        │   │   ├── LocalVideoTranscoding.java   # [32] "LocalVideoTranscoding" — local video compositing
+        │   │   ├── RhythmPlayer.java            # Hidden — APIs deprecated since RTC SDK 4.6.0
+        │   │   ├── SendDataStream.java          # [34] "Send Data Stream" — data channel messaging
+        │   │   ├── HostAcrossChannel.java       # [35] "Relay Streams across Channels" — cross-channel relay
+        │   │   ├── SpatialSound.java            # [36] "Spatial Audio" — 3D spatial audio
+        │   │   ├── ContentInspect.java          # [37] "Content Inspect" — content moderation
+        │   │   ├── ThirdPartyBeauty.java        # [38] "Third-party beauty" — third-party beauty SDK
+        │   │   ├── KtvCopyrightMusic.java       # [39] "KTV Copyright Music" — licensed music
+        │   │   ├── TransparentRendering.java    # [40] "TransparentRendering" — alpha channel rendering
+        │   │   ├── UrlLiveStream.java           # [41] "Ultra Live Streaming with Url" — URL-based live stream
+        │   │   ├── AgoraBeauty.java             # [42] "Shengwang Beauty 2.0" — built-in beauty effects
+        │   │   ├── Simulcast.java               # [43] "Simulcast" — multi-quality stream publishing
+        │   │   ├── Multipath.java               # [44] "Multipath" — multi-path transmission
         │   │   ├── beauty/                      # Third-party beauty integrations
         │   │   └── videoRender/                 # Custom video rendering helpers
         │   └── audio/                           # Audio-specific cases (grouped as ADVANCED)
@@ -97,7 +96,7 @@ APIExample/
         │
         └── utils/
             ├── ClassUtils.java              # DEX scanner — auto-discovers @Example classes
-            ├── TokenUtils.java              # Fetches RTC tokens from Agora token server
+            ├── TokenUtils.java              # Fetches RTC tokens from the Shengwang token server
             ├── PermissonUtils.java          # Permission check/request helpers
             ├── CommonUtil.java
             ├── ErrorUtil.java
@@ -128,7 +127,6 @@ APIExample/
 | Raw Video Data | `advanced/ProcessRawData.java` | `registerVideoFrameObserver()`, `startPreview()` | Demonstrates processing raw video data through the video frame observer |
 | Simple Extension | `advanced/SimpleExtension.java` | `enableExtension()`, `setExtensionProperty()`, `enableAudioVolumeIndication()` | Demonstrates loading and configuring a custom audio/video extension |
 | Picture In Picture | `advanced/PictureInPicture.java` | `joinChannel()`, `setupLocalVideo()`, `enableVideo()` | Demonstrates Android Picture-in-Picture mode during a video call |
-| Face Capture | `advanced/FaceCapture.java` | `enableExtension()`, `setExtensionProperty()`, `registerVideoFrameObserver()`, `registerFaceInfoObserver()` | Demonstrates face capture and lip-sync driven video using extensions |
 | Quick Switch Channel | `advanced/VideoQuickSwitch.java` | `joinChannel()`, `leaveChannel()`, `startPreview()`, `setClientRole()` | Demonstrates fast channel switching for audience members |
 | Join Multiple Channel | `advanced/JoinMultipleChannel.java` | `joinChannel()`, `joinChannelEx()`, `leaveChannelEx()`, `startPreview()`, `takeSnapshotEx()` | Demonstrates joining two channels simultaneously using RtcEngineEx |
 | Media Stream Encryption | `advanced/ChannelEncryption.java` | `enableEncryption()` | Demonstrates built-in media stream encryption |
@@ -136,19 +134,19 @@ APIExample/
 | Pre-call Tests | `advanced/PreCallTest.java` | `startLastmileProbeTest()`, `stopLastmileProbeTest()`, `startEchoTest()`, `stopEchoTest()` | Demonstrates network quality probing and echo testing before joining a channel |
 | MediaPlayer | `advanced/MediaPlayer.java` | `createMediaPlayer()`, `mediaPlayer.open()`, `mediaPlayer.play()`, `mediaPlayer.stop()`, `mediaPlayer.pause()`, `mediaPlayer.seek()`, `updateChannelMediaOptions()` | Demonstrates playing media files with the built-in media player |
 | Local/Remote MediaRecorder | `advanced/MediaRecorder.java` | `createMediaRecorder()`, `destroyMediaRecorder()`, `startRecordingDeviceTest()` | Demonstrates recording local and remote media streams |
-| Scree Sharing | `advanced/ScreenSharing.java` | `startScreenCapture()`, `stopScreenCapture()`, `updateScreenCaptureParameters()`, `setScreenCaptureScenario()` | Demonstrates screen capture and sharing during a video call |
+| Screen Sharing | `advanced/ScreenSharing.java` | `startScreenCapture()`, `stopScreenCapture()`, `updateScreenCaptureParameters()`, `setScreenCaptureScenario()` | Demonstrates screen capture and sharing during a video call |
 | Video Enhancement | `advanced/VideoProcessExtension.java` | `setBeautyEffectOptions()`, `setFilterEffectOptions()`, `setLowlightEnhanceOptions()`, `setVideoDenoiserOptions()`, `setColorEnhanceOptions()`, `enableVirtualBackground()`, `setFaceShapeBeautyOptions()`, `setFaceShapeAreaOptions()` | Demonstrates built-in video enhancement including beauty, filter, denoising, and virtual background |
 | LocalVideoTranscoding | `advanced/LocalVideoTranscoding.java` | `startLocalVideoTranscoder()`, `startCameraCapture()`, `startScreenCapture()`, `stopScreenCapture()`, `enableVirtualBackground()` | Demonstrates compositing multiple local video sources into a single stream |
-| Rhythm Player | `advanced/RhythmPlayer.java` | `startRhythmPlayer()`, `stopRhythmPlayer()`, `enableAudioVolumeIndication()` | Demonstrates metronome/rhythm playback synchronized with audio streaming |
+| Rhythm Player (hidden) | `advanced/RhythmPlayer.java` | `startRhythmPlayer()`, `stopRhythmPlayer()`, `enableAudioVolumeIndication()` | Source retained for reference; hidden from the case list because the Rhythm Player APIs are deprecated since RTC SDK 4.6.0 |
 | Send Data Stream | `advanced/SendDataStream.java` | `createDataStream()`, `sendStreamMessage()` | Demonstrates sending and receiving data channel messages |
 | Relay Streams across Channels | `advanced/HostAcrossChannel.java` | `startOrUpdateChannelMediaRelay()`, `stopChannelMediaRelay()`, `pauseAllChannelMediaRelay()`, `resumeAllChannelMediaRelay()` | Demonstrates relaying media streams from one channel to another |
 | Spatial Audio | `advanced/SpatialSound.java` | `enableAudio()`, `setRemoteUserSpatialAudioParams()`, `createMediaPlayer()` | Demonstrates 3D spatial audio positioning for remote users |
 | Content Inspect | `advanced/ContentInspect.java` | `enableContentInspect()` | Demonstrates real-time content moderation on video streams |
-| Third-party beauty | `advanced/ThirdPartyBeauty.java` | `registerVideoFrameObserver()` | Demonstrates integration with third-party beauty SDKs (e.g. FaceUnity) |
+| Third-party beauty | `advanced/ThirdPartyBeauty.java` | `registerVideoFrameObserver()` | Demonstrates integration with FaceUnity and SenseTime beauty SDKs |
 | KTV Copyright Music | `advanced/KtvCopyrightMusic.java` | N/A (browser-based documentation link) | Demonstrates the KTV copyright music feature via documentation reference |
 | TransparentRendering | `advanced/TransparentRendering.java` | `setExternalVideoSource()`, `pushExternalVideoFrame()`, `createMediaPlayer()`, `startPreview()` | Demonstrates alpha-channel transparent video rendering |
 | Ultra Live Streaming with Url | `advanced/UrlLiveStream.java` | `Rte()`, `Player()`, `Canvas()`, `player.openWithUrl()`, `player.stop()` | Demonstrates ultra-low-latency live streaming playback via URL using the RTE SDK |
-| Agora beauty 2.0 | `advanced/AgoraBeauty.java` | `enableVirtualBackground()`, `setFaceShapeAreaOptions()` | Demonstrates built-in Agora beauty effects with face shaping and virtual background |
+| Shengwang Beauty 2.0 | `advanced/AgoraBeauty.java` | `createVideoEffectObject()`, `setVideoEffectStringParam()`, `enableVirtualBackground()` | Demonstrates built-in Shengwang beauty effects with face shaping and virtual background |
 | Simulcast | `advanced/Simulcast.java` | `setSimulcastConfig()`, `setRemoteVideoStreamType()` | Demonstrates publishing multiple quality streams with simulcast |
 | Multipath | `advanced/Multipath.java` | `joinChannel()`, `updateChannelMediaOptions()` | Demonstrates multi-path transmission for improved network reliability |
 | Audio Waveform | `audio/AudioWaveform.java` | `enableAudio()`, `enableAudioVolumeIndication()` | Demonstrates real-time audio waveform visualization |

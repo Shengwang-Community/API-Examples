@@ -1,6 +1,6 @@
 # Windows ARCHITECTURE
 
-Windows example project using C++ + MFC (Microsoft Foundation Classes). Demonstrates Agora RTC SDK features through a collection of self-contained dialog-based examples organized by complexity.
+Windows example project using C++ + MFC (Microsoft Foundation Classes). Demonstrates Shengwang RTC SDK features through a collection of self-contained dialog-based examples organized by complexity.
 
 ## Technology Stack
 
@@ -60,7 +60,7 @@ Each example lives in its own folder under `APIExample/APIExample/Basic/` or `AP
 Each example is a dialog class that:
 - Inherits from `CDialogEx` or `CDialog`
 - Implements message handlers via `BEGIN_MESSAGE_MAP` / `END_MESSAGE_MAP`
-- Manages its own Agora engine lifecycle
+- Manages its own Shengwang RTC engine lifecycle
 - Implements `IAgoraRtcEngineEventHandler` interface
 - Owns all UI controls and state for that example
 
@@ -107,7 +107,6 @@ All examples share utilities:
 | CustomAudioCapture | `Advanced/CustomAudioCapture/` | `setExternalAudioSource()`, `pushAudioFrame()` | Custom audio source capture |
 | CustomEncrypt | `Advanced/CustomEncrypt/` | `setEncryptionConfig()`, `enableEncryption()` | Custom stream encryption |
 | CustomVideoCapture | `Advanced/CustomVideoCapture/` | `setExternalVideoSource()`, `pushVideoFrame()` | Custom video source capture |
-| FaceCapture | `Advanced/FaceCapture/` | `enableFaceDetection()`, `getFaceDetectionResult()` | Face detection and capture |
 | LocalVideoTranscoding | `Advanced/LocalVideoTranscoding/` | `startLocalVideoTranscoding()`, `updateLocalTranscodingConfig()`, `stopLocalVideoTranscoding()` | Local video transcoding and composition |
 | MediaEncrypt | `Advanced/MediaEncrypt/` | `setEncryptionConfig()`, `enableEncryption()` | Media stream encryption |
 | MediaPlayer | `Advanced/MediaPlayer/` | `createMediaPlayer()`, `open()`, `play()`, `pause()`, `stop()` | Media file playback and control |

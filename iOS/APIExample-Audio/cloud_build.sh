@@ -89,7 +89,7 @@ else
 	else
 		echo "Error: Branch name does not contain version number!"
 		echo "Current branch: $BRANCH_NAME"
-		echo "Branch name must contain x.x.x (e.g., dev/4.6.2, release/4.6.2)"
+		echo "Branch name must contain x.x.x (e.g., dev/4.7.0, release/4.7.0)"
 		exit 1
 	fi
 fi

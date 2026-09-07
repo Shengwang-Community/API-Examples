@@ -2,7 +2,7 @@
 
 *Read this in other languages: [English](README.md)*
 
-这个开源示例项目演示了如何快速集成Agora视频SDK，展示了常用场景的API示例
+这个开源示例项目演示了如何快速集成声网 RTC SDK，并展示常用场景的 API 示例。
 
 本开源项目使用 **C++** 语言
 
@@ -17,10 +17,10 @@
 
 这个段落主要讲解了如何编译和运行实例程序。
 
-### 创建Agora账号并获取AppId
+### 创建声网账号并获取 App ID
 
 在编译和启动实例程序前，您需要首先获取一个可用的App ID:
-1. 在[agora.io](https://dashboard.agora.io/signin/)创建一个开发者账号
+1. 登录[声网控制台](https://dashboard.agora.io/signin/)并创建开发者账号
 2. 前往后台页面，点击左部导航栏的 **项目 > 项目列表** 菜单
 3. 复制后台的 **App ID** 并备注，稍后启动应用时会用到它
 4. 在项目页面生成临时 **Access Token** (24小时内有效)并备注，注意生成的Token只能适用于对应的频道名。
@@ -38,7 +38,7 @@
     ```
 
 ### 编译项目
-**这个开源示例项目使用了Agora RTC SDK,DirectShow SDK,MeidaPlayer SDK。**
+**这个开源示例项目使用了声网 RTC SDK、DirectShow SDK 和 MediaPlayer SDK。**
 
 你可以通过直接运行`APIExample/installThirdParty.bat`来自动进行依赖下载与环境配置。配置完成后使用vs2017打开项目，选择x86版本进行编译就可以运行了。
 
@@ -166,13 +166,10 @@
 
 ## 联系我们
 
-- 如果你遇到了困难，可以先参阅[常见问题](https://docs.agora.io/cn/faq)
-- 如果你想了解更多官方示例，可以参考[官方SDK示例](https://github.com/AgoraIO)
-- 如果你想了解声网SDK在复杂场景下的应用，可以参考[官方场景案例](https://github.com/AgoraIO-usecase)
-- 如果你想了解声网的一些社区开发者维护的项目，可以查看[社区](https://github.com/AgoraIO-Community)
-- 完整的 API 文档见 [文档中心](https://docs.agora.io/cn/)
+- 产品指南和 API 参考见[声网文档中心](https://doc.shengwang.cn/)
+- 更多官方示例和社区项目见 [Shengwang Community](https://github.com/Shengwang-Community)
 - 若遇到问题需要开发者帮助，你可以到 [开发者社区](https://rtcdeveloper.com/) 提问
-- 如果发现了示例代码的 bug，欢迎提交 [issue](https://github.com/AgoraIO/Basic-Video-Broadcasting/issues)
+- 如果发现了示例代码的 bug，欢迎提交 [issue](https://github.com/Shengwang-Community/API-Examples/issues)
 
 ## 代码许可
 

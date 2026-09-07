@@ -108,7 +108,7 @@
     <string name="item_multiVideoSourceTracks">Multi Video Source Tracks</string>
     <string name="item_switchexternal">Switch Video Sources</string>
     <string name="item_cameraorscreen">Multiple Video Sources</string>
-    <string name="item_screensharing">Scree Sharing</string>
+    <string name="item_screensharing">Screen Sharing</string>
     <string name="item_customaudiosource">Custom Audio Sources</string>
     <string name="item_customaudiorender">Custom Audio Render</string>
     <string name="item_customremoterender">Custom Video Renderer</string>
@@ -203,6 +203,7 @@
     <string name="picture_in_picture">This example demonstrates how to show remove video in Picture In Picture mode.</string>
     <string name="third_party_beauty">This example demonstrates how to integrate third-party beauty sdk.</string>
     <string name="agora_beauty">his example demonstrates how to integrate agora beauty 2.0.</string>
+    <string name="agora_beauty_material_unavailable">Agora Beauty material is unavailable in this build.</string>
     <string name="ktv_copyright_music">This example demonstrates how to using ktv api to implement a scene demo.</string>
     <string name="transparent_rendering">This example demonstrates how to use transparent rendering.</string>
     <string name="tip_ultra_live_streaming_with_url">This example demonstrates how to use ultra live stream with url.</string>
@@ -347,9 +348,6 @@
     <string name="faceunity_beauty">FaceUnityBeauty</string>
     <string name="body_beauty">Body Beauty</string>
     <string name="faceunity_integrate_tip">FaceUnity library is not integrated! Please read README before compiling</string>
-    <string name="bytedance_beauty">ByteDance Beauty</string>
-    <string name="bytedance_integrate_tip">ByteDance library is not integrated! Please read README before compiling</string>
-
     <string name="private_clound">Private Cloud</string>
     <string name="ip_address">IP Address</string>
     <string name="ip_address_input_hint">please input IP</string>

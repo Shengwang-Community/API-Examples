@@ -1,6 +1,6 @@
 # AGENTS.md — APIExample
 
-Full demo project. Covers all Agora RTC APIs using Java/Kotlin + XML layouts.
+Full demo project. Covers all Shengwang RTC APIs using Java/Kotlin + XML layouts.
 Default project for video, screen sharing, beauty, or extension demos.
 
 ## Build Commands
@@ -19,8 +19,8 @@ See [README.md — Obtain an App Id](README.md#obtain-an-app-id).
 ## Optional Modules
 
 Controlled via `gradle.properties`:
-- `simpleFilter = true` — enables the C++ video extension module (`agora-simple-filter`). Requires OpenCV and Agora C++ SDK headers. See README for setup.
-- `streamEncrypt = true` — enables the custom stream encryption module (`agora-stream-encrypt`). Requires Agora C++ SDK headers. See README for setup.
+- `simpleFilter = true` — enables the C++ video extension module (`agora-simple-filter`). Requires OpenCV and Shengwang C++ SDK headers. See README for setup.
+- `streamEncrypt = true` — enables the custom stream encryption module (`agora-stream-encrypt`). Requires Shengwang C++ SDK headers. See README for setup.
 
 Both are `false` by default. Do not enable unless the feature explicitly requires it.
 

@@ -30,5 +30,5 @@ end
 #end
 
 pre_install do |installer|
-#  system("sh .download_script.sh 4.5.2 true")
+#  system("sh .download_script.sh 4.7.0 true")
 end

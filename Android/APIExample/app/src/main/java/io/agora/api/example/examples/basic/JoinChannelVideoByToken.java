@@ -241,7 +241,7 @@ public class JoinChannelVideoByToken extends BaseFragment implements View.OnClic
         @Override
         public void onError(int err) {
             super.onError(err);
-//            showLongToast("Error code:" + err + ", msg:" + RtcEngine.getErrorDescription(err));
+            showLongToast("Error code:" + err + ", msg:" + RtcEngine.getErrorDescription(err));
         }
 
         /**

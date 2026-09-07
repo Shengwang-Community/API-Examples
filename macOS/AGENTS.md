@@ -2,7 +2,7 @@
 
 ## Project Context
 
-This is the Swift + Cocoa implementation of Agora RTC SDK examples for macOS. Before making any changes, read `ARCHITECTURE.md` to understand the structural rules.
+This is the Swift + Cocoa implementation of Shengwang RTC SDK examples for macOS. Before making any changes, read `ARCHITECTURE.md` to understand the structural rules.
 
 ## Build Commands
 
@@ -19,7 +19,7 @@ open APIExample.xcworkspace
 
 ## App ID Configuration
 
-Configure your Agora App ID in `APIExample/Common/KeyCenter.swift`:
+Configure your Shengwang App ID in `APIExample/Common/KeyCenter.swift`:
 
 ```swift
 struct KeyCenter {
@@ -48,7 +48,7 @@ struct KeyCenter {
 
 All work must conform to the rules defined in `ARCHITECTURE.md`:
 - Every example is a self-contained class implementing `AgoraRtcEngineDelegate`
-- Each example manages its own Agora engine lifecycle
+- Each example manages its own Shengwang RTC engine lifecycle
 - Configuration is passed via initialization or property injection
 - All examples are registered in `APIExample/ViewController.swift`
 

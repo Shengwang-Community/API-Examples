@@ -196,6 +196,7 @@
     <string name="picture_in_picture">此示例演示了如何在画中画中使用sdk进行远端视频显示的功能。</string>
     <string name="third_party_beauty">此示例演示了如何集成第三方美颜sdk</string>
     <string name="agora_beauty">此示例演示了如何集成声网美颜2.0</string>
+    <string name="agora_beauty_material_unavailable">当前构建未包含声网 Beauty 素材。</string>
     <string name="ktv_copyright_music">此示例演示如何使用ktv api实现一个场景demo</string>
     <string name="transparent_rendering">此示例演示如何使用透明渲染功能播放Mp4视频</string>
     <string name="tip_ultra_live_streaming_with_url">此示例演示如何使用URL拉流来极速直播</string>
@@ -337,9 +338,6 @@
     <string name="faceunity_beauty">相芯美颜</string>
     <string name="body_beauty">美体</string>
     <string name="faceunity_integrate_tip">相芯库没有集成！请按README集成后再编译运行</string>
-    <string name="bytedance_beauty">字节美颜</string>
-    <string name="bytedance_integrate_tip">字节库没有集成！请按README集成后再编译运行</string>
-
     <string name="private_clound">私有云</string>
     <string name="ip_address">IP地址</string>
     <string name="ip_address_input_hint">请输入IP地址</string>

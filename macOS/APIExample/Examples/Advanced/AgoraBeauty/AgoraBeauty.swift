@@ -78,6 +78,12 @@ class AgoraBeauty: BaseViewController {
         beautyManager = AgoraBeautyManager(agoraKit: agoraKit)
         beautyManager.beautyMakeupStyle = "Makeup-Young"
         beautyManager.makeUpEnable = false
+        if !beautyManager.isAvailable {
+            DispatchQueue.main.async { [weak self] in
+                self?.showAlert(title: "Error",
+                                message: "Agora Beauty material is unavailable in this build.".localized)
+            }
+        }
     }
     
     override func viewWillBeRemovedFromSplitView() {

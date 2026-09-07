@@ -330,7 +330,9 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
             //            updateExtensionProperty();
             //            updateFaceShapeBeautyStyleOptions();
 
-            initBeautySDK();
+            if (!initBeautySDK()) {
+                showAlert(getString(R.string.agora_beauty_material_unavailable));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             getActivity().onBackPressed();

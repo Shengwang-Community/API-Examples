@@ -2,11 +2,13 @@
 
 *[English](README.md) | 中文*
 
-这个开源示例项目演示了Agora视频SDK的部分API使用示例，以帮助开发者更好地理解和运用Agora视频SDK的API。
+这个开源示例项目演示了声网 RTC SDK 的部分 API，帮助开发者理解和使用声网 RTC SDK。
 
 ## 环境准备
 
-- Android Studio 3.0+
+- Android Studio Ladybug (2024.2.1) 或更高版本
+- JDK 17
+- Android SDK Platform 35
 - Android 真机设备
 - 支持模拟器
 
@@ -14,16 +16,16 @@
 
 这个段落主要讲解了如何编译和运行实例程序。
 
-### 创建Agora账号并获取AppId
+### 创建声网账号并获取 App ID
 
 在编译和启动实例程序前，你需要首先获取一个可用的App Id:
 
-1. 在[agora.io](https://dashboard.agora.io/signin/)创建一个开发者账号
+1. 登录[声网控制台](https://dashboard.agora.io/signin/)并创建开发者账号
 2. 前往后台页面，点击左部导航栏的 **项目 > 项目列表** 菜单
 3. 复制后台的 **App Id** 并备注，稍后启动应用时会用到它
 4. 复制后台的 **App 证书** 并备注，稍后启动应用时会用到它
 
-5. 打开 `Android/APIExample` 并编辑项目根目录下的 `local.properties`，填入你的 App ID。如果你的 Agora 项目开启了 App Certificate，并且你希望使用示例内置的 token 生成功能，再填入 `YOUR APP CERTIFICATE`
+5. 打开 `Android/APIExample` 并编辑项目根目录下的 `local.properties`，填入你的 App ID。如果你的声网项目开启了 App Certificate，并且你希望使用示例内置的 token 生成功能，再填入 `YOUR APP CERTIFICATE`
 
     ```
     sdk.dir=/path/to/Android/sdk
@@ -41,6 +43,26 @@
 
 本项目包含第三方美颜集成示例，在没有配置资源和证书的情况下，默认是无法启用的。资源证书配置方法如下：
 
+Gradle 配置阶段会根据 `app/vendors.gradle` 自动下载并缓存商汤 9.3.1 Android 依赖库，因此首次 Gradle Sync 需要联网。该下载不包含下方列出的商汤素材和许可证，这些文件仍需单独提供。
+
+#### 声网美颜 2.0
+
+声网美颜 2.0 资源包不包含在仓库中。本地构建前：
+
+1. 从声网技术支持获取 `AgoraBeautyMaterial.zip`。
+2. 将 `AgoraBeautyMaterial.zip` 解压到 `app/src/main/assets/beauty_agora/`。
+
+解压后的资源目录结构如下：
+
+```text
+app/src/main/assets/beauty_agora/
+└── beauty_material_functional/
+    ├── config.json
+    └── ...
+```
+
+该资源目录已被 Git 忽略。
+
 #### 商汤美颜
 
 1. 联系商汤客服获取美颜sdk下载链接以及证书
@@ -49,9 +71,9 @@
 | 商汤SDK文件/目录                                                           | 项目路径                                                     |
 |----------------------------------------------------------------------|----------------------------------------------------------|
 | Android/models                                                       | app/src/main/assets/beauty_sensetime/models              |
-| Android/smaple/SenseMeEffects/app/src/main/assets/sticker_face_shape | app/src/main/assets/beauty_sensetime/sticker_face_shape  |
-| Android/smaple/SenseMeEffects/app/src/main/assets/style_lightly      | app/src/main/assets/beauty_sensetime/style_lightly       |
-| Android/smaple/SenseMeEffects/app/src/main/assets/makeup_lip         | app/src/main/assets/beauty_sensetime/makeup_lip          |
+| Android/sample/SenseMeEffects/app/src/main/assets/sticker_face_shape | app/src/main/assets/beauty_sensetime/sticker_face_shape  |
+| Android/sample/SenseMeEffects/app/src/main/assets/style_lightly      | app/src/main/assets/beauty_sensetime/style_lightly       |
+| Android/sample/SenseMeEffects/app/src/main/assets/makeup_lip         | app/src/main/assets/beauty_sensetime/makeup_lip          |
 | SenseME.lic                                                          | app/src/main/assets/beauty_sensetime/license/SenseME.lic |
 
 #### 相芯美颜
@@ -65,9 +87,9 @@
 | 贴纸资源(如fashi.bundle)  | app/src/main/assets/beauty_faceunity/sticker                                   |
 | 证书authpack.java      | app/src/main/java/io/agora/api/example/examples/advanced/beauty/authpack.java  |
 
-### 对于Agora Extension开发者
+### 对于声网 Extension 开发者
 
-从4.0.0SDK开始，Agora SDK支持插件系统和开放的云市场帮助开发者发布自己的音视频插件，本项目包含了一个SimpleFilter示例，默认是禁用的状态，如果需要开启编译和使用需要完成以下步骤：
+从 4.0.0 版本开始，声网 RTC SDK 支持插件系统和开放的云市场，开发者可以发布自己的音视频插件。本项目包含一个默认关闭的 SimpleFilter 示例，如需编译和使用，请完成以下步骤：
 
 1. 下载 [opencv](https://agora-adc-artifacts.s3.cn-north-1.amazonaws.com.cn/androidLibs/opencv4.zip) 解压后复制到 
    Android/APIExample/agora-simple-filter/src/main/jniLibs
@@ -76,7 +98,7 @@ Android/APIExample/agora-simple-filter/src/main/jniLibs
 ├── arm64-v8a
 └── armeabi-v7a
 ```
-2. 手动下载[Agora SDK包](https://doc.shengwang.cn/doc/rtc/android/resources), 解压后将c++动态库（包括架构文件夹）copy到Android/APIExample/agora-simple-filter/src/main/agoraLibs, 将 low_level_api/include 头文件替换到 Android/APIExample/agora-simple-filter/src/main/cpp/AgoraRtcKit 目录中
+2. 手动下载[声网 RTC SDK 包](https://doc.shengwang.cn/doc/rtc/android/resources), 解压后将c++动态库（包括架构文件夹）copy到Android/APIExample/agora-simple-filter/src/main/agoraLibs, 将 low_level_api/include 头文件替换到 Android/APIExample/agora-simple-filter/src/main/cpp/AgoraRtcKit 目录中
 
 ```text
 Android/APIExample/agora-simple-filter/src/main/agoraLibs
@@ -96,7 +118,7 @@ Android/APIExample/agora-simple-filter/src/main/cpp
 
 本项目包含自定义加密示例，默认是不启用的。配置方法如下：
 
-1. 手动下载[Agora SDK包](https://doc.shengwang.cn/doc/rtc/android/resources), 解压后将c++动态库（包括架构文件夹）copy到Android/APIExample/agora-stream-encrypt/src/main/agoraLibs，将 hight_level_api/include 头文件替换到 Android/APIExample/agora-stream-encrypt/src/main/cpp/include/agora 目录中
+1. 手动下载[声网 RTC SDK 包](https://doc.shengwang.cn/doc/rtc/android/resources), 解压后将c++动态库（包括架构文件夹）copy到Android/APIExample/agora-stream-encrypt/src/main/agoraLibs，将 high_level_api/include 头文件替换到 Android/APIExample/agora-stream-encrypt/src/main/cpp/include/agora 目录中
 
 ```text
 Android/APIExample/agora-stream-encrypt/src/main/agoraLibs
@@ -115,14 +137,11 @@ Android/APIExample/agora-stream-encrypt/src/main/cpp
 
 ## 联系我们
 
-- 如果你遇到了困难，可以先参阅 [常见问题](https://docs.agora.io/cn/faq)
-- 如果你想了解更多官方示例，可以参考 [官方SDK示例](https://github.com/AgoraIO)
-- 如果你想了解声网SDK在复杂场景下的应用，可以参考 [官方场景案例](https://github.com/AgoraIO-usecase)
-- 如果你想了解声网的一些社区开发者维护的项目，可以查看 [社区](https://github.com/AgoraIO-Community)
-- 完整的 API 文档见 [文档中心](https://docs.agora.io/cn/)
+- 产品指南和 API 参考见[声网文档中心](https://doc.shengwang.cn/)
+- 更多官方示例和社区项目见 [Shengwang Community](https://github.com/Shengwang-Community)
 - 若遇到问题需要开发者帮助，你可以到 [开发者社区](https://rtcdeveloper.com/) 提问
-- 如果需要售后技术支持, 你可以在 [Agora Dashboard](https://dashboard.agora.io) 提交工单
-- 如果发现了示例代码的 bug，欢迎提交 [issue](https://github.com/AgoraIO/API-Examples/issues)
+- 如果需要售后技术支持，可以在[声网控制台](https://dashboard.agora.io)提交工单
+- 如果发现了示例代码的 bug，欢迎提交 [issue](https://github.com/Shengwang-Community/API-Examples/issues)
 
 ## 代码许可
 

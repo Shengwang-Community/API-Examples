@@ -12,6 +12,7 @@ import AgoraRtcKit
 class AgoraBeautyManager {
     weak var agoraKit: AgoraRtcEngineKit?
     private var videoEffectObject: AgoraVideoEffectObject?
+    private(set) var isAvailable = false
     private lazy var faceshapeOption = AgoraFaceShapeBeautyOptions()
     private var styleParam: [String : Any] = ["enable_mu": false]
     private var m_bundle_copied = false;
@@ -27,6 +28,7 @@ class AgoraBeautyManager {
         let result = agoraKit?.destroyVideoEffectObject(videoEffectObject)
         if result == 0 {
             videoEffectObject = nil
+            isAvailable = false
         }
     }
     
@@ -43,7 +45,16 @@ class AgoraBeautyManager {
             return
         }
         let path = beauty_material_path + "/" + m_current_material_name;
-        videoEffectObject = agoraKit?.createVideoEffectObject(bundlePath: path, sourceType: AgoraMediaSourceType.primaryCamera)
+        guard let videoEffectObject = agoraKit?.createVideoEffectObject(bundlePath: path,
+                                                                         sourceType: AgoraMediaSourceType.primaryCamera) else {
+            agoraKit?.enableExtension(withVendor: "agora_video_filters_clear_vision",
+                                      extension: "clear_vision",
+                                      enabled: false,
+                                      sourceType: .primaryCamera)
+            return
+        }
+        self.videoEffectObject = videoEffectObject
+        isAvailable = true
         agoraKit?.setParameters("{\"rtc.video.yuvconverter_enable_hardware_buffer\":true}")
 
     }

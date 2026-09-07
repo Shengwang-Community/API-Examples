@@ -2,7 +2,7 @@
 
 ## Project Context
 
-This is the C++ + MFC implementation of Agora RTC SDK examples for Windows. Before making any changes, read `ARCHITECTURE.md` to understand the structural rules.
+This is the C++ + MFC implementation of Shengwang RTC SDK examples for Windows. Before making any changes, read `ARCHITECTURE.md` to understand the structural rules.
 
 ## Build Commands
 
@@ -17,7 +17,7 @@ start APIExample.sln
 
 ## App ID Configuration
 
-Configure your Agora App ID in `APIExample/APIExample/CConfig.h` and `CConfig.cpp`:
+Configure your Shengwang App ID in `APIExample/APIExample/CConfig.h` and `CConfig.cpp`:
 
 ```cpp
 // CConfig.h
@@ -47,7 +47,7 @@ public:
 All work must conform to the rules defined in `ARCHITECTURE.md`:
 - Every example is a dialog class inheriting from `CDialogEx` or `CDialog`
 - Each example implements `IAgoraRtcEngineEventHandler` interface
-- Each example manages its own Agora engine lifecycle
+- Each example manages its own Shengwang RTC engine lifecycle
 - Message handlers are defined via `BEGIN_MESSAGE_MAP` / `END_MESSAGE_MAP`
 - All examples are registered in `APIExampleDlg.h` and `APIExampleDlg.cpp`
 - Configuration is managed centrally via `CConfig` class

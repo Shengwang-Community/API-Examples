@@ -1,6 +1,6 @@
 # AGENTS.md — APIExample
 
-Full demo project. Covers all Agora RTC APIs using UIKit + Swift. Default choice when no specific variant is required.
+Full demo project. Covers all Shengwang RTC APIs using UIKit + Swift. Default choice when no specific variant is required.
 
 ## Build Commands
 

@@ -1,11 +1,11 @@
 # AGENTS.md
 
-Entry point for AI agents working on the Agora RTC Native SDK API-Examples repository.
+Entry point for AI agents working on the Shengwang RTC Native SDK API-Examples repository.
 Read this file first, then navigate to the relevant platform directory.
 
 ## Repository Overview
 
-This repository contains sample projects demonstrating Agora RTC Native SDK APIs across four independent platforms. Each platform is self-contained — do not share source files, build scripts, or dependencies across platforms.
+This repository contains sample projects demonstrating Shengwang RTC Native SDK APIs across four independent platforms. Each platform is self-contained — do not share source files, build scripts, or dependencies across platforms.
 
 | Platform | Language(s) | Directory | SDK |
 |----------|-------------|-----------|-----|

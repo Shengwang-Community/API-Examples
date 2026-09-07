@@ -22,7 +22,7 @@
 | RawVideoData | `Examples/Advanced/RawVideoData/RawVideoData.swift` | `setVideoFrameDelegate()` | Capture raw video frames via delegate |
 | RawMediaData | `Examples/Advanced/RawMediaData/RawMediaData.swift` | `setVideoFrameDelegate()`, `setAudioFrameDelegate()`, `setRecordingAudioFrameParametersWithSampleRate()`, `startAudioRecording()` | Capture both raw audio and video data simultaneously |
 | PictureInPicture | `Examples/Advanced/PictureInPicture/` | `AVPictureInPictureController`, `joinChannel()`, `setVideoFrameDelegate()` | Picture-in-Picture using AVKit (iOS 15+) |
-| SimpleFilter | `Examples/Advanced/SimpleFilter/SimpleFilter.swift` | `enableExtension()`, `setExtensionPropertyWithVendor()` | Apply audio/video filter via Agora Extension API |
+| SimpleFilter | `Examples/Advanced/SimpleFilter/SimpleFilter.swift` | `enableExtension()`, `setExtensionPropertyWithVendor()` | Apply audio/video filter via the RTC Extension API |
 | QuickSwitchChannel | `Examples/Advanced/QuickSwitchChannel/QuickSwitchChannel.swift` | `joinChannel()`, `leaveChannel()` | Quickly switch between channels as audience |
 | JoinMultiChannel | `Examples/Advanced/JoinMultiChannel/JoinMultiChannel.swift` | `joinChannelEx()`, `takeSnapshotEx()` | Join multiple channels simultaneously via ex connection |
 | StreamEncryption | `Examples/Advanced/StreamEncryption/StreamEncryption.swift` | `enableEncryption()` | Built-in and custom stream encryption |
@@ -32,19 +32,18 @@
 | ScreenShare | `Examples/Advanced/ScreenShare/ScreenShare.swift` | `startScreenCapture()`, `updateScreenCapture()`, `stopScreenCapture()`, `setScreenCaptureScenario()` | Screen capture and sharing via ReplayKit extension |
 | LocalCompositeGraph | `Examples/Advanced/LocalCompositeGraph/LocalCompositeGraph.swift` | `startLocalVideoTranscoder()`, `startCameraCapture()`, `startScreenCapture()`, `enableVirtualBackground()` | Composite multiple video sources locally before publishing |
 | VideoProcess | `Examples/Advanced/VideoProcess/VideoProcess.swift` | `setBeautyEffectOptions()`, `enableVirtualBackground()`, `enableExtension()` | Built-in beauty, virtual background, and video enhancement |
-| AgoraBeauty | `Examples/Advanced/AgoraBeauty/AgoraBeauty.swift` | `enableExtension()`, `enableVirtualBackground()` | Agora beauty extension with virtual background |
-| RhythmPlayer | `Examples/Advanced/RhythmPlayer/RhythmPlayer.swift` | `startRhythmPlayer()`, `stopRhythmPlayer()` | Play metronome-style rhythm audio |
+| AgoraBeauty | `Examples/Advanced/AgoraBeauty/AgoraBeauty.swift` | `createVideoEffectObject()`, `setVideoEffectStringParam()`, `enableVirtualBackground()` | Shengwang Beauty extension with virtual background |
+| RhythmPlayer (hidden) | `Examples/Advanced/RhythmPlayer/RhythmPlayer.swift` | `startRhythmPlayer()`, `stopRhythmPlayer()` | Source retained for reference; hidden from the menu because the Rhythm Player APIs are deprecated since RTC SDK 4.6.0 |
 | CreateDataStream | `Examples/Advanced/CreateDataStream/CreateDataStream.swift` | `createDataStream()`, `sendStreamMessage()` | Create and send data stream messages between users |
 | MediaChannelRelay | `Examples/Advanced/MediaChannelRelay/MediaChannelRelay.swift` | `startOrUpdateChannelMediaRelay()`, `stopChannelMediaRelay()`, `pauseAllChannelMediaRelay()`, `resumeAllChannelMediaRelay()` | Relay media stream to multiple destination channels |
 | SpatialAudio | `Examples/Advanced/SpatialAudio/SpatialAudio.swift` | `createMediaPlayer()`, `updateChannel()` | 3D spatial audio with media player integration |
 | ContentInspect | `Examples/Advanced/ContentInspect/ContentInspect.swift` | `enableContentInspect()`, `switchCamera()` | Moderate content in video stream |
 | MutliCamera | `Examples/Advanced/MutliCamera/MutliCamera.swift` | `enableMultiCamera()`, `startCameraCapture()`, `stopCameraCapture()` | Capture from front and back cameras simultaneously (iOS 13+) |
 | KtvCopyrightMusic | `Examples/Advanced/KtvCopyrightMusic/KtvCopyrightMusic.swift` | — | Links to KTV copyright music documentation |
-| ThirdBeautify | `Examples/Advanced/ThirdBeautify/ThirdBeautify.swift` | `enableExtension()` | Third-party beauty SDK integration (ByteDance / FaceUnity / SenseTime) |
+| ThirdBeautify | `Examples/Advanced/ThirdBeautify/ThirdBeautify.swift` | `enableExtension()` | Third-party beauty SDK integration (FaceUnity / SenseTime) |
 | ARKit | `Examples/Advanced/ARKit/ARKit.swift` | `setVideoFrameDelegate()`, `enableInstantMediaRendering()`, `startMediaRenderingTracing()` | Push ARKit face tracking frames as custom video source |
 | AudioRouterPlayer | `Examples/Advanced/AudioRouterPlayer/AudioRouterPlayer.swift` | `setEnableSpeakerphone()` | Control audio output routing with third-party player |
 | AudioWaveform | `Examples/Advanced/AudioWaveform/AudioWaveform.swift` | `setAudioProfile()`, `enableAudioVolumeIndication()` | Visualize audio waveform from volume callbacks |
-| FaceCapture | `Examples/Advanced/FaceCapture/FaceCapture.swift` | `enableExtension()`, `setExtensionPropertyWithVendor()`, `setFaceInfoDelegate()` | Face capture and lip sync via Agora extension |
 | TransparentRender | `Examples/Advanced/TransparentRender/TransparentRender.swift` | `createMediaPlayer()`, `setExternalVideoSource()`, `pushExternalVideoFrame()` | Render video with transparent background |
 | RtePlayer | `Examples/Advanced/RtePlayer/RtePlayer.swift` | `AgoraRte`, `AgoraRtePlayer`, `AgoraRteCanvas` | URL-based stream playback via RTE Player API |
 | Simulcast | `Examples/Advanced/Simulcast/Simulcast.swift` | `setSimulcastConfig()`, `setRemoteVideoStream()` | Publish multiple video quality layers simultaneously |
@@ -57,7 +56,6 @@ APIExample/
 ├── Podfile                                  # CocoaPods dependencies (AgoraRtcEngine_iOS, Floaty, AGEVideoLayout, etc.)
 ├── SimpleFilter/                            # Optional C++ audio/video extension module
 ├── Agora-ScreenShare-Extension/             # ReplayKit broadcast extension for screen sharing
-├── ByteEffectLib/                           # Optional ByteDance beauty SDK resources
 ├── FULib/                                   # Optional FaceUnity beauty SDK resources
 ├── SenseLib/                                # Optional SenseTime beauty SDK resources
 ├── libs/                                    # Local SDK frameworks (when not using CocoaPods)
@@ -120,7 +118,7 @@ APIExample/
     │       ├── LocalCompositeGraph/         # "Local Composite Graph"
     │       ├── VideoProcess/                # "Video Process"
     │       ├── AgoraBeauty/                 # "Agora Beauty"
-    │       ├── RhythmPlayer/                # "Rhythm Player"
+    │       ├── RhythmPlayer/                # Hidden — APIs deprecated since RTC SDK 4.6.0
     │       ├── CreateDataStream/            # "Create Data Stream"
     │       ├── MediaChannelRelay/           # "Media Channel Relay"
     │       ├── SpatialAudio/                # "Spatial Audio"
@@ -131,14 +129,13 @@ APIExample/
     │       ├── ARKit/                       # "ARKit"
     │       ├── AudioRouterPlayer/           # "Audio Router (Third Party Player)"
     │       ├── AudioWaveform/               # "Audio Waveform"
-    │       ├── FaceCapture/                 # "Face Capture"
     │       ├── TransparentRender/           # "Transparent Render"
     │       ├── RtePlayer/                   # "URL Streaming (RTE Player)"
     │       ├── Simulcast/                   # "Simulcast"
     │       ├── Multipath/                   # "Multipath"
     │       └── VideoChat/                   # (disabled) Group Video Chat
     │
-    ├── Resources/                           # Audio/video sample files; beauty_material.bundle (Agora beauty, domestic)
+    ├── Resources/                           # Audio/video sample files and Shengwang Beauty materials
     ├── Assets.xcassets/
     ├── Base.lproj/                          # Main.storyboard, LaunchScreen.storyboard
     └── zh-Hans.lproj/                       # Chinese localization

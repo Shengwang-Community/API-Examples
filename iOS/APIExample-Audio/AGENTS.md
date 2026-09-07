@@ -1,6 +1,6 @@
 # AGENTS.md — APIExample-Audio
 
-Audio-only demo project. Uses `AgoraAudio_iOS` SDK — the video module is not included.
+Audio-only demo project. Uses `ShengwangAudio_iOS` SDK — the video module is not included.
 
 ## Build Commands
 

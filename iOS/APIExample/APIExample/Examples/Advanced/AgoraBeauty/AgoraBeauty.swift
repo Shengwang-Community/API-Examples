@@ -142,6 +142,12 @@ class AgoraBeautyMain: BaseViewController {
         beautyManager.beautyMakeupStyle = "Makeup-Young"
         beautyManager.makeUpEnable = false
         setupUI()
+        if !beautyManager.isAvailable {
+            DispatchQueue.main.async { [weak self] in
+                self?.showAlert(title: "Error",
+                                message: "Agora Beauty material is unavailable in this build.".localized)
+            }
+        }
     }
     
     override func willMove(toParent parent: UIViewController?) {
@@ -545,7 +551,7 @@ extension AgoraBeautyMain {
         let key = makeupList[index]["key"] as? String ?? ""
         let state = view.isOn
         if state {
-            beautyManager.beautyMakeupStyle = "default makeup style".localized
+            beautyManager.beautyMakeupStyle = "Makeup-Young"
         }
         makeupParams[key] = state
         beautyManager.makeUpEnable = state
