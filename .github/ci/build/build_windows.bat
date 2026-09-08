@@ -80,11 +80,11 @@ echo compile_project: %compile_project%
 
 REM Package APIExample code with dependencies (only when compress_apiexample=true)
 REM Run before compile so package content is not affected by compile
-set result_zip=APIExample_result.zip
-set des_path=%WORKSPACE%\Shengwang_Native_SDK_for_Windows_v%SDK_VER%_APIExample_%BUILD_NUMBER%.zip
+set "result_zip=APIExample_result.zip"
+set "des_path=%WORKSPACE%\Shengwang_Native_SDK_for_Windows_v%SDK_VER%_APIExample_%BUILD_NUMBER%.zip"
 if "%compress_apiexample%"=="true" (
     echo "Packaging APIExample code with dependencies..."
-    
+
     REM Install dependencies (ThirdParty, SDK) in windows\APIExample
     echo "Installing dependencies in windows\APIExample..."
     cd windows\APIExample
@@ -96,39 +96,35 @@ if "%compress_apiexample%"=="true" (
     )
     cd ..\..
 
-    REM Beauty 2.0 material is generated only for executable builds. A reused
-    REM Jenkins workspace may still contain it from an earlier compile job.
-    if exist windows\APIExample\Release\beauty_agora (
-        echo "Removing generated Beauty material from source package..."
-        rmdir /S /Q windows\APIExample\Release\beauty_agora
-        if exist windows\APIExample\Release\beauty_agora (
-            echo Failed to remove Beauty material from source package!
-            exit /b 1
-        )
-    )
-    
-    REM Compress windows\APIExample (code + dependencies) to zip
-    echo "Compressing APIExample code package..."
-    del /F /Q %result_zip% 2>nul
-    7z a -tzip %result_zip% -r windows\APIExample
+    REM Archive tracked source so reused workspaces cannot leak build output or
+    REM local configuration into the APIExample package.
+    del /F /Q "%result_zip%" 2>nul
+    git archive --format=zip --output="%result_zip%" HEAD windows/APIExample
     if errorlevel 1 (
-        echo 7z compression failed!
+        echo git archive failed!
         exit /b 1
     )
-    
+
+    REM Preserve an SDK URL injected by this job and add Shengwang dependencies.
+    7z u -tzip "%result_zip%" -r windows\APIExample\install.ps1 windows\APIExample\sdk windows\APIExample\ThirdParty >nul
+    if errorlevel 1 (
+        echo Failed to add Shengwang dependencies to APIExample package!
+        exit /b 1
+    )
+
     REM Copy to WORKSPACE with new naming format
     echo "Copying %result_zip% to %des_path%"
-    copy %result_zip% %des_path%
+    copy /Y "%result_zip%" "%des_path%"
     if errorlevel 1 (
         echo copy failed!
         exit /b 1
     )
-    
+
     REM Clean up temporary zip in repo root
-    del /F %result_zip%
-    
+    del /F /Q "%result_zip%"
+
     echo "Complete: APIExample code package created"
-    dir %WORKSPACE%\
+    dir "%WORKSPACE%\"
 ) else (
     echo "Skipping APIExample code packaging (compress_apiexample=false)"
 )

@@ -128,14 +128,16 @@ fi
 
 python3 ./.github/ci/build/modify_podfile.py ./$unzip_name/samples/${ios_direction}/Podfile $sdk_url_flag || exit 1
 
-echo "start compress"
-7za a -tzip result.zip -r $unzip_name > log.txt
-echo "start move to"
-sdk_des_path=$WORKSPACE/Shengwang_with${ios_direction}_${BUILD_NUMBER}_$zip_name
-echo $sdk_des_path
-mv result.zip $sdk_des_path
+if [ "$compress_apiexample" != true ]; then
+    echo "start compress"
+    7za a -tzip result.zip -r $unzip_name > log.txt
+    echo "start move to"
+    sdk_des_path=$WORKSPACE/Shengwang_with${ios_direction}_${BUILD_NUMBER}_$zip_name
+    echo $sdk_des_path
+    mv result.zip $sdk_des_path
+fi
 
-if [ $compress_apiexample = true ]; then
+if [ "$compress_apiexample" = true ]; then
     echo "Using version for package: $API_EXAMPLES_SDK_VERSION"
 
     mkdir -p $cn_dir

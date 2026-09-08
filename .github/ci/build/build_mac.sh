@@ -129,19 +129,25 @@ fi
 
 python3 ./.github/ci/build/modify_podfile.py ./$unzip_name/samples/APIExample/Podfile $sdk_url_flag
 
-echo "start compress"
-7za a -tzip result.zip -r $unzip_name > log.txt
-echo "start move to"
-sdk_des_path=$WORKSPACE/Shengwang_APIExample_mac_${BUILD_NUMBER}_$zip_name
-echo $sdk_des_path
-mv result.zip $sdk_des_path
+if [ "$compress_apiexample" != true ]; then
+    echo "start compress"
+    7za a -tzip result.zip -r $unzip_name > log.txt
+    echo "start move to"
+    sdk_des_path=$WORKSPACE/Shengwang_APIExample_mac_${BUILD_NUMBER}_$zip_name
+    echo $sdk_des_path
+    mv result.zip $sdk_des_path
+fi
 
-if [ $compress_apiexample = true ]; then
+if [ "$compress_apiexample" = true ]; then
     echo "Using version for package: $API_EXAMPLES_SDK_VERSION"
 
     mkdir -p $cn_dir
     echo "cn_dir: $cn_dir"
     cp -rf ./macOS $cn_dir/
+    # Include CocoaPods dependencies in Shengwang packages for customers with slow pod access.
+    cd $cn_dir/macOS
+    ./cloud_project.sh || exit 1
+    cd -
     echo "start compress api example"
     7za a -tzip cn_result.zip $cn_dir
     echo "complete compress api example"
