@@ -1,7 +1,7 @@
 xcuserdata
 .DS_Store
+.venv/
 AgoraRtcKit.framework
 */libs
 /sdk
 docs/superpowers/
-docs/ai-engineering/tools/__pycache__
