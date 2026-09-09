@@ -10,7 +10,7 @@
 /// 1.Register obesever: agoraKit.setVideoFrameDelegate(self)
 /// 2.Call back AgoraVideoFrameDelegate to get raw video frame data
 ///
-/// More detail: https://docs.agora.io/en/Interactive%20Broadcast/raw_data_video_apple?platform=iOS
+/// More detail: https://doc.shengwang.cn/doc/rtc/ios/advanced-features/raw-video-data
 
 import AgoraRtcKit
 import AGEVideoLayout

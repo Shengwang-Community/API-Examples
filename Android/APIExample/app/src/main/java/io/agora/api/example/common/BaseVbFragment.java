@@ -59,7 +59,7 @@ public abstract class BaseVbFragment<T extends ViewBinding> extends BaseFragment
              */
             config.mContext = context.getApplicationContext();
             /*
-             * The App ID issued to you by Agora. See <a href="https://docs.agora.io/en/Agora%20Platform/token#get-an-app-id"> How to get the App ID</a>
+             * The App ID issued to you by Agora. See <a href="https://doc.shengwang.cn/doc/console/general/quickstart"> How to get the App ID</a>
              */
             config.mAppId = getAgoraAppId();
             /* The channel profile.

@@ -439,7 +439,7 @@ void CAPIExampleDlg::InitSceneList()
 
 void CAPIExampleDlg::OnBnClickedButtonFaq()
 {
-	ShellExecute(NULL, L"open", L"https://docs.agora.io/cn/Video/faq", NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(NULL, L"open", L"https://doc.shengwang.cn/faq/list", NULL, NULL, SW_SHOWNORMAL);
 }
 
 
