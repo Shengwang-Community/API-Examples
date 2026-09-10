@@ -1,35 +1,42 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+set -eu
+
 export LANG=en_US.UTF-8
 export PATH=$PATH:/opt/homebrew/bin
 
 PROJECT_PATH=$PWD
+WORKSPACE=${WORKSPACE:-$PWD}
+SIGNING_TEAM="YS397FG5PA"
 
-if [ "$WORKSPACE" = "" ]; then
-	WORKSPACE=$PWD
-fi
+: "${BUILD_NUMBER:?BUILD_NUMBER is required}"
+: "${APP_ID:?APP_ID is required}"
+: "${JFROG_API_KEY:?JFROG_API_KEY is required}"
+
+cd "${PROJECT_PATH}"
+
 # Version validation logic
 echo "Starting branch version validation..."
 
 # Get current branch name (try multiple methods for CI environments)
-BRANCH_NAME=""
+BRANCH_NAME="${BRANCH_NAME:-}"
 
 # Method 1: Try the explicit Jenkins branch parameter first.
 # Jenkins checks out a detached HEAD, so inferring from branches containing
 # HEAD can pick an unrelated release branch before main.
-if [ ! -z "$api_examples_shengwang_branch" ]; then
-    BRANCH_NAME="$api_examples_shengwang_branch"
+if [ ! -z "${api_examples_shengwang_branch:-}" ]; then
+    BRANCH_NAME="${api_examples_shengwang_branch:-}"
     echo "Branch from api_examples_shengwang_branch: $BRANCH_NAME"
-elif [ ! -z "$GIT_BRANCH" ]; then
-    BRANCH_NAME="$GIT_BRANCH"
+elif [ ! -z "${GIT_BRANCH:-}" ]; then
+    BRANCH_NAME="${GIT_BRANCH:-}"
     echo "Branch from GIT_BRANCH: $BRANCH_NAME"
 elif [ ! -z "$BRANCH_NAME" ]; then
     echo "Branch from BRANCH_NAME: $BRANCH_NAME"
-elif [ ! -z "$CI_COMMIT_REF_NAME" ]; then
-    BRANCH_NAME="$CI_COMMIT_REF_NAME"
+elif [ ! -z "${CI_COMMIT_REF_NAME:-}" ]; then
+    BRANCH_NAME="${CI_COMMIT_REF_NAME:-}"
     echo "Branch from CI_COMMIT_REF_NAME: $BRANCH_NAME"
 # Method 2: Try git command
 elif [ -z "$BRANCH_NAME" ]; then
-    BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)
     if [ "$BRANCH_NAME" = "HEAD" ]; then
         echo "Detached HEAD without explicit branch; skipping branch inference"
         BRANCH_NAME=""
@@ -98,156 +105,96 @@ fi
 echo "Version validation completed"
 echo "-----------------------------------"
 
-curl --fail --location -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -o AgoraBeautyMaterial.bundle.zip "https://artifactory-api.bj2.agoralab.co/artifactory/qa_test_data/beauty/AgoraBeautyMaterial.bundle.zip" || exit 1
+curl --fail --location -H "X-JFrog-Art-Api:${JFROG_API_KEY}" -o AgoraBeautyMaterial.bundle.zip "https://artifactory-api.bj2.agoralab.co/artifactory/qa_test_data/beauty/AgoraBeautyMaterial.bundle.zip"
 rm -rf APIExample/Resources/AgoraBeautyMaterial.bundle
-unzip -q AgoraBeautyMaterial.bundle.zip -d APIExample/Resources || exit 1
+unzip -q AgoraBeautyMaterial.bundle.zip -d APIExample/Resources
 rm -f AgoraBeautyMaterial.bundle.zip
-test -f APIExample/Resources/AgoraBeautyMaterial.bundle/beauty_material_functional/config.json || exit 1
+test -f APIExample/Resources/AgoraBeautyMaterial.bundle/beauty_material_functional/config.json
 
-cd ${PROJECT_PATH} && pod install || exit 1
+pod install
 
-# 打包环境
+# Build environment
 CONFIGURATION="Debug"
 
-#工程文件路径
-APP_PATH="$(ls | grep xcworkspace)"
+# Project file path
+APP_PATH=$(find . -maxdepth 1 -type d -name '*.xcworkspace' -print -quit)
+if [ -z "${APP_PATH}" ]; then
+	echo "Error: No Xcode workspace found in ${PROJECT_PATH}"
+	exit 1
+fi
+APP_PATH=${APP_PATH#./}
 
-# 项目target名
-TARGET_NAME=${APP_PATH%%.*} 
+# Project target name
+TARGET_NAME=${APP_PATH%%.*}
 
 KEYCENTER_PATH=$TARGET_NAME/Common/KeyCenter.swift
 
-#工程配置路径
-PBXPROJ_PATH=${TARGET_NAME}.xcodeproj/project.pbxproj
+# Read APPID environment variable
+echo "AGORA_APP_ID is configured"
 
-# 主项目工程配置
-# Debug
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5324F8A011008593CD:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5324F8A011008593CD:buildSettings:CODE_SIGN_IDENTITY 'Developer ID Application'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5324F8A011008593CD:buildSettings:DEVELOPMENT_TEAM 'GM72UGLGZW'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5324F8A011008593CD:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'App'" $PBXPROJ_PATH
-# Release
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5424F8A011008593CD:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5424F8A011008593CD:buildSettings:CODE_SIGN_IDENTITY 'Developer ID Application'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5424F8A011008593CD:buildSettings:DEVELOPMENT_TEAM 'GM72UGLGZW'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5424F8A011008593CD:buildSettings:PROVISIONING_PROFILE_SPECIFIER 'App'" $PBXPROJ_PATH
+echo PROJECT_PATH: "$PROJECT_PATH"
+echo TARGET_NAME: "$TARGET_NAME"
+echo KEYCENTER_PATH: "$KEYCENTER_PATH"
+echo APP_PATH: "$APP_PATH"
 
-# SimpleFilter
-# Debug
-/usr/libexec/PlistBuddy -c "Set :objects:8BD4AE7E272518D600E95B87:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:8BD4AE7E272518D600E95B87:buildSettings:DEVELOPMENT_TEAM ''" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:8BD4AE7E272518D600E95B87:buildSettings:PROVISIONING_PROFILE_SPECIFIER ''" $PBXPROJ_PATH
-# Release
-/usr/libexec/PlistBuddy -c "Set :objects:8BD4AE7F272518D600E95B87:buildSettings:CODE_SIGN_STYLE 'Manual'" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:8BD4AE7F272518D600E95B87:buildSettings:DEVELOPMENT_TEAM ''" $PBXPROJ_PATH
-/usr/libexec/PlistBuddy -c "Set :objects:8BD4AE7F272518D600E95B87:buildSettings:PROVISIONING_PROFILE_SPECIFIER ''" $PBXPROJ_PATH
+# Modify Keycenter file
+sed -i -e "s#<\#YOUR AppId\#>#\"$APP_ID\"#g" "${KEYCENTER_PATH}"
+rm -f "${KEYCENTER_PATH}-e"
 
-#修改build number
-# Debug
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5324F8A011008593CD:buildSettings:CURRENT_PROJECT_VERSION ${BUILD_NUMBER}" $PBXPROJ_PATH
-# Release
-/usr/libexec/PlistBuddy -c "Set :objects:03896D5424F8A011008593CD:buildSettings:CURRENT_PROJECT_VERSION ${BUILD_NUMBER}" $PBXPROJ_PATH
-
-
-# 读取APPID环境变量
-echo AGORA_APP_ID: $APP_ID
-
-echo PROJECT_PATH: $PROJECT_PATH
-echo TARGET_NAME: $TARGET_NAME
-echo KEYCENTER_PATH: $KEYCENTER_PATH
-echo APP_PATH: $APP_PATH
-
-#修改Keycenter文件
-sed -i -e "s#<\#YOUR AppId\#>#\"$APP_ID\"#g" $KEYCENTER_PATH
-rm -f ${KEYCENTER_PATH}-e
-
-# Xcode clean
-xcodebuild clean -workspace "${APP_PATH}" -configuration "${CONFIGURATION}" -scheme "${TARGET_NAME}"
-
-# 时间戳
-CURRENT_TIME=$(date "+%Y-%m-%d %H-%M-%S")
-
-# 归档路径
+# Archive path
 ARCHIVE_PATH="${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}.xcarchive"
 
-# 编译环境
+# Build environment
 
-# plist路径
+# Plist path
 PLIST_PATH="${PROJECT_PATH}/ExportOptions.plist"
+EXPORT_PATH="${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}_export"
 
-echo PLIST_PATH: $PLIST_PATH
+echo PLIST_PATH: "$PLIST_PATH"
 
-# archive 这边使用的工作区间 也可以使用project
-xcodebuild archive -workspace "${APP_PATH}" -scheme "${TARGET_NAME}" -configuration "${CONFIGURATION}" -archivePath "${ARCHIVE_PATH}"
+# Archive with Xcode-managed development signing for the configured team.
+rm -rf "${ARCHIVE_PATH}" "${EXPORT_PATH}"
+xcodebuild \
+	-workspace "${APP_PATH}" \
+	-scheme "${TARGET_NAME}" \
+	-configuration "${CONFIGURATION}" \
+	-destination 'generic/platform=macOS' \
+	-archivePath "${ARCHIVE_PATH}" \
+	-allowProvisioningUpdates \
+	CODE_SIGN_STYLE=Automatic \
+	CODE_SIGN_IDENTITY="Apple Development" \
+	DEVELOPMENT_TEAM="${SIGNING_TEAM}" \
+	PROVISIONING_PROFILE_SPECIFIER= \
+	CURRENT_PROJECT_VERSION="${BUILD_NUMBER}" \
+	clean archive
 
-cd ${WORKSPACE}
-
-# 压缩archive
-7za a -tzip "${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" "${ARCHIVE_PATH}"
-
-echo "start sign..."
-
-# 签名
-sh sign "${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}.xcarchive.zip" --type xcarchive --plist "${PLIST_PATH}" --application macApp
-
-
-SDK_VERSION=$(echo $sdk_url | cut -d "/" -f 5)
-OUTPUT_FILE=${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}_${SDK_VERSION}_$(date "+%Y%m%d%H%M%S").app.zip
-mv ${TARGET_NAME}_${BUILD_NUMBER}.app.zip $OUTPUT_FILE
-
-rm -rf *.xcarchive
-rm -rf *.xcarchive.zip
-echo OUTPUT_FILE: $OUTPUT_FILE
-
-echo ""
-echo "=========================================="
-echo "=== Certificate Expiration Information ==="
-echo "=========================================="
-
-# 获取用于签名的证书信息 (macOS)
-SIGNING_CERT=$(security find-identity -v -p codesigning | grep "Developer ID Application\|Mac Developer\|Apple Development" | head -1 | awk -F'"' '{print $2}')
-
-if [ ! -z "$SIGNING_CERT" ]; then
-    echo "Signing Certificate: $SIGNING_CERT"
-    
-    # 获取证书的详细信息
-    CERT_INFO=$(security find-certificate -c "$SIGNING_CERT" -p | openssl x509 -noout -dates 2>/dev/null)
-    
-    if [ $? -eq 0 ]; then
-        echo "$CERT_INFO"
-        
-        # 提取过期日期
-        EXPIRY_DATE=$(echo "$CERT_INFO" | grep "notAfter" | cut -d= -f2)
-        echo ""
-        echo "⚠️  Certificate will expire on: $EXPIRY_DATE"
-        
-        # 计算剩余天数
-        if command -v gdate >/dev/null 2>&1; then
-            # macOS with GNU coreutils installed
-            EXPIRY_EPOCH=$(gdate -d "$EXPIRY_DATE" +%s 2>/dev/null)
-            CURRENT_EPOCH=$(gdate +%s)
-        else
-            # macOS default date command
-            EXPIRY_EPOCH=$(date -j -f "%b %d %T %Y %Z" "$EXPIRY_DATE" +%s 2>/dev/null)
-            CURRENT_EPOCH=$(date +%s)
-        fi
-        
-        if [ ! -z "$EXPIRY_EPOCH" ] && [ ! -z "$CURRENT_EPOCH" ]; then
-            DAYS_LEFT=$(( ($EXPIRY_EPOCH - $CURRENT_EPOCH) / 86400 ))
-            echo "📅 Days remaining: $DAYS_LEFT days"
-            
-            if [ $DAYS_LEFT -lt 30 ]; then
-                echo "🚨 WARNING: Certificate will expire in less than 30 days!"
-            elif [ $DAYS_LEFT -lt 90 ]; then
-                echo "⚠️  NOTICE: Certificate will expire in less than 90 days"
-            fi
-        fi
-    else
-        echo "Unable to retrieve certificate expiration information"
-    fi
-else
-    echo "No distribution certificate found"
+if [ ! -d "${ARCHIVE_PATH}/Products/Applications/${TARGET_NAME}.app" ]; then
+	echo "Error: Archive does not contain ${TARGET_NAME}.app"
+	exit 1
 fi
 
-echo "=========================================="
-echo ""
+mkdir -p "${EXPORT_PATH}"
+xcodebuild -exportArchive \
+	-archivePath "${ARCHIVE_PATH}" \
+	-exportPath "${EXPORT_PATH}" \
+	-exportOptionsPlist "${PLIST_PATH}" \
+	-allowProvisioningUpdates
+
+EXPORTED_APP="${EXPORT_PATH}/${TARGET_NAME}.app"
+if [ ! -d "${EXPORTED_APP}" ]; then
+	echo "Error: Xcode export did not produce ${TARGET_NAME}.app"
+	exit 1
+fi
+codesign --verify --deep --strict --verbose=2 "${EXPORTED_APP}"
+
+SDK_VERSION=$(echo "${sdk_url:-unknown}" | cut -d "/" -f 5)
+OUTPUT_FILE=${WORKSPACE}/${TARGET_NAME}_${BUILD_NUMBER}_${SDK_VERSION}_$(date "+%Y%m%d%H%M%S").app.zip
+rm -f "${OUTPUT_FILE}"
+ditto -c -k --sequesterRsrc --keepParent "${EXPORTED_APP}" "${OUTPUT_FILE}"
+if [ ! -s "${OUTPUT_FILE}" ]; then
+	echo "Error: App package was not created"
+	exit 1
+fi
+
+rm -rf "${ARCHIVE_PATH}" "${EXPORT_PATH}"
+echo OUTPUT_FILE: "$OUTPUT_FILE"
