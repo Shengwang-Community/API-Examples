@@ -44,8 +44,8 @@
 /* Class = "NSTextFieldCell"; title = "Mixing Volume"; ObjectID = "hQ4-2Z-Twn"; */
 "hQ4-2Z-Twn.title" = "混音音量";
 
-/* Class = "NSViewController"; title = "Join Channel Audio"; ObjectID = "jAv-ZA-ecf"; */
-"jAv-ZA-ecf.title" = "Join Channel Audio";
+/* Class = "NSViewController"; title = "Audio Mixing"; ObjectID = "jAv-ZA-ecf"; */
+"jAv-ZA-ecf.title" = "音频文件混音";
 
 /* Class = "NSTextFieldCell"; title = "Effect Volume"; ObjectID = "kh5-ZD-Sm3"; */
 "kh5-ZD-Sm3.title" = "音效音量";

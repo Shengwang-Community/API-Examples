@@ -17,5 +17,5 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "j41-op-nLI"; */
 "j41-op-nLI.title" = "Box";
 
-/* Class = "NSViewController"; title = "Join Channel Audio"; ObjectID = "jAv-ZA-ecf"; */
-"jAv-ZA-ecf.title" = "Join Channel Audio";
+/* Class = "NSViewController"; title = "Join a channel (Audio)"; ObjectID = "jAv-ZA-ecf"; */
+"jAv-ZA-ecf.title" = "实时语音通话/直播";

@@ -8,8 +8,8 @@
 /* Class = "NSButtonCell"; title = "Display Share"; ObjectID = "ACV-0l-kRZ"; */
 "ACV-0l-kRZ.title" = "屏幕共享";
 
-/* Class = "NSViewController"; title = "Stream Encryption"; ObjectID = "Gwp-vd-c2J"; */
-"Gwp-vd-c2J.title" = "码流加密";
+/* Class = "NSViewController"; title = "Screen Share"; ObjectID = "Gwp-vd-c2J"; */
+"Gwp-vd-c2J.title" = "屏幕共享";
 
 /* Class = "NSButtonCell"; title = "Leave"; ObjectID = "Owt-vb-7U9"; */
 "Owt-vb-7U9.title" = "离开频道";
