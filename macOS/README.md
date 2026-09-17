@@ -7,7 +7,8 @@ This project presents a set of API examples to help you understand how to use Sh
 
 ## Prerequisites
 
-- Xcode 13.0+
+- macOS 12.0 or later
+- Xcode 13.1+
 
 ## Quick Start
 
