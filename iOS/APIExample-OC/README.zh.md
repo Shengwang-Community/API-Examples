@@ -13,7 +13,8 @@ iOS 系统版本升级至 14.0 版本后，用户首次使用集成了声网 iOS
 
 ## 环境准备
 
-- Xcode 13.0 或更高版本
+- iOS 12.0 或更高版本
+- Xcode 13.0 或更高版本，且该版本支持将最低部署目标设为 iOS 12（[Xcode 支持范围](https://developer.apple.com/support/xcode/)）
 - iOS 真机设备
 - 不支持模拟器
 
