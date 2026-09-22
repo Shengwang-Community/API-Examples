@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -42,6 +45,8 @@ jobs:
             ${{ matrix.project }}/**/*.gradle*
             ${{ matrix.project }}/gradle/wrapper/gradle-wrapper.properties
       - uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-35 build-tools;35.0.0"
       - name: Configure compile-only App ID
         working-directory: ${{ matrix.project }}
         run: printf 'AGORA_APP_ID=%s\nAGORA_APP_CERT=\n' "$PLACEHOLDER_APP_ID" > local.properties
@@ -167,4 +172,4 @@ jobs:
       - name: Compile
         working-directory: windows/APIExample
         shell: pwsh
-        run: msbuild APIExample.sln -m /p:Configuration=Release /p:Platform=Win32
+        run: msbuild APIExample.sln -m /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143

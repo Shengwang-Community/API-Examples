@@ -17,7 +17,7 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
-    if: github.actor != 'dependabot[bot]'
+    if: github.actor != 'dependabot[bot]' && github.ref == 'refs/heads/main'
     steps:
       - name: Gitee sync repo
         uses: xgfd3/hub-mirror-action@1114fedb661f99966a6d857041f91fda6ef7575b # v1.4
@@ -31,8 +31,8 @@ jobs:
           dst_token: ${{ secrets.GITEE_PRIVATE_TOKEN }}
           force_update: true
           account_type: org
+          # github_ref makes v1.4 recreate the already checked-out main branch.
           shell_path: ./.github/ci/sync/gitee-sync.sh
-          github_ref: ${{ github.ref }}
 
       - name: Verify post-sync customization
         run: test "$(cat ./cache/API-Examples/.git/gitee-sync-status)" = "0"

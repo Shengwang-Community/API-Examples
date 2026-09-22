@@ -68,4 +68,4 @@ See `HOOKS-GUIDE.md` for details and troubleshooting.
 
 ## Sensitive Configuration
 
-API keys and real App IDs are never committed. GitHub Actions compilation uses an all-zero 32-character placeholder App ID and does not run RTC sessions. It must not use repository secrets, App Certificates, or tokens. The compile workflow runs automatically only after changes reach `main`, when the referenced SDK version is available from public package repositories.
+API keys and real App IDs are never committed. GitHub Actions compilation uses an all-zero 32-character placeholder App ID and does not run RTC sessions. It must not use repository secrets, App Certificates, or tokens. The compile workflow runs for pull requests targeting `main` and for pushes to `main`; referenced SDK versions must be available from public package repositories before the pull request can pass.
