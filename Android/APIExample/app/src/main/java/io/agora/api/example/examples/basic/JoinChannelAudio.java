@@ -85,6 +85,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
     private Spinner audioProfileInput;
     private Spinner audioScenarioInput;
     private Spinner audioRouteInput;
+    private boolean syncingAudioRouteSelection;
     private EditText et_channel;
     private Button mute, join;
     private SeekBar record, playout, inear;
@@ -156,7 +157,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (joined) {
-                    int scenario = Constants.AudioScenario.getValue(Constants.AudioScenario.valueOf(audioScenarioInput.getSelectedItem().toString()));
+                    int scenario = getAudioScenarioValue(audioScenarioInput.getSelectedItem().toString());
                     engine.setAudioScenario(scenario);
                 }
             }
@@ -169,20 +170,32 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         audioRouteInput.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (syncingAudioRouteSelection) {
+                    syncingAudioRouteSelection = false;
+                    return;
+                }
                 if (!joined) {
                     return;
                 }
                 boolean isCommunication = getString(R.string.channel_profile_communication).equals(channelProfileInput.getSelectedItem());
                 if (isCommunication) {
-                    int route = Constants.AUDIO_ROUTE_EARPIECE;
-                    if (getString(R.string.audio_route_earpiece).equals(parent.getSelectedItem())) {
-                        route = Constants.AUDIO_ROUTE_EARPIECE;
-                    } else if (getString(R.string.audio_route_speakerphone).equals(parent.getSelectedItem())) {
-                        route = Constants.AUDIO_ROUTE_SPEAKERPHONE;
+                    int route = Constants.AUDIO_ROUTE_DEFAULT;
+                    if (getString(R.string.audio_route_default).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_DEFAULT;
                     } else if (getString(R.string.audio_route_headset).equals(parent.getSelectedItem())) {
                         route = Constants.AUDIO_ROUTE_HEADSET;
+                    } else if (getString(R.string.audio_route_earpiece).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_EARPIECE;
+                    } else if (getString(R.string.audio_route_headset_no_mic).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_HEADSETNOMIC;
+                    } else if (getString(R.string.audio_route_speakerphone).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_SPEAKERPHONE;
+                    } else if (getString(R.string.audio_route_loudspeaker).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_LOUDSPEAKER;
                     } else if (getString(R.string.audio_route_headset_bluetooth).equals(parent.getSelectedItem())) {
                         route = Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP;
+                    } else if (getString(R.string.audio_route_headset_typec).equals(parent.getSelectedItem())) {
+                        route = Constants.AUDIO_ROUTE_USBDEVICE;
                     }
                     int ret = engine.setRouteInCommunicationMode(route);
                     showShortToast("setRouteInCommunicationMode route=" + route + ", ret=" + ret);
@@ -298,7 +311,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
              */
             config.mContext = context.getApplicationContext();
             /*
-             * The App ID issued to you by Agora. See <a href="https://docs.agora.io/en/Agora%20Platform/token#get-an-app-id"> How to get the App ID</a>
+             * The App ID issued to you by Agora. See <a href="https://doc.shengwang.cn/doc/console/general/quickstart"> How to get the App ID</a>
              */
             config.mAppId = getAgoraAppId();
             /* The channel profile.
@@ -316,7 +329,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
              * The SDK uses this class to report to the app on SDK runtime events.
              */
             config.mEventHandler = iRtcEngineEventHandler;
-            config.mAudioScenario = Constants.AudioScenario.getValue(Constants.AudioScenario.valueOf(audioScenarioInput.getSelectedItem().toString()));
+            config.mAudioScenario = getAudioScenarioValue(audioScenarioInput.getSelectedItem().toString());
             config.mAreaCode = ((MainApplication) getActivity().getApplication()).getGlobalSettings().getAreaCode();
             engine = (RtcEngineEx) RtcEngine.create(config);
             /*
@@ -549,7 +562,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         int audioProfile = Constants.AudioProfile.getValue(Constants.AudioProfile.valueOf(audioProfileInput.getSelectedItem().toString()));
         engine.setAudioProfile(audioProfile);
 
-        int scenario = Constants.AudioScenario.getValue(Constants.AudioScenario.valueOf(audioScenarioInput.getSelectedItem().toString()));
+        int scenario = getAudioScenarioValue(audioScenarioInput.getSelectedItem().toString());
         engine.setAudioScenario(scenario);
 
         ChannelMediaOptions option = new ChannelMediaOptions();
@@ -558,9 +571,9 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
 
         /*
          * A temporary token generated in Console. A temporary token is valid for 24 hours. For details, see
-         *      https://docs.agora.io/en/Agora%20Platform/token?platform=All%20Platforms#get-a-temporary-token
+         *      https://doc.shengwang.cn/doc/rtc/android/basic-features/token-authentication
          * A token generated at the server. This applies to scenarios with high-security requirements. For details, see
-         *      https://docs.agora.io/en/cloud-recording/token_server_java?platform=Java*/
+         *      https://doc.shengwang.cn/doc/rtc/android/basic-features/token-authentication*/
         TokenUtils.gen(requireContext(), channelId, 0, ret -> {
 
             /* Allows a user to join a channel.
@@ -569,8 +582,8 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
             if (res != 0) {
                 // Usually happens with invalid parameters
                 // Error code description can be found at:
-                // en: https://docs.agora.io/en/Voice/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler_1_1_error_code.html
-                // cn: https://docs.agora.io/cn/Voice/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler_1_1_error_code.html
+                // en: https://docs.agora.io/en/realtime-media/rtc/reference/error-codes
+                // cn: https://doc.shengwang.cn/api-ref/rtc/android/error-code
                 showAlert(RtcEngine.getErrorDescription(Math.abs(res)));
                 Log.e(TAG, RtcEngine.getErrorDescription(Math.abs(res)));
                 return;
@@ -579,6 +592,17 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
             join.setEnabled(false);
         });
 
+    }
+
+    private int getAudioScenarioValue(String label) {
+        return switch (label) {
+            case "AUDIO_SCENARIO_GAME_STREAMING" -> Constants.AUDIO_SCENARIO_GAME_STREAMING;
+            case "AUDIO_SCENARIO_CHATROOM" -> Constants.AUDIO_SCENARIO_CHATROOM;
+            case "AUDIO_SCENARIO_CHORUS" -> Constants.AUDIO_SCENARIO_CHORUS;
+            case "AUDIO_SCENARIO_MEETING" -> Constants.AUDIO_SCENARIO_MEETING;
+            case "AUDIO_SCENARIO_AI_CLIENT" -> Constants.AUDIO_SCENARIO_AI_CLIENT;
+            default -> Constants.AUDIO_SCENARIO_DEFAULT;
+        };
     }
 
     private final IRtcEngineEventHandler secondHandler = new IRtcEngineEventHandler() {
@@ -666,7 +690,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         @Override
         public void onAudioRouteChanged(int routing) {
             super.onAudioRouteChanged(routing);
-            Log.d(TAG, "secondHandler onAudioRouteChanged : " + routing);
+            Log.d(TAG, "secondHandler onAudioRouteChanged : " + getAudioRouteKey(routing));
         }
     };
 
@@ -678,7 +702,7 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         /**
          * Error code description can be found at:
          * en: https://api-ref.agora.io/en/video-sdk/android/4.x/API/class_irtcengineeventhandler.html#callback_irtcengineeventhandler_onerror
-         * cn: https://docs.agora.io/cn/video-call-4.x/API%20Reference/java_ng/API/class_irtcengineeventhandler.html#callback_irtcengineeventhandler_onerror
+         * cn: https://doc.shengwang.cn/api-ref/rtc/android/error-code
          */
         @Override
         public void onError(int error) {
@@ -820,33 +844,58 @@ public class JoinChannelAudio extends BaseFragment implements View.OnClickListen
         @Override
         public void onAudioRouteChanged(int routing) {
             super.onAudioRouteChanged(routing);
-            showShortToast("onAudioRouteChanged : " + routing);
+            showShortToast("onAudioRouteChanged: " + getAudioRouteKey(routing));
             runOnUIThread(() -> {
-                String selectedRouteStr = getString(R.string.audio_route_speakerphone);
-                if (routing == Constants.AUDIO_ROUTE_EARPIECE) {
+                String selectedRouteStr;
+                if (routing == Constants.AUDIO_ROUTE_DEFAULT) {
+                    selectedRouteStr = getString(R.string.audio_route_default);
+                } else if (routing == Constants.AUDIO_ROUTE_EARPIECE) {
                     selectedRouteStr = getString(R.string.audio_route_earpiece);
                 } else if (routing == Constants.AUDIO_ROUTE_SPEAKERPHONE) {
                     selectedRouteStr = getString(R.string.audio_route_speakerphone);
                 } else if (routing == Constants.AUDIO_ROUTE_HEADSET) {
                     selectedRouteStr = getString(R.string.audio_route_headset);
-                } else if (routing == Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP) {
+                } else if (routing == Constants.AUDIO_ROUTE_HEADSETNOMIC) {
+                    selectedRouteStr = getString(R.string.audio_route_headset_no_mic);
+                } else if (routing == Constants.AUDIO_ROUTE_LOUDSPEAKER) {
+                    selectedRouteStr = getString(R.string.audio_route_loudspeaker);
+                } else if (routing == Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP
+                        || routing == Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_A2DP) {
                     selectedRouteStr = getString(R.string.audio_route_headset_bluetooth);
-                } else if (routing == Constants.AUDIO_ROUTE_USBDEVICE) {
+                } else if (routing == Constants.AUDIO_ROUTE_USBDEVICE
+                        || routing == Constants.AUDIO_ROUTE_USB_HEADSET) {
                     selectedRouteStr = getString(R.string.audio_route_headset_typec);
+                } else {
+                    return;
                 }
 
-                int selection = 0;
                 for (int i = 0; i < audioRouteInput.getAdapter().getCount(); i++) {
                     String routeStr = (String) audioRouteInput.getItemAtPosition(i);
                     if (routeStr.equals(selectedRouteStr)) {
-                        selection = i;
-                        break;
+                        if (audioRouteInput.getSelectedItemPosition() != i) {
+                            syncingAudioRouteSelection = true;
+                            audioRouteInput.setSelection(i);
+                        }
+                        return;
                     }
                 }
-                audioRouteInput.setSelection(selection);
             });
         }
     };
+
+    private String getAudioRouteKey(int routing) {
+        return switch (routing) {
+            case Constants.AUDIO_ROUTE_DEFAULT -> "AUDIO_ROUTE_DEFAULT";
+            case Constants.AUDIO_ROUTE_HEADSET -> "AUDIO_ROUTE_HEADSET";
+            case Constants.AUDIO_ROUTE_EARPIECE -> "AUDIO_ROUTE_EARPIECE";
+            case Constants.AUDIO_ROUTE_HEADSETNOMIC -> "AUDIO_ROUTE_HEADSETNOMIC";
+            case Constants.AUDIO_ROUTE_SPEAKERPHONE -> "AUDIO_ROUTE_SPEAKERPHONE";
+            case Constants.AUDIO_ROUTE_LOUDSPEAKER -> "AUDIO_ROUTE_LOUDSPEAKER";
+            case Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP -> "AUDIO_ROUTE_BLUETOOTH_DEVICE_HFP";
+            case Constants.AUDIO_ROUTE_BLUETOOTH_DEVICE_A2DP -> "AUDIO_ROUTE_BLUETOOTH_DEVICE_A2DP";
+            default -> String.valueOf(routing);
+        };
+    }
 
 
     /**

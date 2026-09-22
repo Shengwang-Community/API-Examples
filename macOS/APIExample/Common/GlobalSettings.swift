@@ -31,7 +31,7 @@ class SettingItem<T> {
 
 class GlobalSettings {
     // The region for connection. This advanced feature applies to scenarios that have regional restrictions.
-    // For the regions that Agora supports, see https://docs.agora.io/en/Interactive%20Broadcast/API%20Reference/oc/Constants/AgoraAreaCode.html. After specifying the region, the SDK connects to the Agora servers within that region.
+    // For the regions that Agora supports, see https://doc.shengwang.cn/api-ref/rtc/macos/API/enum_areacode. After specifying the region, the SDK connects to the Agora servers within that region.
     var area:AgoraAreaCodeType = .global
     static let shared = GlobalSettings()
     let resolutionSetting: SettingItem<Int> = SettingItem(

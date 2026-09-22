@@ -139,9 +139,15 @@ class AgoraBeautyMain: BaseViewController {
         })
         
         beautyManager = AgoraBeautyManager(agoraKit: agoraKit)
-        beautyManager.beautyMakeupStyle = "default makeup style".localized
+        beautyManager.beautyMakeupStyle = "Makeup-Young"
         beautyManager.makeUpEnable = false
         setupUI()
+        if !beautyManager.isAvailable {
+            DispatchQueue.main.async { [weak self] in
+                self?.showAlert(title: "Error",
+                                message: "Agora Beauty material is unavailable in this build.".localized)
+            }
+        }
     }
     
     override func willMove(toParent parent: UIViewController?) {
@@ -154,8 +160,8 @@ class AgoraBeautyMain: BaseViewController {
                     LogUtils.log(message: "left channel, duration: \(stats.duration)", level: .info)
                 }
             }
-            AgoraRtcEngineKit.destroy()
             beautyManager.destory()
+            AgoraRtcEngineKit.destroy()
         }
     }
     
@@ -256,8 +262,8 @@ extension AgoraBeautyMain: AgoraRtcEngineDelegate {
     /// callback when warning occured for agora sdk, warning can usually be ignored, still it's nice to check out
     /// what is happening
     /// Warning code description can be found at:
-    /// en: https://api-ref.agora.io/en/voice-sdk/ios/3.x/Constants/AgoraWarningCode.html
-    /// cn: https://docs.agora.io/cn/Voice/API%20Reference/oc/Constants/AgoraWarningCode.html
+    /// en: https://api-ref.agora.io/en/video-sdk/ios/4.x/documentation/agorartckit/agorawarningcode
+    /// cn: https://doc.shengwang.cn/api-ref/rtc/ios/error-code
     /// @param warningCode warning code of the problem
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOccurWarning warningCode: AgoraWarningCode) {
         LogUtils.log(message: "warning: \(warningCode.description)", level: .warning)
@@ -422,7 +428,7 @@ extension AgoraBeautyMain {
                 let values = makeupList[i]["value"] as? [Int] ?? []
                 let defaultIndex = values.firstIndex(of: defaultValue) ?? 0
                 
-                segmentView.selectedSegmentIndex = Int(getDefaultSegmentValueForKey(key: key))
+                segmentView.selectedSegmentIndex = defaultIndex
                 segmentView.addTarget(self, action: #selector(makeupSegmentAction(_:)), for: .valueChanged)
                 valueView = segmentView
             }
@@ -545,7 +551,7 @@ extension AgoraBeautyMain {
         let key = makeupList[index]["key"] as? String ?? ""
         let state = view.isOn
         if state {
-            beautyManager.beautyMakeupStyle = "default makeup style".localized
+            beautyManager.beautyMakeupStyle = "Makeup-Young"
         }
         makeupParams[key] = state
         beautyManager.makeUpEnable = state
@@ -556,6 +562,7 @@ extension AgoraBeautyMain {
         let makeupList = beautyManager.makeupList
         let key = makeupList[index]["key"] as? String ?? ""
         let values = makeupList[index]["value"] as? [Int] ?? []
+        guard values.indices.contains(view.selectedSegmentIndex) else { return }
         let value = Int32(values[view.selectedSegmentIndex])
 
         makeupParams[key] = value
@@ -730,6 +737,6 @@ extension AgoraBeautyMain {
     
     @objc func beautyShapeSegmentAction(_ view: UISegmentedControl) {
         let style = AgoraFaceShapeStyle(rawValue: UInt(view.selectedSegmentIndex)) ?? .female
-        beautyManager.beautyShapeStyle = style == .male ? "Male Template Title".localized : "Female Template Title".localized
+        beautyManager.beautyShapeStyle = style == .male ? "Beauty-Ordinary" : "Beauty-Basic"
     }
 }

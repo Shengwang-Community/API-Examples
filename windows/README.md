@@ -13,7 +13,7 @@ This demo is written in **C++**
 ### Obtain an App ID
 
 To build and run the sample application, get an App ID:
-1. Create a developer account at [agora.io](https://dashboard.agora.io/signin/). Once you finish the signup process, you will be redirected to the Dashboard.
+1. Create a developer account in the [Shengwang Console](https://dashboard.agora.io/signin/). Once you finish the signup process, you will be redirected to the Dashboard.
 2. Navigate in the Dashboard tree on the left to **Projects** > **Project List**.
 3. Save the **App ID** from the Dashboard for later use.
 4. Generate a temp **Access Token** (valid for 24 hours) from dashboard page with given channel name, save for later use.
@@ -32,7 +32,7 @@ To build and run the sample application, get an App ID:
     ```
 
 ### Build the application
-**This open source sample project uses the Agora RTC SDK,DirectShow SDK, and MeidaPlayer SDK.**
+**This open source sample project uses the Shengwang RTC SDK, DirectShow SDK, and MediaPlayer SDK.**
 
 You can directly run `APIExample/installThirdParty.bat` to automatically environment configuration.Once the configuration is complete, open the project with VS2017, select the x86 version to compile and run.
 
@@ -141,15 +141,12 @@ You can directly run `APIExample/installThirdParty.bat` to automatically environ
 * After successful initialization, you can call media-related methods, such as play, pause, etc.
 * Handle exceptions in the player callback methods.
 
-## Connect Us
+## Contact Us
 
-- For potential issues, take a look at our [FAQ](https://docs.agora.io/cn/faq) first
-- Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials
-- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use case
-- Repositories managed by developer communities can be found at [Agora Community](https://github.com/AgoraIO-Community)
-- You can find full API documentation at [Document Center](https://docs.agora.io/en/)
-- If you encounter problems during integration, you can ask question in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io)
-- You can file bugs about this sample at [issue](https://github.com/AgoraIO/Basic-Video-Broadcasting/issues)
+- Browse the [Shengwang documentation](https://doc.shengwang.cn/) for product guides and API references.
+- Explore more samples in [Shengwang Community](https://github.com/Shengwang-Community).
+- Ask integration questions in the [developer community](https://rtcdeveloper.com/).
+- File bugs about this sample at [issues](https://github.com/Shengwang-Community/API-Examples/issues).
 
 ## License
 

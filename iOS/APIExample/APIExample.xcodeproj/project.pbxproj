@@ -64,6 +64,7 @@
 		03BEED0B251C4446005E78F4 /* audiomixing.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 03BEED0A251C4446005E78F4 /* audiomixing.mp3 */; };
 		03BEED0D251CAB9C005E78F4 /* audioeffect.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 03BEED0C251CAB9C005E78F4 /* audioeffect.mp3 */; };
 		03D13BD02448758900B599B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D13BCF2448758900B599B3 /* AppDelegate.swift */; };
+		6B1F9C169FBD07EE9D70CFCD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD65ABDD9A5B24C43142396 /* SceneDelegate.swift */; };
 		03D13BD42448758900B599B3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D13BD32448758900B599B3 /* ViewController.swift */; };
 		03D13BD72448758900B599B3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03D13BD52448758900B599B3 /* Main.storyboard */; };
 		03D13BD92448758B00B599B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03D13BD82448758B00B599B3 /* Assets.xcassets */; };
@@ -185,9 +186,6 @@
 		E77D54C728F55E9100D51C1E /* JoinChannelVideoToken.strings in Resources */ = {isa = PBXBuildFile; fileRef = E77D54C228F55E9100D51C1E /* JoinChannelVideoToken.strings */; };
 		E77D54C828F55E9100D51C1E /* JoinChannelVideoToken.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E77D54C428F55E9100D51C1E /* JoinChannelVideoToken.storyboard */; };
 		E77D54C928F55E9100D51C1E /* JoinChannelVideoToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77D54C628F55E9100D51C1E /* JoinChannelVideoToken.swift */; };
-		E7883AE92B074746003CCF44 /* FaceCapture.strings in Resources */ = {isa = PBXBuildFile; fileRef = E7883AE42B074746003CCF44 /* FaceCapture.strings */; };
-		E7883AEA2B074746003CCF44 /* FaceCapture.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7883AE62B074746003CCF44 /* FaceCapture.storyboard */; };
-		E7883AEB2B074746003CCF44 /* FaceCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7883AE82B074746003CCF44 /* FaceCapture.swift */; };
 		E7899BDC2861673600851463 /* CreateDataStream.strings in Resources */ = {isa = PBXBuildFile; fileRef = E7899BD72861673600851463 /* CreateDataStream.strings */; };
 		E7899BDD2861673600851463 /* CreateDataStream.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7899BD92861673600851463 /* CreateDataStream.storyboard */; };
 		E7899BDE2861673600851463 /* CreateDataStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7899BDB2861673600851463 /* CreateDataStream.swift */; };
@@ -227,7 +225,6 @@
 		F73478792DE5A0510030C0CE /* AgoraBeauty.strings in Resources */ = {isa = PBXBuildFile; fileRef = F73478752DE5A0510030C0CE /* AgoraBeauty.strings */; };
 		F734787A2DE5A0510030C0CE /* AgoraBeauty.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F73478732DE5A0510030C0CE /* AgoraBeauty.storyboard */; };
 		F734787C2DE5B2BD0030C0CE /* AgoraBeautyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F734787B2DE5B2BD0030C0CE /* AgoraBeautyManager.swift */; };
-		F73478802DE7119F0030C0CE /* beauty_material.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F734787F2DE7119F0030C0CE /* beauty_material.bundle */; };
 		F73B01D52CCB84590077B7D2 /* APIReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = F73B01D32CCB84590077B7D2 /* APIReporter.m */; };
 		F73B01D82CCB862A0077B7D2 /* EFGlobalSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = F73B01D72CCB862A0077B7D2 /* EFGlobalSingleton.m */; };
 /* End PBXBuildFile section */
@@ -349,6 +346,7 @@
 		03BEED0C251CAB9C005E78F4 /* audioeffect.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = audioeffect.mp3; sourceTree = "<group>"; };
 		03D13BCC2448758900B599B3 /* APIExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APIExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D13BCF2448758900B599B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		BDD65ABDD9A5B24C43142396 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		03D13BD32448758900B599B3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		03D13BD62448758900B599B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		03D13BD82448758B00B599B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -511,9 +509,6 @@
 		E77D54C328F55E9100D51C1E /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/JoinChannelVideoToken.strings"; sourceTree = "<group>"; };
 		E77D54C528F55E9100D51C1E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/JoinChannelVideoToken.storyboard; sourceTree = "<group>"; };
 		E77D54C628F55E9100D51C1E /* JoinChannelVideoToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinChannelVideoToken.swift; sourceTree = "<group>"; };
-		E7883AE52B074746003CCF44 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/FaceCapture.strings"; sourceTree = "<group>"; };
-		E7883AE72B074746003CCF44 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/FaceCapture.storyboard; sourceTree = "<group>"; };
-		E7883AE82B074746003CCF44 /* FaceCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceCapture.swift; sourceTree = "<group>"; };
 		E7899BD82861673600851463 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/CreateDataStream.strings"; sourceTree = "<group>"; };
 		E7899BDA2861673600851463 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/CreateDataStream.storyboard; sourceTree = "<group>"; };
 		E7899BDB2861673600851463 /* CreateDataStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateDataStream.swift; sourceTree = "<group>"; };
@@ -570,7 +565,7 @@
 		F73478742DE5A0510030C0CE /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AgoraBeauty.strings"; sourceTree = "<group>"; };
 		F73478762DE5A0510030C0CE /* AgoraBeauty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeauty.swift; sourceTree = "<group>"; };
 		F734787B2DE5B2BD0030C0CE /* AgoraBeautyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraBeautyManager.swift; sourceTree = "<group>"; };
-		F734787F2DE7119F0030C0CE /* beauty_material.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = beauty_material.bundle; sourceTree = "<group>"; };
+		F734787F2DE7119F0030C0CE /* AgoraBeautyMaterial.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AgoraBeautyMaterial.bundle; sourceTree = "<group>"; };
 		F73B01D12CCB7EE20077B7D2 /* EffectMacro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectMacro.h; sourceTree = "<group>"; };
 		F73B01D22CCB84590077B7D2 /* APIReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIReporter.h; sourceTree = "<group>"; };
 		F73B01D32CCB84590077B7D2 /* APIReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APIReporter.m; sourceTree = "<group>"; };
@@ -840,7 +835,7 @@
 		03BEED09251C4446005E78F4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F734787F2DE7119F0030C0CE /* beauty_material.bundle */,
+				F734787F2DE7119F0030C0CE /* AgoraBeautyMaterial.bundle */,
 				DD6DCEE12CBD1D68008D7B72 /* hlg-hdr.yuv */,
 				DDFD50292C2065D00050B344 /* yuv_limit_range_alpha_1280_540_right.mp4 */,
 				8B349FE22681E2CE007247F2 /* agora-logo.png */,
@@ -1100,7 +1095,6 @@
 				ABB90A902DF6800F007FDDEB /* Simulcast */,
 				F73478772DE5A0510030C0CE /* AgoraBeauty */,
 				DDFD50242C205BDF0050B344 /* TransparentRender */,
-				E7883AE32B074746003CCF44 /* FaceCapture */,
 				E726BFFD2A96FD3A006870E2 /* AudioWaveform */,
 				E726BFF42A949F70006870E2 /* AudioRouterPlayer */,
 				E7163F7B2964149800EBBD55 /* ARKit */,
@@ -1147,6 +1141,7 @@
 				E7163F8929651D8900EBBD55 /* AR.scnassets */,
 				03D13BDD2448758B00B599B3 /* Info.plist */,
 				03D13BCF2448758900B599B3 /* AppDelegate.swift */,
+				BDD65ABDD9A5B24C43142396 /* SceneDelegate.swift */,
 				03D13BD82448758B00B599B3 /* Assets.xcassets */,
 				03D13BDA2448758B00B599B3 /* LaunchScreen.storyboard */,
 				033A9F2C252D737900BC26E1 /* Localizable.strings */,
@@ -1341,16 +1336,6 @@
 			path = "JoinChannelVideo(Token)";
 			sourceTree = "<group>";
 		};
-		E7883AE32B074746003CCF44 /* FaceCapture */ = {
-			isa = PBXGroup;
-			children = (
-				E7883AE42B074746003CCF44 /* FaceCapture.strings */,
-				E7883AE62B074746003CCF44 /* FaceCapture.storyboard */,
-				E7883AE82B074746003CCF44 /* FaceCapture.swift */,
-			);
-			path = FaceCapture;
-			sourceTree = "<group>";
-		};
 		E7899BD62861673600851463 /* CreateDataStream */ = {
 			isa = PBXGroup;
 			children = (
@@ -1542,7 +1527,7 @@
 				03D13BCA2448758900B599B3 /* Resources */,
 				1B6F6CF9B678035E221EAFDE /* [CP] Embed Pods Frameworks */,
 				0339BEBA25205B80007D4FDD /* Embed App Extensions */,
-				E76F80122AF0A7A200CCB9D6 /* ShellScript */,
+				E76F80122AF0A7A200CCB9D6 /* Copy Optional Beauty Resources */,
 			);
 			buildRules = (
 			);
@@ -1657,7 +1642,6 @@
 				E7A49CB829011E7500F06DD4 /* MutliCamera.strings in Resources */,
 				E7A49CFA29029E0000F06DD4 /* ThirdBeautify.storyboard in Resources */,
 				E7A49D0929067F8300F06DD4 /* SenseBeautify.strings in Resources */,
-				E7883AE92B074746003CCF44 /* FaceCapture.strings in Resources */,
 				033A9F7A252D8B5000BC26E1 /* MediaPlayer.storyboard in Resources */,
 				0339D6D224E91B80008739CD /* QuickSwitchChannelVCItem.xib in Resources */,
 				E7163F8A29651D8900EBBD55 /* AR.scnassets in Resources */,
@@ -1676,7 +1660,6 @@
 				E77D54C728F55E9100D51C1E /* JoinChannelVideoToken.strings in Resources */,
 				DDCED0352CBAA093004B1C9D /* RtePlayer.strings in Resources */,
 				8B5E5B53274CBF760040E97D /* VideoProcess.storyboard in Resources */,
-				E7883AEA2B074746003CCF44 /* FaceCapture.storyboard in Resources */,
 				DD6DCEE22CBD1D68008D7B72 /* hlg-hdr.yuv in Resources */,
 				033A9F66252D8B2A00BC26E1 /* VoiceChanger.storyboard in Resources */,
 				E7A49CB929011E7500F06DD4 /* MutliCamera.storyboard in Resources */,
@@ -1684,7 +1667,6 @@
 				E7899BDD2861673600851463 /* CreateDataStream.storyboard in Resources */,
 				576CA80A25A9CC3A0091520B /* output.raw in Resources */,
 				03B12DAA251125B700E55818 /* VideoView.xib in Resources */,
-				F73478802DE7119F0030C0CE /* beauty_material.bundle in Resources */,
 				E7163F832964149800EBBD55 /* ARKit.storyboard in Resources */,
 				8BA5459526AFEC8D00ED4295 /* SimpleFilter.storyboard in Resources */,
 				E7163F812964149800EBBD55 /* ARKit.strings in Resources */,
@@ -1815,8 +1797,9 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E76F80122AF0A7A200CCB9D6 /* ShellScript */ = {
+		E76F80122AF0A7A200CCB9D6 /* Copy Optional Beauty Resources */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1824,13 +1807,14 @@
 			);
 			inputPaths = (
 			);
+			name = "Copy Optional Beauty Resources";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "";
+			shellScript = "set -eu\n\nSOURCE=\"${PROJECT_DIR:?}/APIExample/Resources/AgoraBeautyMaterial.bundle\"\nDESTINATION=\"${TARGET_BUILD_DIR:?}/${UNLOCALIZED_RESOURCES_FOLDER_PATH:?}/AgoraBeautyMaterial.bundle\"\n\n/bin/rm -rf \"${DESTINATION}\"\nif [ -d \"${SOURCE}\" ]; then\n    /usr/bin/ditto \"${SOURCE}\" \"${DESTINATION}\"\nelse\n    echo \"warning: AgoraBeautyMaterial.bundle is unavailable. Internal builds can provide it by running cloud_build.sh with JFROG_API_KEY.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1930,7 +1914,6 @@
 				67450169282D5D8B00E79F2F /* ContentInspect.swift in Sources */,
 				67B8C7B52805757200195106 /* MediaUtils.m in Sources */,
 				03D13C0124488F1F00B599B3 /* KeyCenter.swift in Sources */,
-				E7883AEB2B074746003CCF44 /* FaceCapture.swift in Sources */,
 				03BEED08251C35E7005E78F4 /* AudioMixing.swift in Sources */,
 				E74877B728A23B8B00CA2F58 /* NetworkManager.swift in Sources */,
 				03DF1D9424CFC29700DF7151 /* AudioController.m in Sources */,
@@ -1944,6 +1927,7 @@
 				034C625E2524A06800296ECF /* VoiceChanger.swift in Sources */,
 				E7A49D2B2907DEE600F06DD4 /* EFMotionManager.m in Sources */,
 				03D13BD02448758900B599B3 /* AppDelegate.swift in Sources */,
+				6B1F9C169FBD07EE9D70CFCD /* SceneDelegate.swift in Sources */,
 				0385768225224A88003C369A /* JoinChannelVideo.swift in Sources */,
 				A7847F922458062900469187 /* StatisticsInfo.swift in Sources */,
 				E7163F88296414F700EBBD55 /* ARVideoRenderer.swift in Sources */,
@@ -2431,22 +2415,6 @@
 			name = JoinChannelVideoToken.storyboard;
 			sourceTree = "<group>";
 		};
-		E7883AE42B074746003CCF44 /* FaceCapture.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E7883AE52B074746003CCF44 /* zh-Hans */,
-			);
-			name = FaceCapture.strings;
-			sourceTree = "<group>";
-		};
-		E7883AE62B074746003CCF44 /* FaceCapture.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E7883AE72B074746003CCF44 /* Base */,
-			);
-			name = FaceCapture.storyboard;
-			sourceTree = "<group>";
-		};
 		E7899BD72861673600851463 /* CreateDataStream.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2552,6 +2520,8 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos27.*]" = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2561,7 +2531,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Agora-ScreenShare-Extension",
 				);
-				MARKETING_VERSION = 4.0.0;
+				MARKETING_VERSION = 4.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples.Agora-ScreenShare-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2586,6 +2556,8 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Agora-ScreenShare-Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos27.*]" = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2595,7 +2567,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Agora-ScreenShare-Extension",
 				);
-				MARKETING_VERSION = 4.0.0;
+				MARKETING_VERSION = 4.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.agora.api.examples.Agora-ScreenShare-Extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2659,6 +2631,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos27.*]" = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2715,6 +2689,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos27.*]" = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -2742,11 +2718,13 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = APIExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos27.*]" = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.6.4;
+				MARKETING_VERSION = 4.7.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2813,11 +2791,13 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = APIExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos27.*]" = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.6.4;
+				MARKETING_VERSION = 4.7.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2885,6 +2865,8 @@
 				INFOPLIST_FILE = SimpleFilter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos27.*]" = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2922,6 +2904,8 @@
 				INFOPLIST_FILE = SimpleFilter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos27.*]" = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphonesimulator27.*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

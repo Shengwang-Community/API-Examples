@@ -41,7 +41,4 @@ class KeyCenter: NSObject {
      注意：App证书放在客户端不安全，推荐放在服务端以确保 App 证书不会泄露。
      */
     static let Certificate: String? = nil
-    
-    
-    static let FaceCaptureLicense: String? = nil
 }

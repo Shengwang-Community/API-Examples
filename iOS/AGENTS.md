@@ -6,10 +6,10 @@ Entry point for AI agents working on iOS examples. Read this first, then go to t
 
 | Project | SDK | Purpose |
 |---------|-----|---------|
-| `APIExample/` | `AgoraRtcEngine_iOS` | Full demo — all APIs, UIKit + Swift, default choice |
-| `APIExample-SwiftUI/` | `AgoraRtcEngine_iOS` | SwiftUI variant, mirrors APIExample cases |
-| `APIExample-OC/` | `AgoraRtcEngine_iOS` | Objective-C variant, mirrors APIExample cases |
-| `APIExample-Audio/` | `AgoraAudio_iOS` | Audio-only — no video APIs available |
+| `APIExample/` | `ShengwangRtcEngine_iOS` | Full demo — all APIs, UIKit + Swift, default choice |
+| `APIExample-SwiftUI/` | `ShengwangRtcEngine_iOS` | SwiftUI variant, mirrors APIExample cases |
+| `APIExample-OC/` | `ShengwangRtcEngine_iOS` | Objective-C variant, mirrors APIExample cases |
+| `APIExample-Audio/` | `ShengwangAudio_iOS` | Audio-only — no video APIs available |
 
 SDK version: each project's `Podfile` specifies the version.
 
@@ -24,6 +24,7 @@ SDK version: each project's `Podfile` specifies the version.
 ## Architecture Red Lines
 
 - Do NOT share source files, storyboards, or SDK dependencies between projects
+- Preserve the existing minimum iOS versions and availability checks; see [Deployment Targets and Lifecycle](ARCHITECTURE.md#deployment-targets-and-lifecycle).
 - Do NOT add video rendering APIs (`enableVideo`, `setupLocalVideo`) to `APIExample-Audio/`
 - Do NOT call SDK APIs on a background thread without dispatching UI updates to the main thread
 - Do NOT commit `KeyCenter.swift` / `KeyCenter.m` with real App IDs or certificates

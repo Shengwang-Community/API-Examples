@@ -101,8 +101,6 @@ if [ -z "$sdk_url" -o "$sdk_url" = "none" ]; then
    echo "sdk_url is empty"
    echo unzip_name: $unzip_name 
    mkdir -p ./$unzip_name/samples
-   cp -rf ./macOS ./$unzip_name/samples/APIExample || exit 1
-   ls -al ./$unzip_name/samples/API-Example/
 else 
    sdk_url_flag=true
    zip_name=${sdk_url##*/}
@@ -121,31 +119,31 @@ else
    rm -f ./$unzip_name/Package.swift
    
    mkdir ./$unzip_name/samples
-   cp -rf ./macOS ./$unzip_name/samples/APIExample || exit 1
-   ls -al ./$unzip_name/samples/API-Example/
+fi
+
+cp -rf ./macOS ./$unzip_name/samples/APIExample || exit 1
+ls -al ./$unzip_name/samples/API-Example/
+if [ $sdk_url_flag = true ]; then
    mv ./$unzip_name/samples/APIExample/sdk.podspec ./$unzip_name/
 fi
 
 python3 ./.github/ci/build/modify_podfile.py ./$unzip_name/samples/APIExample/Podfile $sdk_url_flag
 
-echo "start compress"
-7za a -tzip result.zip -r $unzip_name > log.txt
-echo "start move to"
-sdk_des_path=$WORKSPACE/Shengwang_APIExample_mac_${BUILD_NUMBER}_$zip_name
-echo $sdk_des_path
-mv result.zip $sdk_des_path
+if [ "$compress_apiexample" != true ]; then
+    echo "start compress"
+    7za a -tzip result.zip -r $unzip_name > log.txt
+    echo "start move to"
+    sdk_des_path=$WORKSPACE/Shengwang_APIExample_mac_${BUILD_NUMBER}_$zip_name
+    echo $sdk_des_path
+    mv result.zip $sdk_des_path
+fi
 
-if [ $compress_apiexample = true ]; then
+if [ "$compress_apiexample" = true ]; then
     echo "Using version for package: $API_EXAMPLES_SDK_VERSION"
 
     mkdir -p $cn_dir
     echo "cn_dir: $cn_dir"
     cp -rf ./macOS $cn_dir/
-    cd $cn_dir/macOS
-    echo pwd: `pwd`
-    ls -al
-    ./cloud_project.sh || exit 1
-    cd -
     echo "start compress api example"
     7za a -tzip cn_result.zip $cn_dir
     echo "complete compress api example"
@@ -159,8 +157,8 @@ if [ $compress_apiexample = true ]; then
     ls -al $WORKSPACE/
 fi
 
-#if [ $compile_project = true ]; then
-#    cd ./$unzip_name/samples/APIExample
-#    ./cloud_build.sh || exit 1
-#    cd -
-#fi
+if [ $compile_project = true ]; then
+    cd ./$unzip_name/samples/APIExample
+    ./cloud_build.sh || exit 1
+    cd -
+fi

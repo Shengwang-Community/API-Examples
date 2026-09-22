@@ -75,102 +75,21 @@ BOOL CDlgBeautyEx2::OnInitDialog()
 	// 暂时隐藏脸部塑形相关的UI控件
 	HideFaceShapeControls();
 	
-	// 如果引擎已经初始化，创建美颜资源
-	if (m_initialize && *m_initialize && m_rtcEngine && *m_rtcEngine) {
-		InitializeBeautyResources();
-	}
-	
 	return TRUE;
 }
 
-void CDlgBeautyEx2::initData(bool* initialize, agora::rtc::IRtcEngine** engine, CDlgBeauty2* beautyDlg)
+void CDlgBeautyEx2::initData(CDlgBeauty2* beautyDlg)
 {
-	m_initialize = initialize;
-	m_rtcEngine = engine;
 	m_beautyDlg = beautyDlg;
 }
 
-void CDlgBeautyEx2::InitializeBeautyResources()
+void CDlgBeautyEx2::SetVideoEffectObject(agora::rtc::IVideoEffectObject* videoEffectObject)
 {
-	if (!m_initialize || !*m_initialize || !m_rtcEngine || !*m_rtcEngine) {
-		return;
-	}
-	
-	// 如果已经创建过，直接返回
-	if (m_videoEffectObjectRef) {
-		return;
-	}
-	
-	// 1. 启用扩展
-	int ret = (*m_rtcEngine)->enableExtension("agora_video_filters_clear_vision", "clear_vision", true);
-	if (ret != 0) {
-		CString strMsg;
-		strMsg.Format(_T("Enable beauty extension failed: %d"), ret);
-		AfxMessageBox(strMsg);
-		return;
-	}
-	
-	// 2. 设置参数优化
-	(*m_rtcEngine)->setParameters("{\"rtc.video.yuvconverter_enable_hardware_buffer\":true}");
-	
-	// 3. 获取美颜资源路径
-	CString strExePath = GetExePath();
-	CString strModelPath = strExePath + _T("\\beauty_agora\\beauty_material.bundle\\beauty_material_v2.0.0");
-	
-	// 检查路径是否存在
-	if (!PathFileExists(strModelPath)) {
-		CString strMsg;
-		strMsg.Format(_T("Beauty resource path not exist: %s"), strModelPath);
-		AfxMessageBox(strMsg);
-		return;
-	}
-	
-	// 4. 创建VideoEffectObject - 使用智能指针
-	std::string modelPath = cs2utf8(strModelPath);
-	m_videoEffectObjectRef = (*m_rtcEngine)->createVideoEffectObject(
-		modelPath.c_str(),
-		agora::media::PRIMARY_CAMERA_SOURCE
-	);
-	
-	if (m_videoEffectObjectRef) {
-		CString strInfo;
-		strInfo.Format(_T("Beauty resource loaded successfully: %s"), strModelPath);
-		AfxMessageBox(strInfo);
-	} else {
-		AfxMessageBox(_T("Create VideoEffectObject failed"));
-	}
-}
-
-CString CDlgBeautyEx2::GetExePath()
-{
-	TCHAR szPath[MAX_PATH];
-	GetModuleFileName(NULL, szPath, MAX_PATH);
-	CString strExePath = szPath;
-	int nPos = strExePath.ReverseFind('\\');
-	return strExePath.Left(nPos);  // 去掉exe文件名，得到目录路径
-}
-
-void CDlgBeautyEx2::CleanupBeautyResources()
-{
-	if (m_videoEffectObjectRef && m_rtcEngine && *m_rtcEngine) {
-		// 禁用扩展
-		(*m_rtcEngine)->enableExtension(
-			"agora_video_filters_clear_vision", 
-			"clear_vision", 
-			false,
-			agora::media::PRIMARY_CAMERA_SOURCE
-		);
-		
-		// 智能指针自动管理生命周期
-		m_videoEffectObjectRef = nullptr;
-	}
+	m_videoEffectObjectRef = videoEffectObject;
 }
 
 void CDlgBeautyEx2::OnClose()
 {
-	// 清理资源
-	CleanupBeautyResources();
-	
 	if (m_beautyDlg) {
 		m_beautyDlg->UpdateExtentCbState(false);
 	}
@@ -346,12 +265,6 @@ void CDlgBeautyEx2::HideFaceShapeControls()
 
 void CDlgBeautyEx2::SetBeauty()
 {
-	// 如果还没有创建VideoEffectObject，先创建
-	if (!m_videoEffectObjectRef) {
-		InitializeBeautyResources();
-	}
-	
-	// 检查是否创建成功
 	if (!m_videoEffectObjectRef) {
 		AfxMessageBox(_T("VideoEffectObject not created successfully"));
 		return;

@@ -14,8 +14,8 @@
 /* Class = "NSMenuItem"; title = "1V3"; ObjectID = "VNU-so-ajb"; */
 "VNU-so-ajb.title" = "1V3";
 
-/* Class = "NSViewController"; title = "Join Channel Video"; ObjectID = "YjT-yy-DnJ"; */
-"YjT-yy-DnJ.title" = "实时视频通话/直播";
+/* Class = "NSViewController"; title = "Join a channel (Token)"; ObjectID = "YjT-yy-DnJ"; */
+"YjT-yy-DnJ.title" = "实时视频通话/直播(Token验证)";
 
 /* Class = "NSMenuItem"; title = "1V8"; ObjectID = "cH4-ft-u77"; */
 "cH4-ft-u77.title" = "1V8";

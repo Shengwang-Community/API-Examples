@@ -53,8 +53,8 @@
 /* Class = "NSTextFieldCell"; title = "Voice Pitch"; ObjectID = "j8U-Er-3Ry"; */
 "j8U-Er-3Ry.title" = "音调";
 
-/* Class = "NSViewController"; title = "Join Channel Audio"; ObjectID = "jAv-ZA-ecf"; */
-"jAv-ZA-ecf.title" = "Join Channel Audio";
+/* Class = "NSViewController"; title = "Voice Effects"; ObjectID = "jAv-ZA-ecf"; */
+"jAv-ZA-ecf.title" = "美声/音效";
 
 /* Class = "NSTextFieldCell"; title = "8Khz"; ObjectID = "k68-jy-Jcs"; */
 "k68-jy-Jcs.title" = "8Khz";

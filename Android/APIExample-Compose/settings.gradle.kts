@@ -18,6 +18,16 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        // Resolve RTC SDK modules and their infrastructure dependencies from the official source.
+        exclusiveContent {
+            forRepository {
+                maven { url = uri("https://download.shengwang.cn/maven/") }
+            }
+            filter {
+                includeGroup("cn.shengwang.rtc")
+                includeGroup("cn.shengwang.infra")
+            }
+        }
         google()
         mavenCentral()
         maven { url = uri("https://maven.aliyun.com/repository/public") }

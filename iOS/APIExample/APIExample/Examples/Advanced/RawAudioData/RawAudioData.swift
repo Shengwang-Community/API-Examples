@@ -11,7 +11,7 @@
 /// 1.Register obesever: agoraKit.setAudioFrameDelegate(self)
 /// 2.Call back AgoraAudioFrameDelegate to get raw audio frame data
 ///
-/// More detail: https://docs.agora.io/en/Interactive%20Broadcast/raw_data_audio_apple?platform=iOS
+/// More detail: https://doc.shengwang.cn/doc/rtc/ios/advanced-features/raw-audio-data
 
 import AgoraRtcKit
 import AGEVideoLayout

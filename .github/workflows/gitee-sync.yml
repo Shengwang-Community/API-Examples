@@ -1,12 +1,18 @@
 name: gitee-sync
 on:
-  pull_request:
+  push:
+    branches:
+      - main
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
     name: gitee-sync
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,7 +20,7 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     steps:
       - name: Gitee sync repo
-        uses: xgfd3/hub-mirror-action@v1.4
+        uses: xgfd3/hub-mirror-action@1114fedb661f99966a6d857041f91fda6ef7575b # v1.4
         with:
           src: github/Shengwang-Community
           dst: gitee/agoraio-community
@@ -25,5 +31,8 @@ jobs:
           dst_token: ${{ secrets.GITEE_PRIVATE_TOKEN }}
           force_update: true
           account_type: org
-          shell_path: ./.github/workflows/gitee-sync-shell.sh
+          shell_path: ./.github/ci/sync/gitee-sync.sh
           github_ref: ${{ github.ref }}
+
+      - name: Verify post-sync customization
+        run: test "$(cat ./cache/API-Examples/.git/gitee-sync-status)" = "0"

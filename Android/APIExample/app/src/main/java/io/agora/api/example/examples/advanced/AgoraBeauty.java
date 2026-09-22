@@ -54,7 +54,7 @@ import io.agora.rtc2.video.VirtualBackgroundSource;
  * The type Agora beauty.
  */
 @Example(
-        index = 27,
+        index = 41,
         group = ADVANCED,
         name = R.string.item_agora_beauty,
         actionId = R.id.action_mainFragment_agora_beauty,
@@ -286,7 +286,7 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
              */
             config.mContext = context.getApplicationContext();
             /*
-             * The App ID issued to you by Agora. See <a href="https://docs.agora.io/en/Agora%20Platform/token#get-an-app-id"> How to get the App ID</a>
+             * The App ID issued to you by Agora. See <a href="https://doc.shengwang.cn/doc/console/general/quickstart"> How to get the App ID</a>
              */
             config.mAppId = getAgoraAppId();
             /* The channel profile.
@@ -330,7 +330,9 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
             //            updateExtensionProperty();
             //            updateFaceShapeBeautyStyleOptions();
 
-            initBeautySDK();
+            if (!initBeautySDK()) {
+                showAlert(getString(R.string.agora_beauty_material_unavailable));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             getActivity().onBackPressed();
@@ -399,9 +401,9 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
 
         /*
          * A temporary token generated in Console. A temporary token is valid for 24 hours. For details, see
-         *      https://docs.agora.io/en/Agora%20Platform/token?platform=All%20Platforms#get-a-temporary-token
+         *      https://doc.shengwang.cn/doc/rtc/android/basic-features/token-authentication
          * A token generated at the server. This applies to scenarios with high-security requirements. For details, see
-         *      https://docs.agora.io/en/cloud-recording/token_server_java?platform=Java*/
+         *      https://doc.shengwang.cn/doc/rtc/android/basic-features/token-authentication*/
         TokenUtils.gen(requireContext(), channelId, 0, accessToken -> {
             /* Allows a user to join a channel.
              if you do not specify the uid, we will generate the uid for you*/
@@ -414,8 +416,8 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
             if (res != 0) {
                 // Usually happens with invalid parameters
                 // Error code description can be found at:
-                // en: https://docs.agora.io/en/Voice/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler_1_1_error_code.html
-                // cn: https://docs.agora.io/cn/Voice/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler_1_1_error_code.html
+                // en: https://docs.agora.io/en/realtime-media/rtc/reference/error-codes
+                // cn: https://doc.shengwang.cn/api-ref/rtc/android/error-code
                 showAlert(RtcEngine.getErrorDescription(Math.abs(res)));
                 return;
             }
@@ -575,7 +577,7 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 if (!shapeBeauty.isChecked()) {
                     return;
                 }
-                AgoraBeautySDK.getBeautyConfig().setBeautyShapeStyle(spinnerShapeBeautifyStyle.getSelectedItem().toString());
+                AgoraBeautySDK.getBeautyConfig().setBeautyShapeStyle(getMaterialKey(spinnerShapeBeautifyStyle, R.array.agora_beauty_style_keys));
                 sbShapeBeautifyStyleIntensity.setProgress(AgoraBeautySDK.getBeautyConfig().getBeautyShapeStrength());
                 updateBasicBeautyOption();
                 checkEnable();
@@ -629,7 +631,7 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 if (!makeUp.isChecked()) {
                     return;
                 }
-                AgoraBeautySDK.getBeautyConfig().setBeautyMakeupStyle(spinnerFaceMakeupStyle.getSelectedItem().toString());
+                AgoraBeautySDK.getBeautyConfig().setBeautyMakeupStyle(getMaterialKey(spinnerFaceMakeupStyle, R.array.agora_makeup_style_keys));
                 sbFaceMakeupStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getBeautyMakeupStrength() * 10));
                 updateMakeupOptionsByStyle();
                 checkEnable();
@@ -638,7 +640,7 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 if (!filter.isChecked()) {
                     return;
                 }
-                AgoraBeautySDK.getBeautyConfig().setBeautyFilter(spinnerFilterStyle.getSelectedItem().toString());
+                AgoraBeautySDK.getBeautyConfig().setBeautyFilter(getMaterialKey(spinnerFilterStyle, R.array.agora_filter_style_keys));
                 sbFilterStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getFilterStrength() * 10));
                 checkEnable();
                 return;
@@ -767,6 +769,12 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
 
     }
 
+    private String getMaterialKey(Spinner spinner, int keyArrayRes) {
+        String[] keys = getResources().getStringArray(keyArrayRes);
+        int position = spinner.getSelectedItemPosition();
+        return position >= 0 && position < keys.length ? keys[position] : null;
+    }
+
     private void checkEnable() {
         if (BuildConfig.DEBUG) {
             boolean beautyShapeEnable = AgoraBeautySDK.getBeautyConfig().getBeautyShapeEnable();
@@ -825,7 +833,7 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 return;
             }
             if (isChecked) {
-                AgoraBeautySDK.getBeautyConfig().setBeautyShapeStyle(spinnerShapeBeautifyStyle.getSelectedItem().toString());
+                AgoraBeautySDK.getBeautyConfig().setBeautyShapeStyle(getMaterialKey(spinnerShapeBeautifyStyle, R.array.agora_beauty_style_keys));
                 sbShapeBeautifyStyleIntensity.setProgress(AgoraBeautySDK.getBeautyConfig().getBeautyShapeStrength());
                 updateBasicBeautyOption();
                 checkEnable();
@@ -840,7 +848,7 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 return;
             }
             if (isChecked) {
-                AgoraBeautySDK.getBeautyConfig().setBeautyMakeupStyle(spinnerFaceMakeupStyle.getSelectedItem().toString());
+                AgoraBeautySDK.getBeautyConfig().setBeautyMakeupStyle(getMaterialKey(spinnerFaceMakeupStyle, R.array.agora_makeup_style_keys));
                 sbFaceMakeupStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getBeautyMakeupStrength() * 10));
                 updateMakeupOptionsByStyle();
                 checkEnable();
@@ -874,7 +882,7 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
                 return;
             }
             if (isChecked) {
-                AgoraBeautySDK.getBeautyConfig().setBeautyFilter(spinnerFilterStyle.getSelectedItem().toString());
+                AgoraBeautySDK.getBeautyConfig().setBeautyFilter(getMaterialKey(spinnerFilterStyle, R.array.agora_filter_style_keys));
                 sbFilterStyleIntensity.setProgress((int) (AgoraBeautySDK.getBeautyConfig().getFilterStrength() * 10));
                 checkEnable();
             } else {
@@ -1047,7 +1055,7 @@ public class AgoraBeauty extends BaseFragment implements View.OnClickListener, C
         /**
          * Error code description can be found at:
          * en: https://api-ref.agora.io/en/video-sdk/android/4.x/API/class_irtcengineeventhandler.html#callback_irtcengineeventhandler_onerror
-         * cn: https://docs.agora.io/cn/video-call-4.x/API%20Reference/java_ng/API/class_irtcengineeventhandler.html#callback_irtcengineeventhandler_onerror
+         * cn: https://doc.shengwang.cn/api-ref/rtc/android/error-code
          */
         @Override
         public void onError(int err) {

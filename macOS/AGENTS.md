@@ -2,7 +2,7 @@
 
 ## Project Context
 
-This is the Swift + Cocoa implementation of Agora RTC SDK examples for macOS. Before making any changes, read `ARCHITECTURE.md` to understand the structural rules.
+This is the Swift + Cocoa implementation of Shengwang RTC SDK examples for macOS. Before making any changes, read `ARCHITECTURE.md` to understand the structural rules.
 
 ## Build Commands
 
@@ -19,18 +19,20 @@ open APIExample.xcworkspace
 
 ## App ID Configuration
 
-Configure your Agora App ID in `APIExample/Common/KeyCenter.swift`:
+Configure your Shengwang App ID in `APIExample/Common/KeyCenter.swift`:
 
 ```swift
 struct KeyCenter {
     static let AppId: String = "<#YOUR_APP_ID#>"
     
-    // Token is optional for testing, but required for production
-    static func Token(channelName: String) -> String {
-        return "<#YOUR_TOKEN#>"
-    }
+    static let Certificate: String? = nil
 }
 ```
+
+The current KeyCenter has AppId and Certificate only. Cases obtain tokens through
+`NetworkManager.shared.generateToken(channelName:uid:success:)` in
+`APIExample/Common/NetworkManager/NetworkManager.swift`. Never stage real credentials in
+this tracked configuration file.
 
 ## Architecture Red Lines
 
@@ -48,7 +50,7 @@ struct KeyCenter {
 
 All work must conform to the rules defined in `ARCHITECTURE.md`:
 - Every example is a self-contained class implementing `AgoraRtcEngineDelegate`
-- Each example manages its own Agora engine lifecycle
+- Each example manages its own Shengwang RTC engine lifecycle
 - Configuration is passed via initialization or property injection
 - All examples are registered in `APIExample/ViewController.swift`
 
@@ -61,9 +63,10 @@ All work must conform to the rules defined in `ARCHITECTURE.md`:
 
 ### Use Project-Level SKILLs
 
-For broader tasks, use the skills in `.agent/skills/`:
+For broader tasks, use the skills in `.agents/skills/`:
 
 | Task | Skill | When to use |
 |------|-------|-------------|
-| Add or modify an example | `.agent/skills/upsert-case/` | Need to create a new API demo or update an existing one |
-| Code review | `.agent/skills/review-case/` | Review example code for lifecycle, thread safety, and convention compliance |
+| Find an existing example | `.agents/skills/query-cases/` | Need to locate a case by feature or API and verify its menu/storyboard registration |
+| Add or modify an example | `.agents/skills/upsert-case/` | Need to create a new API demo or update an existing one |
+| Code review | `.agents/skills/review-case/` | Review example code for lifecycle, thread safety, and convention compliance |

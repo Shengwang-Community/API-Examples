@@ -2,11 +2,13 @@
 
 *English | [中文](README.zh.md)*
 
-This project presents you a set of API examples to help you understand how to use Agora APIs.
+This project presents a set of API examples to help you understand how to use Shengwang APIs.
 
 ## Prerequisites
 
-- Android Studio 3.0+
+- Android Studio Ladybug (2024.2.1) or later
+- JDK 17
+- Android SDK Platform 35
 - Physical Android device
 - Android simulator is supported
 
@@ -18,12 +20,12 @@ This section shows you how to prepare, build, and run the sample application.
 
 To build and run the sample application, get an App Id:
 
-1. Create a developer account at [agora.io](https://dashboard.agora.io/signin/). Once you finish the signup process, you will be redirected to the Dashboard.
+1. Create a developer account in the [Shengwang Console](https://dashboard.agora.io/signin/). Once you finish the signup process, you will be redirected to the Dashboard.
 2. Navigate in the Dashboard tree on the left to **Projects** > **Project List**.
 3. Save the **App Id** from the Dashboard for later use.
 4. Save the **App Certificate** from the Dashboard for later use.
 
-5. Open `Android/APIExample` and edit the `local.properties` file in the project root. Update `YOUR APP ID` with your App Id. If your Agora project has App Certificate enabled and you want to use the sample's built-in token generation flow, update `YOUR APP CERTIFICATE` as well.
+5. Open `Android/APIExample` and edit the `local.properties` file in the project root. Update `YOUR APP ID` with your App Id. If your Shengwang project has App Certificate enabled and you want to use the sample's built-in token generation flow, update `YOUR APP CERTIFICATE` as well.
 
     ```
     sdk.dir=/path/to/Android/sdk
@@ -38,11 +40,34 @@ You are all set. Now connect your Android device and run the project.
 ### Beauty Configuration
 
 > Third Part Beauty case use
-> the [Agora Beauty API Library](https://github.com/AgoraIO-Community/BeautyAPI)
+> the [Beauty API Library](https://github.com/AgoraIO-Community/BeautyAPI)
 
 This project contains third-party beauty integration examples, which cannot be enabled by default
 without configuring resources and certificates. The resource certificate configuration method is as
 follows:
+
+During Gradle configuration, the project automatically downloads and caches the SenseTime 9.3.1
+Android libraries declared in `app/vendors.gradle`. The first Gradle sync therefore requires network
+access. This download does not include the SenseTime assets or license listed below; provide those
+files separately.
+
+#### Shengwang Beauty 2.0
+
+The Shengwang Beauty 2.0 material package is not included in this repository. Before building locally:
+
+1. Obtain `AgoraBeautyMaterial.zip` from Shengwang technical support.
+2. Extract `AgoraBeautyMaterial.zip` to `app/src/main/assets/beauty_agora/`.
+
+The extracted resources should have the following structure:
+
+```text
+app/src/main/assets/beauty_agora/
+└── beauty_material_functional/
+    ├── config.json
+    └── ...
+```
+
+The material directory is ignored by Git.
 
 #### SenseTime
 
@@ -52,9 +77,9 @@ follows:
 | SenseTime Beauty SDK Path                                            | Location                                                 |
 |----------------------------------------------------------------------|----------------------------------------------------------|
 | Android/models                                                       | app/src/main/assets/beauty_sensetime/models              |
-| Android/smaple/SenseMeEffects/app/src/main/assets/sticker_face_shape | app/src/main/assets/beauty_sensetime/sticker_face_shape  |
-| Android/smaple/SenseMeEffects/app/src/main/assets/style_lightly      | app/src/main/assets/beauty_sensetime/style_lightly       |
-| Android/smaple/SenseMeEffects/app/src/main/assets/makeup_lip         | app/src/main/assets/beauty_sensetime/makeup_lip          |
+| Android/sample/SenseMeEffects/app/src/main/assets/sticker_face_shape | app/src/main/assets/beauty_sensetime/sticker_face_shape  |
+| Android/sample/SenseMeEffects/app/src/main/assets/style_lightly      | app/src/main/assets/beauty_sensetime/style_lightly       |
+| Android/sample/SenseMeEffects/app/src/main/assets/makeup_lip         | app/src/main/assets/beauty_sensetime/makeup_lip          |
 | SenseME.lic                                                          | app/src/main/assets/beauty_sensetime/license/SenseME.lic |
 
 #### FaceUnity
@@ -68,9 +93,9 @@ follows:
 | sticker resource(e.g. fashi.bundle) | app/src/main/assets/beauty_faceunity/sticker                                   |
 | authpack.java                       | app/src/main/java/io/agora/api/example/examples/advanced/beauty/authpack.java  |
 
-### For Agora Extension Developers
+### For RTC Extension Developers
 
-Since version 4.0.0, Agora SDK provides an Extension Interface Framework. Developers could publish their own video/audio extension to Agora Extension Market. In this project includes a sample SimpleFilter example, by default it is disabled.
+Since version 4.0.0, the Shengwang RTC SDK provides an Extension Interface Framework. Developers can publish their own video/audio extensions to the extension marketplace. This project includes a SimpleFilter example, which is disabled by default.
 In order to enable it, you could do as follows:
 
 1. Download [opencv](https://agora-adc-artifacts.s3.cn-north-1.amazonaws.com.cn/androidLibs/opencv4.zip) library, unzip it and copy into Android/APIExample/agora-simple-filter/src/main/jniLibs
@@ -79,7 +104,7 @@ Android/APIExample/agora-simple-filter/src/main/jniLibs
 ├── arm64-v8a
 └── armeabi-v7a
 ```
-2. Download [Agora SDK RESOURCE](https://docs.agora.io/en/sdks?platform=android), unzip it and copy c++ .so library (keeps arch folder) to Android/APIExample/agora-simple-filter/src/main/agoraLibs; Replace the low_level_api/include .h files in the Android/APIExample/agora-simple-filter/src/main/cpp/AgoraRtcKit directory.
+2. Download [Shengwang SDK RESOURCE](https://doc.shengwang.cn/doc/rtc/android/resources), unzip it and copy c++ .so library (keeps arch folder) to Android/APIExample/agora-simple-filter/src/main/agoraLibs; Replace the low_level_api/include .h files in the Android/APIExample/agora-simple-filter/src/main/cpp/AgoraRtcKit directory.
 
 ```text
 Android/APIExample/agora-simple-filter/src/main/agoraLibs
@@ -100,7 +125,7 @@ Android/APIExample/agora-simple-filter/src/main/cpp
 This project contains custom stream encrypt examples, which cannot be enabled by default. 
 The configuration method is as follows:
 
-1. Download [Agora SDK RESOURCE](https://docs.agora.io/en/sdks?platform=android), unzip it and copy c++ .so library (keeps arch folder) to Android/APIExample/agora-stream-encrypt/src/main/agoraLibs; Replace the hight_level_api/include .h files in the Android/APIExample/agora-stream-encrypt/src/main/cpp/include/agora directory.
+1. Download [Shengwang SDK RESOURCE](https://doc.shengwang.cn/doc/rtc/android/resources), unzip it and copy c++ .so library (keeps arch folder) to Android/APIExample/agora-stream-encrypt/src/main/agoraLibs; Replace the high_level_api/include .h files in the Android/APIExample/agora-stream-encrypt/src/main/cpp/include/agora directory.
 
 ```text
 Android/APIExample/agora-stream-encrypt/src/main/agoraLibs
@@ -120,13 +145,10 @@ Android/APIExample/agora-stream-encrypt/src/main/cpp
 
 ## Contact Us
 
-- For potential issues, take a look at our [FAQ](https://docs.agora.io/en/faq) first
-- Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials
-- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use case
-- Repositories managed by developer communities can be found at [Agora Community](https://github.com/AgoraIO-Community)
-- You can find full API documentation at [Document Center](https://docs.agora.io/en/)
-- If you encounter problems during integration, you can ask question in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io)
-- You can file bugs about this sample at [issue](https://github.com/AgoraIO/API-Examples/issues)
+- Browse the [Shengwang documentation](https://doc.shengwang.cn/) for product guides and API references.
+- Explore more samples in [Shengwang Community](https://github.com/Shengwang-Community).
+- Ask integration questions in the [developer community](https://rtcdeveloper.com/).
+- File bugs about this sample at [issues](https://github.com/Shengwang-Community/API-Examples/issues).
 
 ## License
 

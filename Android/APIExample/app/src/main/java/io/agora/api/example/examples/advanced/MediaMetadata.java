@@ -47,7 +47,7 @@ import io.agora.rtc2.video.VideoEncoderConfiguration;
  * The type Video metadata.
  */
 @Example(
-        index = 3,
+        index = 12,
         group = ADVANCED,
         name = R.string.item_mediametadata,
         actionId = R.id.action_mainFragment_to_MediaMetadata,
@@ -113,7 +113,7 @@ public class MediaMetadata extends BaseFragment implements View.OnClickListener 
              */
             config.mContext = context.getApplicationContext();
             /*
-             * The App ID issued to you by Agora. See <a href="https://docs.agora.io/en/Agora%20Platform/token#get-an-app-id"> How to get the App ID</a>
+             * The App ID issued to you by Agora. See <a href="https://doc.shengwang.cn/doc/console/general/quickstart"> How to get the App ID</a>
              */
             config.mAppId = getAgoraAppId();
             /* The channel profile.
@@ -131,7 +131,7 @@ public class MediaMetadata extends BaseFragment implements View.OnClickListener 
              * The SDK uses this class to report to the app on SDK runtime events.
              */
             config.mEventHandler = iRtcEngineEventHandler;
-            config.mAudioScenario = Constants.AudioScenario.getValue(Constants.AudioScenario.DEFAULT);
+            config.mAudioScenario = Constants.AUDIO_SCENARIO_DEFAULT;
             config.mAreaCode = ((MainApplication) getActivity().getApplication()).getGlobalSettings().getAreaCode();
             engine = RtcEngine.create(config);
             /*
@@ -265,9 +265,9 @@ public class MediaMetadata extends BaseFragment implements View.OnClickListener 
 
         /*
          * A temporary token generated in Console. A temporary token is valid for 24 hours. For details, see
-         *      https://docs.agora.io/en/Agora%20Platform/token?platform=All%20Platforms#get-a-temporary-token
+         *      https://doc.shengwang.cn/doc/rtc/android/basic-features/token-authentication
          * A token generated at the server. This applies to scenarios with high-security requirements. For details, see
-         *      https://docs.agora.io/en/cloud-recording/token_server_java?platform=Java*/
+         *      https://doc.shengwang.cn/doc/rtc/android/basic-features/token-authentication*/
         TokenUtils.gen(requireContext(), channelId, 0, accessToken -> {
             /* Allows a user to join a channel.
              if you do not specify the uid, we will generate the uid for you*/
@@ -275,8 +275,8 @@ public class MediaMetadata extends BaseFragment implements View.OnClickListener 
             if (res != 0) {
                 // Usually happens with invalid parameters
                 // Error code description can be found at:
-                // en: https://docs.agora.io/en/Voice/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler_1_1_error_code.html
-                // cn: https://docs.agora.io/cn/Voice/API%20Reference/java/classio_1_1agora_1_1rtc_1_1_i_rtc_engine_event_handler_1_1_error_code.html
+                // en: https://docs.agora.io/en/realtime-media/rtc/reference/error-codes
+                // cn: https://doc.shengwang.cn/api-ref/rtc/android/error-code
                 showAlert(RtcEngine.getErrorDescription(Math.abs(res)));
                 return;
             }
@@ -348,7 +348,7 @@ public class MediaMetadata extends BaseFragment implements View.OnClickListener 
         /**
          * Error code description can be found at:
          * en: https://api-ref.agora.io/en/video-sdk/android/4.x/API/class_irtcengineeventhandler.html#callback_irtcengineeventhandler_onerror
-         * cn: https://docs.agora.io/cn/video-call-4.x/API%20Reference/java_ng/API/class_irtcengineeventhandler.html#callback_irtcengineeventhandler_onerror
+         * cn: https://doc.shengwang.cn/api-ref/rtc/android/error-code
          */
         @Override
         public void onError(int err) {

@@ -1,6 +1,6 @@
 # AGENTS.md — APIExample
 
-Full demo project. Covers all Agora RTC APIs using Java/Kotlin + XML layouts.
+Full demo project. Covers all Shengwang RTC APIs using Java/Kotlin + XML layouts.
 Default project for video, screen sharing, beauty, or extension demos.
 
 ## Build Commands
@@ -19,8 +19,8 @@ See [README.md — Obtain an App Id](README.md#obtain-an-app-id).
 ## Optional Modules
 
 Controlled via `gradle.properties`:
-- `simpleFilter = true` — enables the C++ video extension module (`agora-simple-filter`). Requires OpenCV and Agora C++ SDK headers. See README for setup.
-- `streamEncrypt = true` — enables the custom stream encryption module (`agora-stream-encrypt`). Requires Agora C++ SDK headers. See README for setup.
+- `simpleFilter = true` — enables the C++ video extension module (`agora-simple-filter`). Requires OpenCV and Shengwang C++ SDK headers. See README for setup.
+- `streamEncrypt = true` — enables the custom stream encryption module (`agora-stream-encrypt`). Requires Shengwang C++ SDK headers. See README for setup.
 
 Both are `false` by default. Do not enable unless the feature explicitly requires it.
 
@@ -30,7 +30,7 @@ Both are `false` by default. Do not enable unless the feature explicitly require
 - Do NOT use Jetpack Compose — this project is XML + ViewBinding only.
 - Each case Fragment must create and destroy its own `RtcEngine` instance.
 - Always call `engine.leaveChannel()` before `RtcEngine.destroy()` in `onDestroy()`.
-- Call `RtcEngine.destroy()` via `handler.post(RtcEngine::destroy)` — direct call blocks the main thread (ANR).
+- Existing cases defer `RtcEngine.destroy()` with `handler.post(RtcEngine::destroy)`. This handler uses the main Looper: posting defers work but does not move it off the UI thread. Never destroy from an SDK callback, and finish destruction before creating the next engine. If moving destruction to a worker, serialize teardown and subsequent initialization explicitly.
 - All `IRtcEngineEventHandler` callbacks run on a background thread — use `runOnUIThread()` for UI updates.
 - Always call `checkOrRequestPermission()` before `joinChannel()`.
 - `setParameters(...)` is required in every case for backend reporting — do not omit it.
@@ -40,9 +40,9 @@ Both are `false` by default. Do not enable unless the feature explicitly require
 
 | Skill | Path | Description |
 |-------|------|-------------|
-| upsert-case | `.agent/skills/upsert-case/` | Add a new case or modify an existing one |
-| query-cases | `.agent/skills/query-cases/` | Query and browse existing cases |
-| review-case | `.agent/skills/review-case/` | Review a case against project red lines |
+| upsert-case | `.agents/skills/upsert-case/` | Add a new case or modify an existing one |
+| query-cases | `.agents/skills/query-cases/` | Query and browse existing cases |
+| review-case | `.agents/skills/review-case/` | Review a case against project red lines |
 
 ## Further Reading
 

@@ -1,5 +1,7 @@
 xcuserdata
 .DS_Store
+.venv/
 AgoraRtcKit.framework
 */libs
 /sdk
+docs/superpowers/

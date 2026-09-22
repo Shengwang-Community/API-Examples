@@ -75,8 +75,6 @@ public:
 		IDD = IDD_DIALOG_BEAUTY_EX
 	};
 private:
-	bool* m_initialize = nullptr;
-	agora::rtc::IRtcEngine** m_rtcEngine = nullptr;
 	CDlgBeauty2* m_beautyDlg = nullptr;
 	MakeupOptions2 m_makeupOptions;
 	FaceShapeAreaOptions m_faceShapeAreaOptions;
@@ -88,10 +86,7 @@ private:
 	// 辅助方法声明
 	std::string GetFaceShapeAreaParamName(FaceShapeAreaOptions::FACE_SHAPE_AREA area);
 	int MapUIToResourceId(const CString& resourceType, int uiIndex);
-	void InitializeBeautyResources();
-	void CleanupBeautyResources();
 	void HideFaceShapeControls();
-	CString GetExePath();
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -100,12 +95,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	void initData(bool* initialize, agora::rtc::IRtcEngine** engine, CDlgBeauty2* beautyDlg);
+	void initData(CDlgBeauty2* beautyDlg);
+	void SetVideoEffectObject(agora::rtc::IVideoEffectObject* videoEffectObject);
 	void InitCtrlText();
 	void InitCtrlData();
 	void SetBeauty();
 	
-	// 移除SetVideoEffectObject方法，改为内部创建
 	void ApplyMakeupEffect();
 	void ApplyFaceShapeEffect();
 

@@ -2,8 +2,8 @@
 /* Class = "NSMenuItem"; title = "1V3"; ObjectID = "5Bj-Be-5dr"; */
 "5Bj-Be-5dr.title" = "1V3";
 
-/* Class = "NSViewController"; title = "Custom Audio Source"; ObjectID = "8Q5-xy-D8A"; */
-"8Q5-xy-D8A.title" = "音频自采集";
+/* Class = "NSViewController"; title = "Custom Audio Source (PCM)"; ObjectID = "8Q5-xy-D8A"; */
+"8Q5-xy-D8A.title" = "音频自采集(PCM)";
 
 /* Class = "NSTextFieldCell"; placeholderString = "加入频道"; ObjectID = "9hh-5D-rEK"; */
 "9hh-5D-rEK.placeholderString" = "输入频道名";

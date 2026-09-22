@@ -2,11 +2,13 @@
 
 *English | [中文](README.zh.md)*
 
-This project presents you a set of API examples to help you understand how to use Agora APIs.
+This project presents a set of API examples to help you understand how to use Shengwang APIs.
 
 ## Prerequisites
 
-- Android Studio 3.0+
+- Android Studio Ladybug (2024.2.1) or later
+- JDK 17
+- Android SDK Platform 35
 - Physical Android device
 - Android simulator is supported
 
@@ -18,12 +20,12 @@ This section shows you how to prepare, build, and run the sample application.
 
 To build and run the sample application, get an App Id:
 
-1. Create a developer account at [agora.io](https://dashboard.agora.io/signin/). Once you finish the signup process, you will be redirected to the Dashboard.
+1. Create a developer account in the [Shengwang Console](https://dashboard.agora.io/signin/). Once you finish the signup process, you will be redirected to the Dashboard.
 2. Navigate in the Dashboard tree on the left to **Projects** > **Project List**.
 3. Save the **App Id** from the Dashboard for later use.
 4. Save the **App Certificate** from the Dashboard for later use.
 
-5. Open `Android/APIExample-Compose` and edit the `local.properties` file in the project root. Update `YOUR APP ID` with your App Id. If your Agora project has App Certificate enabled and you want to use the sample's built-in token generation flow, update `YOUR APP CERTIFICATE` as well.
+5. Open `Android/APIExample-Compose` and edit the `local.properties` file in the project root. Update `YOUR APP ID` with your App Id. If your Shengwang project has App Certificate enabled and you want to use the sample's built-in token generation flow, update `YOUR APP CERTIFICATE` as well.
 
     ```
     sdk.dir=/path/to/Android/sdk
@@ -38,13 +40,10 @@ You are all set. Now connect your Android device and run the project.
 
 ## Contact Us
 
-- For potential issues, take a look at our [FAQ](https://docs.agora.io/en/faq) first
-- Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials
-- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated real use case
-- Repositories managed by developer communities can be found at [Agora Community](https://github.com/AgoraIO-Community)
-- You can find full API documentation at [Document Center](https://docs.agora.io/en/)
-- If you encounter problems during integration, you can ask question in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io)
-- You can file bugs about this sample at [issue](https://github.com/AgoraIO/API-Examples/issues)
+- Browse the [Shengwang documentation](https://doc.shengwang.cn/) for product guides and API references.
+- Explore more samples in [Shengwang Community](https://github.com/Shengwang-Community).
+- Ask integration questions in the [developer community](https://rtcdeveloper.com/).
+- File bugs about this sample at [issues](https://github.com/Shengwang-Community/API-Examples/issues).
 
 ## License
 

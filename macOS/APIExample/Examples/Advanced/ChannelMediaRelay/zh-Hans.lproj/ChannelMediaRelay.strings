@@ -5,8 +5,8 @@
 /* Class = "NSButtonCell"; title = "Stop Relay"; ObjectID = "Hvn-10-7hC"; */
 "Hvn-10-7hC.title" = "停止转发";
 
-/* Class = "NSViewController"; title = "Join Multiple Channels"; ObjectID = "IBJ-wZ-9Xx"; */
-"IBJ-wZ-9Xx.title" = "Join Multiple Channels";
+/* Class = "NSViewController"; title = "Media Channel Relay"; ObjectID = "IBJ-wZ-9Xx"; */
+"IBJ-wZ-9Xx.title" = "跨频道流转发";
 
 /* Class = "NSButtonCell"; title = "Leave"; ObjectID = "Xtr-fU-GZ5"; */
 "Xtr-fU-GZ5.title" = "离开频道";
