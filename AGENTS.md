@@ -51,7 +51,7 @@ evidence in `.github/pull_request_template.md`.
 | `HOOKS-GUIDE.md` | Git hook installation (sensitive-info detection, commit-message rules) |
 | `.pre-commit-config.yaml` | Pre-commit hook configuration |
 | `.gitleaks.toml` | Gitleaks allowlist configuration |
-| `.github/workflows/compile.yml` | Post-release compile-only checks using a placeholder App ID |
+| `.github/workflows/compile.yml` | Pull request compile-only checks using a placeholder App ID |
 | `.github/workflows/repository-policy.yml` | Remote sensitive-information, commit-message, and AI asset checks |
 | `.github/workflows/gitee-sync.yml` | Shengwang-only synchronization to Gitee after updates reach `main` |
 | `.github/ci/build/` | Jenkins release packaging entry points |
@@ -68,4 +68,4 @@ See `HOOKS-GUIDE.md` for details and troubleshooting.
 
 ## Sensitive Configuration
 
-API keys and real App IDs are never committed. GitHub Actions compilation uses an all-zero 32-character placeholder App ID and does not run RTC sessions. It must not use repository secrets, App Certificates, or tokens. The compile workflow runs for pull requests targeting `main` and for pushes to `main`; referenced SDK versions must be available from public package repositories before the pull request can pass.
+API keys and real App IDs are never committed. GitHub Actions compilation uses an all-zero 32-character placeholder App ID and does not run RTC sessions. It must not use repository secrets, App Certificates, or tokens. The compile workflow runs for pull requests targeting `main` and can be started manually; referenced SDK versions must be available from public package repositories before the pull request can pass.

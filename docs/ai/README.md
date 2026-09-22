@@ -41,7 +41,7 @@ Reuse it for later checks; do not install the validator into the system Python e
 The same checks run in `.github/workflows/repository-policy.yml` for pushes and pull requests.
 That workflow also compiles and executes selected Android/iOS template lifecycle regressions.
 After editing creation templates, run the relevant native checks documented in
-[CI template checks](../../.github/ci/README.md#template-checks). The pull request and `main`
+[CI template checks](../../.github/ci/README.md#template-checks). The `main` pull request
 compile workflow builds the checked-in applications without generating additional template
 sources. Structural validation alone does not establish template API correctness or safe
 asynchronous cleanup.
