@@ -33,10 +33,6 @@ else
   fi
 fi
 
-#change android maven to china repos
-#sed -ie "s#google()#maven { url \"https\://maven.aliyun.com/repository/public\" }\n        google()#g" settings.gradle
-#sed -ie "s#https://services.gradle.org/distributions#https://mirrors.cloud.tencent.com/gradle#g" gradle/wrapper/gradle-wrapper.properties
-
 ## config appId
 if [ ! -f "local.properties" ];then
   touch local.properties

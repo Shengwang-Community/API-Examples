@@ -15,6 +15,19 @@ change contract; this document defines the stable project inventory and dependen
 | macOS AppKit | `macOS/` | `ShengwangRtcEngine_macOS` in `Podfile` | `macOS/AGENTS.md` |
 | Windows MFC | `windows/APIExample/` | Local `../../sdk` or public `Shengwang_Native_SDK_for_Windows_*_FULL.zip` | `windows/AGENTS.md` |
 
+## Android SDK source
+
+All three Android projects resolve `cn.shengwang.rtc` and `cn.shengwang.infra` exclusively
+from [the official Shengwang Maven repository](https://download.shengwang.cn/maven/) when a local
+`../../sdk` directory is absent. Repository routing is declared in each project's
+`settings.gradle` or `settings.gradle.kts`; use the fixed `rtc_sdk_version` from
+`gradle.properties`. Plugin and other third-party dependency repositories are separate.
+
+The checked-in settings are included in source packages. Cloud build adapters and Gitee
+synchronization do not inject an Aliyun Maven repository for RTC dependencies. Validate
+Maven resolution without a local SDK and with a fresh dependency cache; compiling with a
+bundled SDK does not validate the public repository.
+
 ## Scope Rules
 
 - SDK version, dependency, credential plumbing, CI, and packaging changes require review of

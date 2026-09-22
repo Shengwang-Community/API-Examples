@@ -23,16 +23,12 @@ sed_in_place() {
 pwd
 git remote -v
 
-echo "Configure Android projects to use China-hosted mirrors"
+echo "Configure Android Gradle distributions to use a China-hosted mirror"
 android_files=(
-    Android/APIExample/settings.gradle
     Android/APIExample/gradle/wrapper/gradle-wrapper.properties
-    Android/APIExample-Audio/settings.gradle
     Android/APIExample-Audio/gradle/wrapper/gradle-wrapper.properties
 )
-sed_in_place "s#google()#maven { url \"https\://maven.aliyun.com/repository/public\" }\n        google()#g" Android/APIExample/settings.gradle
 sed_in_place "s#https://services.gradle.org/distributions#https://mirrors.cloud.tencent.com/gradle#g" Android/APIExample/gradle/wrapper/gradle-wrapper.properties
-sed_in_place "s#google()#maven { url \"https\://maven.aliyun.com/repository/public\" }\n        google()#g" Android/APIExample-Audio/settings.gradle
 sed_in_place "s#https://services.gradle.org/distributions#https://mirrors.cloud.tencent.com/gradle#g" Android/APIExample-Audio/gradle/wrapper/gradle-wrapper.properties
 
 echo "Configure Apple projects to use Gitee-hosted dependencies"
