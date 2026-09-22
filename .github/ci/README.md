@@ -18,9 +18,9 @@ After creating the venv described above, run the packaging helper tests from the
 
 Keep the Jenkins entry point and `build/` paths stable: external jobs and existing scripts
 refer to them directly. A lack of repository-local callers does not establish that an
-external entry point is unused. GitHub compilation runs for pull requests targeting `main`
-and pushes to `main`, uses public SDK dependencies, and produces compile evidence; Jenkins
-owns release artifacts and signing evidence.
+external entry point is unused. GitHub compilation runs for pull requests targeting `main`,
+uses public SDK dependencies, and produces compile evidence; Jenkins owns release artifacts
+and signing evidence.
 
 ## macOS test packages
 
