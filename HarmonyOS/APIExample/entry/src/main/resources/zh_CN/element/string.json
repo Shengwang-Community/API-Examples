@@ -1,0 +1,516 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "APIExample"
+    },
+    {
+      "name": "Internet_reason",
+      "value": "access internet"
+    },
+    {
+      "name": "Write_reason",
+      "value": "write sdcard"
+    },
+    {
+      "name": "Read_reason",
+      "value": "read sdcard"
+    },
+    {
+      "name": "Audio_reason",
+      "value": "access audio"
+    },
+    {
+      "name": "Video_reason",
+      "value": "access video"
+    },
+    {
+      "name": "category_basic",
+      "value": "基础功能"
+    },
+    {
+      "name": "item_joinvideochannel",
+      "value": "视频互动直播"
+    },
+    {
+      "name": "category_advanced",
+      "value": "高级功能"
+    },
+    {
+      "name": "join",
+      "value": "加入"
+    },
+    {
+      "name": "text_input_channel_name",
+      "value": "请输入频道名"
+    },
+    {
+      "name": "leave",
+      "value": "离开"
+    },
+    {
+      "name": "item_mediametadata",
+      "value": "插入元数据"
+    },
+    {
+      "name": "item_joinmultichannel",
+      "value": "加入多频道"
+    },
+    {
+      "name": "screenshot",
+      "value": "截图"
+    },
+    {
+      "name": "screenshot_saved",
+      "value": "截图已保存，可在相册中查看"
+    },
+    {
+      "name": "screenshot_save_failed",
+      "value": "截图保存失败"
+    },
+    {
+      "name": "screenshot_permission_denied",
+      "value": "无法获取截图保存授权"
+    },
+    {
+      "name": "ex_channel_name",
+      "value": "Ex频道名"
+    },
+    {
+      "name": "text_input_video_metadata",
+      "value": "请输入视频元数据"
+    },
+    {
+      "name": "send",
+      "value": "发送"
+    },
+    {
+      "name": "item_customaudiosource",
+      "value": "自定义音频采集"
+    },
+    {
+      "name": "publish_local_audio",
+      "value": "发布本地音频"
+    },
+    {
+      "name": "publish_microphone",
+      "value": "发布麦克风"
+    },
+    {
+      "name": "item_customvideosource",
+      "value": "自定义视频采集"
+    },
+    {
+      "name": "item_originvideodata",
+      "value": "原始视频数据"
+    },
+    {
+      "name": "settings",
+      "value": "设置"
+    },
+    {
+      "name": "resolution",
+      "value": "分辨率"
+    },
+    {
+      "name": "framerate",
+      "value": "帧率"
+    },
+    {
+      "name": "orientation",
+      "value": "方向"
+    },
+    {
+      "name": "area",
+      "value": "区域"
+    },
+    {
+      "name": "item_originaudiosource",
+      "value": "原始音频数据"
+    },
+    {
+      "name": "item_joinaudiochannel",
+      "value": "音频互动直播"
+    },
+    {
+      "name": "app_id",
+      "value": "App ID"
+    },
+    {
+      "name": "token",
+      "value": "Token"
+    },
+    {
+      "name": "item_joinvideochanneltoken",
+      "value": "视频互动直播(Token验证)"
+    },
+    {
+      "name": "item_livestreaming",
+      "value": "RTC实时直播"
+    },
+    {
+      "name": "start_linking",
+      "value": "开始连麦"
+    },
+    {
+      "name": "stop_linking",
+      "value": "停止连麦"
+    },
+    {
+      "name": "low_stream",
+      "value": "小流"
+    },
+    {
+      "name": "low_legacy_living",
+      "value": "极速直播"
+    },
+    {
+      "name": "item_customaudiorender",
+      "value": "自定义音频渲染"
+    },
+    {
+      "name": "item_screensharing",
+      "value": "屏幕共享"
+    },
+    {
+      "name": "publish_screen_audio",
+      "value": "屏幕共享本地音频"
+    },
+    {
+      "name": "publish_audio_volume",
+      "value": "发布音量"
+    },
+    {
+      "name": "item_rtmpstreaming",
+      "value": "旁路推流CDN"
+    },
+    {
+      "name": "transcoding",
+      "value": "转码"
+    },
+    {
+      "name": "text_input_url",
+      "value": "链接地址"
+    },
+    {
+      "name": "stop_push",
+      "value": "停止推流"
+    },
+    {
+      "name": "push",
+      "value": "推流"
+    },
+    {
+      "name": "item_channelencryption",
+      "value": "媒体流加密"
+    },
+    {
+      "name": "encryption_mode",
+      "value": "加密模式"
+    },
+    {
+      "name": "encryption_key",
+      "value": "加密密钥"
+    },
+    {
+      "name": "item_playaudiofiles",
+      "value": "音频文件混音"
+    },
+    {
+      "name": "audio_mixing",
+      "value": "混音"
+    },
+    {
+      "name": "audio_effect",
+      "value": "单个音效文件"
+    },
+    {
+      "name": "start",
+      "value": "开始"
+    },
+    {
+      "name": "resume",
+      "value": "恢复"
+    },
+    {
+      "name": "pause",
+      "value": "暂停"
+    },
+    {
+      "name": "stop",
+      "value": "停止"
+    },
+    {
+      "name": "volume",
+      "value": "总音量"
+    },
+    {
+      "name": "play_volume",
+      "value": "播放音量"
+    },
+    {
+      "name": "publish_volume",
+      "value": "发布音量"
+    },
+    {
+      "name": "item_precalltest",
+      "value": "通话前质量检测"
+    },
+    {
+      "name": "testing",
+      "value": "Testing..."
+    },
+    {
+      "name": "item_mediarecorder",
+      "value": "本地/远端录制"
+    },
+    {
+      "name": "start_recording",
+      "value": "开始录制"
+    },
+    {
+      "name": "stop_recording",
+      "value": "停止录制"
+    },
+    {
+      "name": "confirm",
+      "value": "确定"
+    },
+    {
+      "name": "item_localvideotranscoding",
+      "value": "本地合图"
+    },
+    {
+      "name": "Background_reason",
+      "value": "Access background"
+    },
+    {
+      "name": "text_input_target_channel_name",
+      "value": "目标频道"
+    },
+    {
+      "name": "item_hostcrosschannel",
+      "value": "跨频道连麦"
+    },
+    {
+      "name": "switch_camera",
+      "value": "切换摄像头"
+    },
+    {
+      "name": "close_microphone",
+      "value": "关闭麦克风"
+    },
+    {
+      "name": "audio_router",
+      "value": "Audio Route"
+    },
+    {
+      "name": "inear_monitor",
+      "value": "InEar Monitor"
+    },
+    {
+      "name": "inear_monitor_vol",
+      "value": "InEar Monitor Vol"
+    },
+    {
+      "name": "playout_vol",
+      "value": "Playout Vol"
+    },
+    {
+      "name": "scenario",
+      "value": "Scenario"
+    },
+    {
+      "name": "audio_profile",
+      "value": "Audio Profile"
+    },
+    {
+      "name": "channel_profile",
+      "value": "Channel Profile"
+    },
+    {
+      "name": "audio_route_speakerphone",
+      "value": "扬声器"
+    },
+    {
+      "name": "audio_route_earpiece",
+      "value": "听筒"
+    },
+    {
+      "name": "audio_route_headset",
+      "value": "耳机"
+    },
+    {
+      "name": "audio_route_headset_bluetooth",
+      "value": "蓝牙耳机"
+    },
+    {
+      "name": "recording_vol",
+      "value": "Recording Vol"
+    },
+    {
+      "name": "open_microphone",
+      "value": "打开麦克风"
+    },
+    {
+      "name": "click_select_router",
+      "value": "点击选择路由"
+    },
+    {
+      "name": "voice_pitch",
+      "value": "人声音调"
+    },
+    {
+      "name": "all_audio_effects",
+      "value": "全部音效文件"
+    },
+    {
+      "name": "play_all",
+      "value": "全部播放"
+    },
+    {
+      "name": "resume_all",
+      "value": "全部恢复"
+    },
+    {
+      "name": "pause_all",
+      "value": "全部暂停"
+    },
+    {
+      "name": "stop_all",
+      "value": "全部停止"
+    },
+    {
+      "name": "unload_all",
+      "value": "全部卸载"
+    },
+    {
+      "name": "remote_subscribe_fallback",
+      "value": "远端订阅降级"
+    },
+    {
+      "name": "fallback_disabled",
+      "value": "关闭"
+    },
+    {
+      "name": "fallback_low_stream",
+      "value": "降级到小流"
+    },
+    {
+      "name": "fallback_audio_only",
+      "value": "降级到纯音频"
+    },
+    {
+      "name": "video_image_source",
+      "value": "垫片推流"
+    },
+    {
+      "name": "get_ntp_time",
+      "value": "获取 NTP 时间"
+    },
+    {
+      "name": "item_useraccount",
+      "value": "User Account 入会"
+    },
+    {
+      "name": "text_input_user_account",
+      "value": "请输入用户账号"
+    },
+    {
+      "name": "mapped_int_uid",
+      "value": "映射 Int UID"
+    },
+    {
+      "name": "register_user_account",
+      "value": "注册账号"
+    },
+    {
+      "name": "preload_user_account_channel",
+      "value": "预加载频道"
+    },
+    {
+      "name": "channel_name_empty",
+      "value": "频道名不能为空"
+    },
+    {
+      "name": "user_account_empty",
+      "value": "用户账号不能为空"
+    },
+    {
+      "name": "item_voiceeffects",
+      "value": "美声与音效"
+    },
+    {
+      "name": "voice_beautifier_preset",
+      "value": "美声预设"
+    },
+    {
+      "name": "audio_effect_preset",
+      "value": "人声音效预设"
+    },
+    {
+      "name": "equalization_band",
+      "value": "均衡频段"
+    },
+    {
+      "name": "equalization_gain",
+      "value": "均衡增益"
+    },
+    {
+      "name": "reverb_key",
+      "value": "混响参数"
+    },
+    {
+      "name": "reverb_value",
+      "value": "混响数值"
+    },
+    {
+      "name": "item_videobeauty",
+      "value": "视频美颜"
+    },
+    {
+      "name": "beauty_effect",
+      "value": "美颜"
+    },
+    {
+      "name": "beauty_contrast",
+      "value": "美白对比度"
+    },
+    {
+      "name": "beauty_contrast_low",
+      "value": "低"
+    },
+    {
+      "name": "beauty_contrast_normal",
+      "value": "正常"
+    },
+    {
+      "name": "beauty_contrast_high",
+      "value": "高"
+    },
+    {
+      "name": "beauty_lightening",
+      "value": "美白"
+    },
+    {
+      "name": "beauty_smoothness",
+      "value": "平滑"
+    },
+    {
+      "name": "beauty_redness",
+      "value": "红润"
+    },
+    {
+      "name": "beauty_sharpness",
+      "value": "锐利"
+    }
+  ]
+}

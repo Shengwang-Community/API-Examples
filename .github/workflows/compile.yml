@@ -161,3 +161,17 @@ jobs:
         working-directory: windows/APIExample
         shell: pwsh
         run: msbuild APIExample.sln -m /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143
+
+  harmonyos:
+    name: HarmonyOS (lightweight checks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check build scripts
+        run: |
+          for script in HarmonyOS/APIExample/prepare_sdk.sh HarmonyOS/APIExample/cloud_build.sh .github/ci/build/build_hmos.sh; do
+            bash -n "$script"
+          done
+      - name: Test SDK preparation and packaging with local fixtures
+        run: python3 -m unittest discover --start-directory .github/ci/build/tests --pattern 'test_hmos_sdk.py' --verbose

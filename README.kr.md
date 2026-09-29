@@ -17,6 +17,7 @@
 | iOS      | Swift       | [iOS/APIExample-Audio](iOS/APIExample-Audio)             | [RTC Objective-C Audio SDK](https://doc.shengwang.cn/doc/rtc/ios/resources)   |
 | macOS    | Swift       | [macOS](macOS)                                           | [RTC Objective-C Video SDK](https://doc.shengwang.cn/doc/rtc/macos/resources) |
 | Windows  | C++         | [windows](windows)                                       | [RTC C++ Video SDK](https://doc.shengwang.cn/doc/rtc/windows/resources)       |
+| HarmonyOS | ArkTS / C++ | [HarmonyOS/APIExample](HarmonyOS/APIExample) | [RTC SDK resources](https://doc.shengwang.cn/doc/rtc/harmonyos/resources) |
 
 각 플랫폼의 내용을 참조하여 프로젝트에 대해 자세히 알아볼 수 있습니다.
 

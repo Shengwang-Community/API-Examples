@@ -1,6 +1,6 @@
 # AI-Assisted Development
 
-This directory contains durable guidance for coordinating one requirement across the nine
+This directory contains durable guidance for coordinating one requirement across the ten
 RTC API Example projects. It is intended for both developers and coding agents and is part
 of the repository's normal review process.
 
@@ -14,7 +14,7 @@ of the repository's normal review process.
 | [project-matrix.md](project-matrix.md) | Project inventory, SDK sources, and scope rules. |
 | [release-risks.md](release-risks.md) | Verified repository-specific build and release risks. |
 | [pull_request_template.md](../../.github/pull_request_template.md) | Review record for scope, differences, and validation. |
-| [validate_ai_assets.py](../../.github/ci/policy/validate_ai_assets.py) | Local and CI validation for skill metadata, links, entry points, and the nine-project matrix. |
+| [validate_ai_assets.py](../../.github/ci/policy/validate_ai_assets.py) | Local and CI validation for skill metadata, links, entry points, and the ten-project matrix. |
 
 ## Working Agreement
 
@@ -42,9 +42,10 @@ The same checks run in `.github/workflows/repository-policy.yml` for pushes and 
 That workflow also compiles and executes selected Android/iOS template lifecycle regressions.
 After editing creation templates, run the relevant native checks documented in
 [CI template checks](../../.github/ci/README.md#template-checks). The `main` pull request
-compile workflow builds the checked-in applications without generating additional template
-sources. Structural validation alone does not establish template API correctness or safe
-asynchronous cleanup.
+compile workflow builds the checked-in Android, iOS, macOS, and Windows applications
+without generating additional template sources. HarmonyOS runs only offline SDK script
+and packaging checks; structural validation alone does not establish template API
+correctness, safe asynchronous cleanup, or HarmonyOS compilation.
 
 The requirement contract owns shared behavior. Platform implementations may differ only
 when the SDK, UI framework, permission model, or operating system requires it, and the

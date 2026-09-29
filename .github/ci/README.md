@@ -46,6 +46,31 @@ compilation. Confirm `ARCHIVE SUCCEEDED`, `EXPORT SUCCEEDED`, signature verifica
 uploaded `.app.zip` in the next Jenkins run. The separate legacy `build_mac_ipa.sh` entry
 point still depends on external job configuration and is not this Groovy pipeline's adapter.
 
+## HarmonyOS
+
+`HarmonyOS/APIExample/sdk-release.env` pins the public SDK ZIP and SHA-256 digest.
+`prepare_sdk.sh` installs its verified HAR for developers. The HarmonyOS job in
+`compile.yml` uses a GitHub-hosted Ubuntu runner for shell syntax and offline SDK
+preparation/packaging tests. It does not download the full SDK, install DevEco Studio,
+compile ArkTS/C++, or verify that the public CDN is currently reachable.
+
+`HARMONY_UNSIGNED_ONLY=true` makes `cloud_build.sh` compile and verify an unsigned HAP
+when a developer runs it locally with DevEco Studio and the HarmonyOS 5.0 SDK installed.
+`build/tests/test_hmos_sdk.py` checks local HAR reuse, version mismatch protection and
+the verified public-ZIP extraction flow with controlled fixtures (no network required).
+Jenkins instead uses `build/build_hmos.groovy` and `build/build_hmos.sh` to package the
+selected `sdk_url` and sign a HAP with credentials held outside Git. Source packaging
+sets App ID to `<#YOUR AppId#>` and clears App Certificate in its copy of
+`KeyCenter.ets`; the public token server URL in `TokenUtils.ets` stays in the
+source package.
+`cloud_build.sh` injects Jenkins `APP_ID` before compilation and restores the
+workspace copy afterward. Set `HMOS_KEY_ALIAS`
+when the signing key alias differs from `HMOS_KEY_PWD`. The Jenkins worker
+must have DevEco and signing files configured; its external HarmonyOS job mapping and
+agent label must be verified separately. Validate HarmonyOS compilation with DevEco
+before release and review the source ZIP and signed HAP in a real Jenkins release job;
+the GitHub PR check does not validate compilation, signing, or publishing.
+
 ## Template checks
 
 `policy/check_templates.py` extracts the canonical creation templates rather than maintaining

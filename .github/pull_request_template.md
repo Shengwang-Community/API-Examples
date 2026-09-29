@@ -24,6 +24,7 @@ For documentation or repository-only work, one shared reason may cover all unaff
 | iOS Objective-C | | |
 | macOS AppKit | | |
 | Windows MFC | | |
+| HarmonyOS ArkUI | | |
 
 ## Cross-Platform Review
 

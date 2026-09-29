@@ -1,0 +1,516 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "APIExample"
+    },
+    {
+      "name": "Internet_reason",
+      "value": "access internet"
+    },
+    {
+      "name": "Write_reason",
+      "value": "write sdcard"
+    },
+    {
+      "name": "Read_reason",
+      "value": "read sdcard"
+    },
+    {
+      "name": "Audio_reason",
+      "value": "access audio"
+    },
+    {
+      "name": "Video_reason",
+      "value": "access video"
+    },
+    {
+      "name": "category_basic",
+      "value": "Basic"
+    },
+    {
+      "name": "item_joinvideochannel",
+      "value": "JoinVideoChannel"
+    },
+    {
+      "name": "category_advanced",
+      "value": "Advanced"
+    },
+    {
+      "name": "join",
+      "value": "Join"
+    },
+    {
+      "name": "text_input_channel_name",
+      "value": "Please input channel name"
+    },
+    {
+      "name": "leave",
+      "value": "Leave"
+    },
+    {
+      "name": "item_mediametadata",
+      "value": "MediaMetadata"
+    },
+    {
+      "name": "item_joinmultichannel",
+      "value": "JoinMultiChannel"
+    },
+    {
+      "name": "screenshot",
+      "value": "Screenshot"
+    },
+    {
+      "name": "screenshot_saved",
+      "value": "Screenshot saved. You can view it in Photos."
+    },
+    {
+      "name": "screenshot_save_failed",
+      "value": "Failed to save screenshot."
+    },
+    {
+      "name": "screenshot_permission_denied",
+      "value": "Unable to get permission to save the screenshot."
+    },
+    {
+      "name": "ex_channel_name",
+      "value": "ExChannelName"
+    },
+    {
+      "name": "text_input_video_metadata",
+      "value": "Please input video metadata"
+    },
+    {
+      "name": "send",
+      "value": "Send"
+    },
+    {
+      "name": "item_customaudiosource",
+      "value": "CustomAudioSource"
+    },
+    {
+      "name": "publish_local_audio",
+      "value": "Publish Local Audio"
+    },
+    {
+      "name": "publish_microphone",
+      "value": "Publish Miccrophone"
+    },
+    {
+      "name": "item_customvideosource",
+      "value": "CustomVideoSource"
+    },
+    {
+      "name": "item_originvideodata",
+      "value": "OriginVideoData"
+    },
+    {
+      "name": "settings",
+      "value": "Settings"
+    },
+    {
+      "name": "resolution",
+      "value": "Resolution"
+    },
+    {
+      "name": "framerate",
+      "value": "FrameRate"
+    },
+    {
+      "name": "orientation",
+      "value": "Orientation"
+    },
+    {
+      "name": "area",
+      "value": "Area"
+    },
+    {
+      "name": "item_originaudiosource",
+      "value": "OriginAudioSource"
+    },
+    {
+      "name": "item_joinaudiochannel",
+      "value": "JoinAudioChannel"
+    },
+    {
+      "name": "app_id",
+      "value": "App ID"
+    },
+    {
+      "name": "token",
+      "value": "Token"
+    },
+    {
+      "name": "item_joinvideochanneltoken",
+      "value": "JoinVideoChannelWithToken"
+    },
+    {
+      "name": "item_livestreaming",
+      "value": "LiveStreaming"
+    },
+    {
+      "name": "start_linking",
+      "value": "StartLinking"
+    },
+    {
+      "name": "stop_linking",
+      "value": "StopLinking"
+    },
+    {
+      "name": "low_stream",
+      "value": "LowStream"
+    },
+    {
+      "name": "low_legacy_living",
+      "value": "LowLegacyLiving"
+    },
+    {
+      "name": "item_customaudiorender",
+      "value": "CustomAudioRender"
+    },
+    {
+      "name": "item_screensharing",
+      "value": "ScreenSharing"
+    },
+    {
+      "name": "publish_screen_audio",
+      "value": "PublishScreenAudio"
+    },
+    {
+      "name": "publish_audio_volume",
+      "value": "PublishAudioVolume"
+    },
+    {
+      "name": "item_rtmpstreaming",
+      "value": "RTMPStreaming"
+    },
+    {
+      "name": "transcoding",
+      "value": "Transcoding"
+    },
+    {
+      "name": "text_input_url",
+      "value": "URL"
+    },
+    {
+      "name": "stop_push",
+      "value": "StopPush"
+    },
+    {
+      "name": "push",
+      "value": "Push"
+    },
+    {
+      "name": "item_channelencryption",
+      "value": "ChannelEncryption"
+    },
+    {
+      "name": "encryption_mode",
+      "value": "EncryptionMode"
+    },
+    {
+      "name": "encryption_key",
+      "value": "EncryptionKey"
+    },
+    {
+      "name": "item_playaudiofiles",
+      "value": "PlayAudioFiles"
+    },
+    {
+      "name": "audio_mixing",
+      "value": "AudioMixing"
+    },
+    {
+      "name": "start",
+      "value": "Start"
+    },
+    {
+      "name": "resume",
+      "value": "Resume"
+    },
+    {
+      "name": "pause",
+      "value": "Pause"
+    },
+    {
+      "name": "stop",
+      "value": "Stop"
+    },
+    {
+      "name": "audio_effect",
+      "value": "Audio Effect"
+    },
+    {
+      "name": "volume",
+      "value": "Volume"
+    },
+    {
+      "name": "play_volume",
+      "value": "Play Volume"
+    },
+    {
+      "name": "publish_volume",
+      "value": "Publish Volume"
+    },
+    {
+      "name": "item_precalltest",
+      "value": "PreCallTest"
+    },
+    {
+      "name": "testing",
+      "value": "Testing..."
+    },
+    {
+      "name": "item_mediarecorder",
+      "value": "MediaRecorder"
+    },
+    {
+      "name": "start_recording",
+      "value": "Start Recording"
+    },
+    {
+      "name": "stop_recording",
+      "value": "Stop Recording"
+    },
+    {
+      "name": "confirm",
+      "value": "Confirm"
+    },
+    {
+      "name": "item_localvideotranscoding",
+      "value": "LocalVideoTranscoding"
+    },
+    {
+      "name": "Background_reason",
+      "value": "Access background"
+    },
+    {
+      "name": "text_input_target_channel_name",
+      "value": "Target Channel Name"
+    },
+    {
+      "name": "item_hostcrosschannel",
+      "value": "HostCrossChannel"
+    },
+    {
+      "name": "switch_camera",
+      "value": "SwitchCamera"
+    },
+    {
+      "name": "close_microphone",
+      "value": "CloseMicophone"
+    },
+    {
+      "name": "audio_router",
+      "value": "Audio Route"
+    },
+    {
+      "name": "inear_monitor",
+      "value": "InEar Monitor"
+    },
+    {
+      "name": "inear_monitor_vol",
+      "value": "InEar Monitor Vol"
+    },
+    {
+      "name": "playout_vol",
+      "value": "Playout Vol"
+    },
+    {
+      "name": "scenario",
+      "value": "Scenario"
+    },
+    {
+      "name": "audio_profile",
+      "value": "Audio Profile"
+    },
+    {
+      "name": "channel_profile",
+      "value": "Channel Profile"
+    },
+    {
+      "name": "audio_route_speakerphone",
+      "value": "speakerphone"
+    },
+    {
+      "name": "audio_route_earpiece",
+      "value": "earpiece"
+    },
+    {
+      "name": "audio_route_headset",
+      "value": "headset"
+    },
+    {
+      "name": "audio_route_headset_bluetooth",
+      "value": "bluetooth headset"
+    },
+    {
+      "name": "recording_vol",
+      "value": "Recording Vol"
+    },
+    {
+      "name": "open_microphone",
+      "value": "Open Microphone"
+    },
+    {
+      "name": "click_select_router",
+      "value": "Click Select Router"
+    },
+    {
+      "name": "voice_pitch",
+      "value": "Voice Pitch"
+    },
+    {
+      "name": "all_audio_effects",
+      "value": "All Audio Effects"
+    },
+    {
+      "name": "play_all",
+      "value": "Play All"
+    },
+    {
+      "name": "resume_all",
+      "value": "Resume All"
+    },
+    {
+      "name": "pause_all",
+      "value": "Pause All"
+    },
+    {
+      "name": "stop_all",
+      "value": "Stop All"
+    },
+    {
+      "name": "unload_all",
+      "value": "Unload All"
+    },
+    {
+      "name": "remote_subscribe_fallback",
+      "value": "Remote Subscribe Fallback"
+    },
+    {
+      "name": "fallback_disabled",
+      "value": "Disabled"
+    },
+    {
+      "name": "fallback_low_stream",
+      "value": "Low Stream"
+    },
+    {
+      "name": "fallback_audio_only",
+      "value": "Audio Only"
+    },
+    {
+      "name": "video_image_source",
+      "value": "Video Image Source"
+    },
+    {
+      "name": "get_ntp_time",
+      "value": "Get NTP Time"
+    },
+    {
+      "name": "item_useraccount",
+      "value": "Join with User Account"
+    },
+    {
+      "name": "text_input_user_account",
+      "value": "Please input user account"
+    },
+    {
+      "name": "mapped_int_uid",
+      "value": "Mapped Int UID"
+    },
+    {
+      "name": "register_user_account",
+      "value": "Register Account"
+    },
+    {
+      "name": "preload_user_account_channel",
+      "value": "Preload Channel"
+    },
+    {
+      "name": "channel_name_empty",
+      "value": "The channel name is empty!"
+    },
+    {
+      "name": "user_account_empty",
+      "value": "The user account is empty!"
+    },
+    {
+      "name": "item_voiceeffects",
+      "value": "Voice Effects"
+    },
+    {
+      "name": "voice_beautifier_preset",
+      "value": "Voice Beautifier"
+    },
+    {
+      "name": "audio_effect_preset",
+      "value": "Audio Effect Preset"
+    },
+    {
+      "name": "equalization_band",
+      "value": "Equalization Band"
+    },
+    {
+      "name": "equalization_gain",
+      "value": "Equalization Gain"
+    },
+    {
+      "name": "reverb_key",
+      "value": "Reverb Key"
+    },
+    {
+      "name": "reverb_value",
+      "value": "Reverb Value"
+    },
+    {
+      "name": "item_videobeauty",
+      "value": "Video Beauty"
+    },
+    {
+      "name": "beauty_effect",
+      "value": "Beauty Effect"
+    },
+    {
+      "name": "beauty_contrast",
+      "value": "Lightening Contrast"
+    },
+    {
+      "name": "beauty_contrast_low",
+      "value": "Low"
+    },
+    {
+      "name": "beauty_contrast_normal",
+      "value": "Normal"
+    },
+    {
+      "name": "beauty_contrast_high",
+      "value": "High"
+    },
+    {
+      "name": "beauty_lightening",
+      "value": "Lightening"
+    },
+    {
+      "name": "beauty_smoothness",
+      "value": "Smoothness"
+    },
+    {
+      "name": "beauty_redness",
+      "value": "Redness"
+    },
+    {
+      "name": "beauty_sharpness",
+      "value": "Sharpness"
+    }
+  ]
+}
