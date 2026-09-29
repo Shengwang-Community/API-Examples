@@ -25,7 +25,7 @@ thread-safe. Check the current SDK declarations before adding or changing an API
 
 DevEco Studio builds the `entry` module. GitHub PR checks validate scripts and SDK
 packaging with offline fixtures, not ArkTS/C++ compilation. Developers can run
-`cloud_build.sh` with `HARMONY_UNSIGNED_ONLY=true` to compile an unsigned HAP locally;
-without that mode, Jenkins uses its external signing files to produce a signed HAP.
-`.github/ci/build/build_hmos.sh` handles release source packaging. None of these build
-outputs or signing assets belongs in Git.
+`cloud_build.sh` with `HARMONY_UNSIGNED_ONLY=true` to compile an unsigned HAP locally.
+The Jenkins QA job leaves that mode unset, builds a debug HAP, and signs it with external
+development signing files. `.github/ci/build/build_hmos.sh` handles the QA source ZIP.
+None of these build outputs or signing assets belongs in Git.

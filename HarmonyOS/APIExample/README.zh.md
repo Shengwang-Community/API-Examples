@@ -19,6 +19,6 @@
 
 `TokenServerUrl` 定义在 `entry/src/main/ets/util/TokenUtils.ets` 中。对于启用证书鉴权的项目，请将它替换为自己控制的 Token 服务地址。应用提交 `appId`、`channelName`、`uid`、`expireSeconds`，服务返回包含 `token` 的 JSON；App 证书只保存在服务端。地址为空时，普通示例使用空 Token，手动 Token 示例可在页面输入 Token。
 
-GitHub PR 只使用离线样例检查 SDK 脚本及打包逻辑，不编译鸿蒙工程。发版前请用 DevEco Studio 验证编译；Jenkins 另外负责发布签名及源码打包。
+GitHub PR 只使用离线样例检查 SDK 脚本及打包逻辑，不编译鸿蒙工程。本地可用 DevEco Studio 验证编译；Jenkins 另外编译调试 HAP，使用外部配置的开发证书签名，并生成供 QA 测试的源码 ZIP。
 
 如有示例问题，请在[本仓库](https://github.com/Shengwang-Community/API-Examples/issues)提交 issue。下载和使用 SDK 请参见[声网 HarmonyOS 资源页](https://doc.shengwang.cn/doc/rtc/harmonyos/resources)。

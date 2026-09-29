@@ -19,6 +19,6 @@ This project uses Shengwang RTC SDK 4.6.3 and targets HarmonyOS NEXT (HarmonyOS 
 
 `TokenServerUrl` is defined in `entry/src/main/ets/util/TokenUtils.ets`. For certificate-enabled projects, replace it with a token service you control. The app posts `appId`, `channelName`, `uid`, and `expireSeconds` and expects a JSON response containing `token`. Keep the App Certificate on that server. When the URL is empty, examples use an empty token for projects without certificate authentication; the manual token example accepts a token entered on screen.
 
-GitHub PR checks validate the SDK scripts and packaging with offline fixtures; they do not compile the HarmonyOS app. Build it with DevEco Studio before release. Release signing and source packaging run separately in Jenkins.
+GitHub PR checks validate the SDK scripts and packaging with offline fixtures; they do not compile the HarmonyOS app. Build it with DevEco Studio for local validation. Jenkins separately builds a debug HAP, signs it with externally configured development credentials, and packages the source ZIP for QA.
 
 For problems with the samples, open an [issue](https://github.com/Shengwang-Community/API-Examples/issues). See the [HarmonyOS SDK resources](https://doc.shengwang.cn/doc/rtc/harmonyos/resources) for downloads and documentation.

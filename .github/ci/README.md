@@ -1,11 +1,11 @@
 # CI Implementation
 
 GitHub Actions entry points live in `.github/workflows/`. This directory contains their
-policy helpers and the release packaging scripts loaded by Jenkins.
+policy helpers and the packaging scripts loaded by Jenkins.
 
 | Path | Caller and responsibility | Validation |
 | --- | --- | --- |
-| `Jenkinsfile_bitbucket.groovy` | External Jenkins shared library loads the release pipeline. | Verify job configuration and release evidence in the release ticket. |
+| `Jenkinsfile_bitbucket.groovy` | External Jenkins shared library loads the packaging pipeline. | Verify job configuration and artifact evidence in the corresponding build or release ticket. |
 | `build/` | Jenkins platform Groovy entry points call packaging scripts, which use each project's `cloud_build.*` adapters. IPA entry points also depend on external Jenkins configuration. | Run the packaging helper tests below; actual signing, private SDK injection and artifact verification belong to Jenkins. |
 | `policy/` | `repository-policy.yml` runs AI asset validation and native template lifecycle regressions; `.git-hooks/` supplies the local credential and commit-message checks. | Follow [AI validation](../../docs/ai/README.md) for venv setup and policy checks. |
 | `sync/` | `gitee-sync.yml` invokes the shell customization through hub-mirror-action; the shell calls the Podfile transformer. | Check shell syntax and Podfile transformation on temporary copies. Run actual synchronization only through an authorized mirror job. |
@@ -19,8 +19,8 @@ After creating the venv described above, run the packaging helper tests from the
 Keep the Jenkins entry point and `build/` paths stable: external jobs and existing scripts
 refer to them directly. A lack of repository-local callers does not establish that an
 external entry point is unused. GitHub compilation runs for pull requests targeting `main`,
-uses public SDK dependencies, and produces compile evidence; Jenkins owns release artifacts
-and signing evidence.
+uses public SDK dependencies, and produces compile evidence for Android, iOS, macOS, and
+Windows. Jenkins owns packaging and signing evidence, including HarmonyOS QA debug builds.
 
 ## macOS test packages
 
@@ -59,17 +59,17 @@ when a developer runs it locally with DevEco Studio and the HarmonyOS 5.0 SDK in
 `build/tests/test_hmos_sdk.py` checks local HAR reuse, version mismatch protection and
 the verified public-ZIP extraction flow with controlled fixtures (no network required).
 Jenkins instead uses `build/build_hmos.groovy` and `build/build_hmos.sh` to package the
-selected `sdk_url` and sign a HAP with credentials held outside Git. Source packaging
-sets App ID to `<#YOUR AppId#>` and clears App Certificate in its copy of
+selected `sdk_url`, build a debug HAP, and sign it for QA with development credentials held
+outside Git. Source packaging sets App ID to `<#YOUR AppId#>` and clears App Certificate in its copy of
 `KeyCenter.ets`; the public token server URL in `TokenUtils.ets` stays in the
 source package.
 `cloud_build.sh` injects Jenkins `APP_ID` before compilation and restores the
 workspace copy afterward. Set `HMOS_KEY_ALIAS`
 when the signing key alias differs from `HMOS_KEY_PWD`. The Jenkins worker
 must have DevEco and signing files configured; its external HarmonyOS job mapping and
-agent label must be verified separately. Validate HarmonyOS compilation with DevEco
-before release and review the source ZIP and signed HAP in a real Jenkins release job;
-the GitHub PR check does not validate compilation, signing, or publishing.
+agent label must be verified separately. Review compilation, development signing, the
+source ZIP, and the signed HAP in a real Jenkins QA build; the GitHub PR check does not
+validate compilation, signing, or publishing.
 
 ## Template checks
 

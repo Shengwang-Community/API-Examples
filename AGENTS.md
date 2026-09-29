@@ -56,7 +56,7 @@ evidence in `.github/pull_request_template.md`.
 | `.github/workflows/compile.yml` | Pull request compilation for Android, iOS, macOS, Windows, and lightweight HarmonyOS checks |
 | `.github/workflows/repository-policy.yml` | Remote sensitive-information, commit-message, and AI asset checks |
 | `.github/workflows/gitee-sync.yml` | Shengwang-only synchronization to Gitee after updates reach `main` |
-| `.github/ci/build/` | Jenkins release packaging entry points |
+| `.github/ci/build/` | Jenkins packaging entry points, including development-signed HarmonyOS QA builds |
 | `.github/ci/README.md` | CI ownership, entry points, and local verification |
 
 ## Git Hooks
