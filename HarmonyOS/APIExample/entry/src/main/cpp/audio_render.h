@@ -33,17 +33,17 @@ private:
 
 
 class SimpleCircularBuffer {
-public: 
+public:
     SimpleCircularBuffer(uint32_t size): size(size),count(0),head(0),tail(0){
         buffer = (unsigned char*)malloc(size);
         memset(buffer,0,size);
     }
     int add(char* data,int length){
         std::lock_guard<std::mutex> l(lock_);
-        int available = size - count;  
-        int copied = length - available > 0? available:length;  
-        if( copied == 0){  
-            return copied;  
+        int available = size - count;
+        int copied = length - available > 0? available:length;
+        if( copied == 0){
+            return copied;
         }
         int tail_available = size - tail;
         if(tail_available >= copied){
@@ -60,7 +60,7 @@ public:
         count += copied;
         return copied;
     }
-    
+
     int get(char* data,int length){
         std::lock_guard<std::mutex> l(lock_);
         int available = count;
@@ -81,7 +81,7 @@ public:
                 head += copied;
                 if(head == size){
                     head = 0;
-                } 
+                }
             } else {
                 memcpy(data,buffer+head,tail_available);
                 memcpy(data+tail_available,buffer, copied -tail_available);

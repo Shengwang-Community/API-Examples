@@ -50,7 +50,7 @@ private:
     agora::rtc::IRtcEngine *rtcEngine_;
     napi_env env_;
     napi_ref wrapper_;
-    
+
     AudioRenderOHOS* audioRender_ = nullptr;
 };
 

@@ -77,4 +77,4 @@ int AudioRenderOHOS::getAudioData(void *buffer, uint32_t size) {
     if (buffer == nullptr || buffer_ == nullptr)
         return 0;
     return buffer_->get((char*)buffer, size);
-} 
+}

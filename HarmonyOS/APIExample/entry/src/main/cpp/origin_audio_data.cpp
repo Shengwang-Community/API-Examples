@@ -16,9 +16,9 @@ int OriginAudioData::getObservedAudioFramePosition() { return IAudioFrameObserve
 OriginAudioData::AudioParams OriginAudioData::getRecordAudioParams() {
     return AudioParams(48000, 2, agora::rtc::RAW_AUDIO_FRAME_OP_MODE_READ_ONLY, 1024);
 }
-bool OriginAudioData::onRecordAudioFrame(const char *channelId, AudioFrame &audioFrame) { 
+bool OriginAudioData::onRecordAudioFrame(const char *channelId, AudioFrame &audioFrame) {
     AG_INFO("OriginAudioData::onRecordAudioFrame called");
-    return false; 
+    return false;
 }
 
 
