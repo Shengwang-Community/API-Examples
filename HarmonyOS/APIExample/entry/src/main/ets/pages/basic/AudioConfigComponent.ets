@@ -9,13 +9,13 @@ export struct AudioChannelSlider {
   @Prop isEnable: boolean = true
   @Prop name: Resource | string = ''
   private onSlide?: OnSliderListener
-  @State num: number = 0
+  @Prop value: number = 0
 
   build() {
     Row() {
       Text(this.name)
       Slider({
-        value: this.num,
+        value: this.value,
         min: 0,
         max: 100,
         style: SliderStyle.OutSet
@@ -23,7 +23,7 @@ export struct AudioChannelSlider {
         .opacity(this.isEnable ? 1 : 0.4)
         .enabled(this.isEnable)
         .onChange((value: number, mode: SliderChangeMode) => {
-          this.num = value
+          this.value = value
           this.onSlide?.(value)
         })
         .width('50%')
@@ -37,13 +37,14 @@ export struct AudioChannelSlider {
 export struct AudioChannelToggle {
   @Prop isEnable: boolean = true
   @Prop name: Resource | string = ''
-  @State isCheck: boolean = true
+  @Link isCheck: boolean
   private onCheck?: OnCheckListener
 
   build() {
     Row() {
       Text(this.name)
-      Toggle({ type: ToggleType.Switch, isOn: this.isEnable && this.isCheck })
+      Toggle({ type: ToggleType.Switch, isOn: this.isCheck })
+        .enabled(this.isEnable)
         .onChange((isOn: boolean) => {
           this.isCheck = isOn
           this.onCheck?.(isOn)

@@ -73,6 +73,7 @@ struct LocalVideoTranscoding {
     }
     config.mEventHandler.onLeaveChannel = () => {
       Logger.info(TAG, "mEventHandler.onLeaveChannel");
+      this.stopTranscoding()
       this.isJoin = false
       this.isOperating = false
       this.localUid = -1
@@ -351,6 +352,8 @@ struct LocalVideoTranscoding {
               if (ret != Constants.ErrorCode.ERR_OK) {
                 this.isOperating = false
                 ShowToast.longToast("leaveChannel error " + ret)
+              } else {
+                this.stopTranscoding()
               }
             }
           })

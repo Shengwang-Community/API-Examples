@@ -46,6 +46,7 @@ struct JoinAudioChannel {
   @State remoteUidList: number[] = []
   @State isMicophotoOpen: boolean = false
   @State isEarMonitorChecked: boolean = false
+  @State inEarMonitorVolume: number = 100
   @State localVoicePitch: number = 1.0
   private channelProfileType = Constants.ChannelProfile.COMMUNICATION
   private audioScenarioType = Constants.AudioScenarioType.DEFAULT
@@ -66,16 +67,26 @@ struct JoinAudioChannel {
     this.rtcEngine?.muteLocalAudioStream(!this.isMicophotoOpen);
   }
   onInEarMonitorCheck: OnCheckListener = (isCheck: boolean) => {
+    const result = this.rtcEngine?.enableInEarMonitoring(isCheck, Constants.EarMontoringFilterType.NONE)
+    if (result != Constants.ErrorCode.ERR_OK) {
+      this.isEarMonitorChecked = !isCheck
+      ShowToast.longToast(`enableInEarMonitoring failed: ${result}`)
+      return
+    }
     this.isEarMonitorChecked = isCheck
+    if (isCheck) {
+      const volumeResult = this.rtcEngine?.setInEarMonitoringVolume(this.inEarMonitorVolume)
+      if (volumeResult != Constants.ErrorCode.ERR_OK) {
+        this.rtcEngine?.enableInEarMonitoring(false, Constants.EarMontoringFilterType.NONE)
+        this.isEarMonitorChecked = false
+        ShowToast.longToast(`setInEarMonitoringVolume failed: ${volumeResult}`)
+      }
+    }
   }
   onInEarMonitorVolSlide: OnSliderListener = (progress: number) => {
     Logger.info(TAG, `onInEarMonitorVolSlide progress:${progress}`)
-    if (progress == 0) {
-      this.rtcEngine?.enableInEarMonitoring(false, 1)
-    } else {
-      this.rtcEngine?.enableInEarMonitoring(true, 1);
-      this.rtcEngine?.setInEarMonitoringVolume(progress);
-    }
+    this.inEarMonitorVolume = progress
+    this.rtcEngine?.setInEarMonitoringVolume(progress)
   }
   onPlayoutVolSlide: OnSliderListener = (progress: number) => {
     Logger.info(TAG, `onPlayoutVolSlide progress:${progress}`)
@@ -92,11 +103,10 @@ struct JoinAudioChannel {
   }
   onAudioProfileSelect: OnSelectListener = (index: number, text: string) => {
     Logger.info(TAG, `onAudioProfileSelect index ${index}  text ${text}}`)
-    if (!this.isJoin) {
+    if (this.isJoin) {
       return
     }
     this.audioProfileType = AudioConfigHelper.getAudioProfileType(text)
-    this.rtcEngine?.setAudioProfile(this.audioProfileType)
   }
   onChannelProfileSelect: OnSelectListener = (index: number, text: string) => {
     Logger.info(TAG, `onChannelProfileSelect index ${index}  text ${text}}`)
@@ -212,6 +222,7 @@ struct JoinAudioChannel {
     }
     config.mEventHandler.onLeaveChannel = () => {
       Logger.info(TAG, "mEventHandler.onLeaveChannel");
+      this.stopInEarMonitoring()
       this.isJoin = false
       this.localUid = 0
       this.isMicophotoOpen = false
@@ -238,6 +249,7 @@ struct JoinAudioChannel {
     this.stopServiceTask()
     this.audioRoutingManager.off('preferOutputDeviceChangeForRendererInfo',this.routerChangeListener)
     if (this.rtcEngine != undefined) {
+      this.stopInEarMonitoring()
       if (this.isJoin) {
         this.rtcEngine.leaveChannel();
       }
@@ -248,6 +260,13 @@ struct JoinAudioChannel {
       Logger.info(TAG, "destroy end")
       this.rtcEngine = undefined;
     }
+  }
+
+  private stopInEarMonitoring(): void {
+    if (this.isEarMonitorChecked) {
+      this.rtcEngine?.enableInEarMonitoring(false, Constants.EarMontoringFilterType.NONE)
+    }
+    this.isEarMonitorChecked = false
   }
 
   build() {
@@ -373,12 +392,13 @@ struct JoinAudioChannel {
           AudioChannelToggle({
             isEnable: this.isJoin,
             name: $r('app.string.inear_monitor'),
-            isCheck: false,
+            isCheck: $isEarMonitorChecked,
             onCheck: this.onInEarMonitorCheck
           })
           AudioChannelSlider({
             isEnable: this.isJoin && this.isEarMonitorChecked,
             name: $r('app.string.inear_monitor_vol'),
+            value: this.inEarMonitorVolume,
             onSlide: this.onInEarMonitorVolSlide
           })
           AudioChannelSlider({
@@ -397,7 +417,7 @@ struct JoinAudioChannel {
             onSelect: this.onScenarioSelect
           })
           AudioChannelSpinner({
-            // isEnable: !this.isJoin,
+            isEnable: !this.isJoin,
             name: $r('app.string.audio_profile'),
             items: AUDIO_PROFILE,
             onSelect: this.onAudioProfileSelect
@@ -455,6 +475,7 @@ struct JoinAudioChannel {
           Button($r('app.string.leave'))
             .id('button_to_leave')
             .onClick(() => {
+              this.stopInEarMonitoring()
               this.rtcEngine?.stopPreview()
               this.rtcEngine?.leaveChannel()
               focusControl.requestFocus("button_to_leave")
