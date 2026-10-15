@@ -24,6 +24,7 @@ For documentation or repository-only work, one shared reason may cover all unaff
 | iOS Objective-C | | |
 | macOS AppKit | | |
 | Windows MFC | | |
+| HarmonyOS ArkUI | | |
 
 ## Cross-Platform Review
 
@@ -47,4 +48,4 @@ blocker is useful handoff information, but it does not make a required check pas
 - [ ] SDK versions and dependency sources match `docs/ai/project-matrix.md`.
 - [ ] Gitleaks passed and no real App ID, certificate, token, private key, signing asset, or private URL is included.
 - [ ] Commit messages are in English.
-- [ ] Release packaging changes were checked separately from compile-only CI when applicable.
+- [ ] Jenkins packaging changes, including QA builds, were checked separately from compile-only CI when applicable.

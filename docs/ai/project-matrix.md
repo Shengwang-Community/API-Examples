@@ -1,6 +1,6 @@
 # Project Matrix
 
-Every cross-platform requirement must review all nine rows. Record the decision in the
+Every cross-platform requirement must review all ten rows. Record the decision in the
 change contract; this document defines the stable project inventory and dependency sources.
 
 | Project | Path | SDK dependency | Project guidance |
@@ -14,6 +14,7 @@ change contract; this document defines the stable project inventory and dependen
 | iOS Objective-C | `iOS/APIExample-OC/` | `ShengwangRtcEngine_iOS` in `Podfile` | `iOS/APIExample-OC/AGENTS.md` |
 | macOS AppKit | `macOS/` | `ShengwangRtcEngine_macOS` in `Podfile` | `macOS/AGENTS.md` |
 | Windows MFC | `windows/APIExample/` | Local `../../sdk` or public `Shengwang_Native_SDK_for_Windows_*_FULL.zip` | `windows/AGENTS.md` |
+| HarmonyOS ArkUI | `HarmonyOS/APIExample/` | `@shengwang/rtc-full` from the pinned public 4.6.3 ZIP, installed as a local HAR | `HarmonyOS/APIExample/AGENTS.md` |
 
 ## Android SDK source
 
@@ -39,13 +40,20 @@ bundled SDK does not validate the public repository.
 - A platform-specific requirement still records decisions for the other projects.
 - Read the selected project's `AGENTS.md` and `ARCHITECTURE.md` before editing.
 
+## HarmonyOS SDK source
+
+`HarmonyOS/APIExample/sdk-release.env` pins the public full SDK URL and SHA-256 digest.
+`prepare_sdk.sh` extracts the HAR to the ignored `entry/libs/` directory and checks its
+package version. Jenkins may pass an explicit `sdk_url` for QA builds; the GitHub
+PR check uses offline SDK fixtures and never downloads the pinned SDK or uses signing credentials.
+
 ## Automation Ownership
 
 | Concern | Source of truth |
 | --- | --- |
-| Post-release unsigned compilation | `.github/workflows/compile.yml`; covers all nine projects using a placeholder App ID |
+| Main PR checks | `.github/workflows/compile.yml`; compiles Android, iOS, macOS, and Windows with a placeholder App ID; tests HarmonyOS SDK scripts/packaging offline without compiling the app |
 | Repository policy checks | `.github/workflows/repository-policy.yml` and local `.git-hooks/` |
-| Release packaging | `.github/ci/build/`; executed by Jenkins |
+| Jenkins packaging | `.github/ci/build/`; includes development-signed HarmonyOS debug HAP and source ZIP for QA |
 | Gitee synchronization | `.github/workflows/gitee-sync.yml` calls `.github/ci/sync/`; Shengwang only, after `main` updates or manual dispatch |
 
 Azure Pipelines configuration and dedicated legacy scripts have been removed from this

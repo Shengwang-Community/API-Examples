@@ -1,0 +1,29 @@
+{
+  "src": [
+    "pages/Index",
+    "pages/Settings",
+    "pages/basic/JoinVideoChannelToken",
+    "pages/basic/JoinVideoChannel",
+    "pages/basic/JoinAudioChannel",
+    "pages/advance/LiveStreaming",
+    "pages/advance/MediaMetadataWrap",
+    "pages/advance/VoiceEffects",
+    "pages/advance/VideoBeauty",
+    "pages/advance/JoinMultiChannel",
+    "pages/advance/UserAccount",
+    "pages/advance/CustomAudioSource",
+    "pages/advance/CustomVideoSource",
+    "pages/advance/OriginVideoDataWrap",
+    "pages/advance/OriginAudioDataWrap",
+    "pages/advance/CustomAudioRenderWrap",
+    "pages/advance/ScreenSharing",
+    "pages/advance/RTMPStreaming",
+    "pages/advance/ChannelEncryption",
+    "pages/advance/PlayAudioFiles",
+    "pages/advance/PreCallTest",
+    "pages/advance/MediaRecorder",
+    "pages/advance/LocalVideoTranscoding",
+    "pages/advance/HostCrossChannel"
+
+  ]
+}

@@ -17,6 +17,7 @@ This repository contains sample projects for the Shengwang RTC Native SDK, inclu
 | iOS      | Swift       | [iOS/APIExample-Audio](iOS/APIExample-Audio)             | [RTC Objective-C Audio SDK](https://doc.shengwang.cn/doc/rtc/ios/resources)   |
 | macOS    | Swift       | [macOS](macOS)                                           | [RTC Objective-C Video SDK](https://doc.shengwang.cn/doc/rtc/macos/resources) |
 | Windows  | C++         | [windows](windows)                                       | [RTC C++ Video SDK](https://doc.shengwang.cn/doc/rtc/windows/resources)       |
+| HarmonyOS | ArkTS / C++ | [HarmonyOS/APIExample](HarmonyOS/APIExample) | [RTC SDK resources](https://doc.shengwang.cn/doc/rtc/harmonyos/resources) |
 
 You can refer to each individual platform to learn more about the projects.
 

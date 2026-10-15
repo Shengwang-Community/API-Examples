@@ -59,7 +59,7 @@ class AssetIntegrityTest(unittest.TestCase):
         self.addCleanup(self.temporary_directory.cleanup)
         self.root = Path(self.temporary_directory.name).resolve()
         source_root = MODULE_PATH.parents[3]
-        directories = {".", "Android", "iOS", *(path for _, path in VALIDATOR.PROJECTS)}
+        directories = {".", *VALIDATOR.PLATFORMS, *(path for _, path in VALIDATOR.PROJECTS)}
         for directory in directories:
             source = source_root / directory
             target = self.root / directory
@@ -105,7 +105,7 @@ class AssetIntegrityTest(unittest.TestCase):
                 self.assert_missing_file_rejected(filename)
 
     def test_missing_platform_architecture_fails(self) -> None:
-        for filename in ("Android/ARCHITECTURE.md", "iOS/ARCHITECTURE.md"):
+        for filename in ("Android/ARCHITECTURE.md", "iOS/ARCHITECTURE.md", "HarmonyOS/ARCHITECTURE.md"):
             with self.subTest(filename=filename):
                 self.assert_missing_file_rejected(filename)
 

@@ -22,6 +22,7 @@ PROJECTS = (
     ("iOS Objective-C", "iOS/APIExample-OC"),
     ("macOS AppKit", "macOS"),
     ("Windows MFC", "windows"),
+    ("HarmonyOS ArkUI", "HarmonyOS/APIExample"),
 )
 ENTRY_FILES = (
     "AGENTS.md",
@@ -32,7 +33,7 @@ ENTRY_FILES = (
     "docs/ai/project-matrix.md",
     "docs/ai/release-risks.md",
 )
-PLATFORMS = ("Android", "iOS", "macOS", "windows")
+PLATFORMS = ("Android", "iOS", "macOS", "windows", "HarmonyOS")
 PROJECT_SKILLS = ("query-cases", "upsert-case", "review-case")
 TABLE_FILES = (
     "docs/ai/project-matrix.md",
@@ -165,7 +166,7 @@ def validate_project_tables(errors: list[str]) -> None:
                 break
             rows.append(line.strip("|").split("|", 1)[0].strip())
         if rows != expected:
-            errors.append(f"{filename}: project table must contain the canonical nine rows in order")
+            errors.append(f"{filename}: project table must contain the canonical {len(PROJECTS)} rows in order")
 
 
 def main() -> int:
@@ -199,7 +200,7 @@ def main() -> int:
         print(f"AI asset validation failed with {len(errors)} error(s).", file=sys.stderr)
         return 1
 
-    print(f"AI asset validation passed: {len(skill_files)} skills, 9 projects, no broken references.")
+    print(f"AI asset validation passed: {len(skill_files)} skills, {len(PROJECTS)} projects, no broken references.")
     return 0
 
 

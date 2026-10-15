@@ -1,6 +1,6 @@
 ---
 name: cross-platform-api-change
-description: Coordinate an RTC API Examples change across Android, iOS, macOS, and Windows when behavior, SDK usage, dependencies, CI, or packaging may affect more than one project.
+description: Coordinate an RTC API Examples change across Android, iOS, macOS, Windows, and HarmonyOS when behavior, SDK usage, dependencies, CI, or packaging may affect more than one project.
 ---
 
 # Cross-Platform API Change

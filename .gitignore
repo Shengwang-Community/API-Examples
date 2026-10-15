@@ -1,6 +1,8 @@
 xcuserdata
 .DS_Store
 .venv/
+__pycache__/
+*.pyc
 AgoraRtcKit.framework
 */libs
 /sdk

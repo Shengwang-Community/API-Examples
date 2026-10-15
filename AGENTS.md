@@ -5,7 +5,7 @@ Read this file first, then navigate to the relevant platform directory.
 
 ## Repository Overview
 
-This repository contains sample projects demonstrating Shengwang RTC Native SDK APIs across four independent platforms. Each platform is self-contained — do not share source files, build scripts, or dependencies across platforms.
+This repository contains sample projects demonstrating Shengwang RTC Native SDK APIs across five independent platforms. Each platform is self-contained — do not share source files, build scripts, or dependencies across platforms.
 
 | Platform | Language(s) | Directory | SDK |
 |----------|-------------|-----------|-----|
@@ -13,6 +13,7 @@ This repository contains sample projects demonstrating Shengwang RTC Native SDK 
 | iOS | Swift / Objective-C | `iOS/` | RTC Objective-C SDK (full / audio) |
 | macOS | Swift | `macOS/` | RTC Objective-C SDK (full) |
 | Windows | C++ | `windows/` | RTC C++ SDK (full) |
+| HarmonyOS | ArkTS / C++ | `HarmonyOS/` | RTC HAR SDK (full) |
 
 ## Navigation
 
@@ -24,12 +25,13 @@ Each platform directory contains its own `AGENTS.md` with platform-specific rule
 | iOS | `iOS/AGENTS.md` |
 | macOS | `macOS/AGENTS.md` |
 | Windows | `windows/AGENTS.md` |
+| HarmonyOS | `HarmonyOS/AGENTS.md` |
 
 ## AI Engineering Workflow
 
 For a requirement that may affect more than one project, use
 `.agents/skills/cross-platform-api-change/SKILL.md`. It requires one shared behavior contract,
-an explicit decision for all nine projects, per-project validation, and a final
+an explicit decision for all ten projects, per-project validation, and a final
 cross-platform comparison.
 
 Durable workflow documentation lives in `docs/ai/`. Start with `docs/ai/README.md`; use
@@ -51,10 +53,10 @@ evidence in `.github/pull_request_template.md`.
 | `HOOKS-GUIDE.md` | Git hook installation (sensitive-info detection, commit-message rules) |
 | `.pre-commit-config.yaml` | Pre-commit hook configuration |
 | `.gitleaks.toml` | Gitleaks allowlist configuration |
-| `.github/workflows/compile.yml` | Pull request compile-only checks using a placeholder App ID |
+| `.github/workflows/compile.yml` | Pull request compilation for Android, iOS, macOS, Windows, and lightweight HarmonyOS checks |
 | `.github/workflows/repository-policy.yml` | Remote sensitive-information, commit-message, and AI asset checks |
 | `.github/workflows/gitee-sync.yml` | Shengwang-only synchronization to Gitee after updates reach `main` |
-| `.github/ci/build/` | Jenkins release packaging entry points |
+| `.github/ci/build/` | Jenkins packaging entry points, including development-signed HarmonyOS QA builds |
 | `.github/ci/README.md` | CI ownership, entry points, and local verification |
 
 ## Git Hooks
@@ -68,4 +70,4 @@ See `HOOKS-GUIDE.md` for details and troubleshooting.
 
 ## Sensitive Configuration
 
-API keys and real App IDs are never committed. GitHub Actions compilation uses an all-zero 32-character placeholder App ID and does not run RTC sessions. It must not use repository secrets, App Certificates, or tokens. The compile workflow runs for pull requests targeting `main` and can be started manually; referenced SDK versions must be available from public package repositories before the pull request can pass.
+API keys and real App IDs are never committed. GitHub Actions compilation uses an all-zero 32-character placeholder App ID and does not run RTC sessions. It must not use repository secrets, App Certificates, or tokens. The compile workflow runs for pull requests targeting `main` and can be started manually; SDK versions for Android, Apple, and Windows builds must be available from public sources before the pull request can pass. HarmonyOS uses GitHub-hosted offline checks without DevEco or a public SDK download; its PR job does not compile the application.

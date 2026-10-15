@@ -19,13 +19,13 @@ concise, testable statements and keep it current when the requirement changes.
 
 ## SDK Contract
 
-| Concern | Shared intent | Android API | Apple API | Windows API |
-| --- | --- | --- | --- | --- |
-| Initialization | | | | |
-| Main operation | | | | |
-| Callback or result | | | | |
-| Error handling | | | | |
-| Cleanup | | | | |
+| Concern | Shared intent | Android API | Apple API | Windows API | HarmonyOS API |
+| --- | --- | --- | --- | --- | --- |
+| Initialization | | | | | |
+| Main operation | | | | | |
+| Callback or result | | | | | |
+| Error handling | | | | | |
+| Cleanup | | | | | |
 
 ## Project Scope
 
@@ -43,6 +43,7 @@ reason.
 | iOS Objective-C | | | | |
 | macOS AppKit | | | | |
 | Windows MFC | | | | |
+| HarmonyOS ArkUI | | | | |
 
 ## Validation Evidence
 

@@ -17,6 +17,7 @@
 | iOS     | Swift       | [iOS/APIExample-Audio](iOS/APIExample-Audio)             | [RTC Objective-C Audio SDK](https://doc.shengwang.cn/doc/rtc/ios/resources)   |
 | macOS   | Swift       | [macOS](macOS)                                           | [RTC Objective-C Video SDK](https://doc.shengwang.cn/doc/rtc/macos/resources) |
 | Windows | C++         | [windows](windows)                                       | [RTC C++ Video SDK](https://doc.shengwang.cn/doc/rtc/windows/resources)       |
+| HarmonyOS | ArkTS / C++ | [HarmonyOS/APIExample](HarmonyOS/APIExample) | [RTC SDK 下载](https://doc.shengwang.cn/doc/rtc/harmonyos/resources) |
 
 你可以进入不同平台的项目进行试用或参考源代码。
 
