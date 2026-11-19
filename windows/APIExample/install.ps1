@@ -2,7 +2,7 @@ param(
     [switch]$RequireBeautyMaterial
 )
 
-$agora_sdk = 'https://download.shengwang.cn/sdk/release/Shengwang_Native_SDK_for_Windows_v4.7.1_FULL.zip'
+$agora_sdk = 'https://download.shengwang.cn/sdk/release/Shengwang_Native_SDK_for_Windows_v4.7.0_FULL.zip'
 $ThirdPartysrc = 'https://fullapp.oss-cn-beijing.aliyuncs.com/API-Examples/ThirdParty.zip'
 $ThirdPartydes = 'ThirdParty.zip'
 $agora_des = 'AgoraSdk.zip'
