@@ -29,6 +29,13 @@ synchronization do not inject an Aliyun Maven repository for RTC dependencies. V
 Maven resolution without a local SDK and with a fresh dependency cache; compiling with a
 bundled SDK does not validate the public repository.
 
+## Apple SDK source
+
+All four iOS projects and the macOS project declare the official Shengwang CocoaPods
+source `https://download.shengwang.cn/cocoapods/` before the public CocoaPods CDN
+`https://cdn.cocoapods.org/`. The Shengwang source provides domestic SDK specs;
+the public CDN remains available for third-party pods.
+
 ## Scope Rules
 
 - SDK version, dependency, credential plumbing, CI, and packaging changes require review of
