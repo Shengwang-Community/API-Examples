@@ -54,9 +54,6 @@ echo sdk_url: $sdk_url
 echo api_examples_shengwang_branch: $api_examples_shengwang_branch
 export api_examples_shengwang_branch
 
-export https_proxy=10.10.114.55:1080
-export http_proxy=10.10.114.55:1080
-export all_proxy=10.10.114.55:1080
 export LANG=en_US.UTF-8
 
 unzip_name=Agora_Native_SDK_for_iOS_FULL
